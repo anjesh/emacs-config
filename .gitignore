@@ -1,0 +1,9 @@
+elpa/
+eln-cache/
+auto-save-list/
+.cache/
+transient/
+*~
+#*#
+.#*
+.DS_Store
