@@ -158,6 +158,29 @@
   :bind (:map vertico-map
               ("DEL" . vertico-directory-delete-char)))
 
+;; Embark: Actions for the item at point (buffer, file, etc.)
+(use-package embark
+  :ensure t
+  :bind
+  (("C-." . embark-act)         ;; Standard key for actions
+   ("M-k" . embark-act)         ;; Bind M-k to actions as well (e.g. M-k k to kill)
+   ("C-;" . embark-dwim)        ;; Do What I Mean
+   ("C-h B" . embark-bindings)) ;; Help
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 ;; Load vertico-directory (part of vertico)
 (use-package vertico-directory
   :after vertico
@@ -238,16 +261,29 @@
 
 ;; Helper to open files in external app (macOS Preview, etc.)
 (defun my/open-in-external-app ()
-  "Open the current file or dired-marked file in the default external app."
+  "Open the current file, dired-marked file, or treemacs node in external app."
   (interactive)
-  (let ((file (if (derived-mode-p 'dired-mode)
-                  (dired-get-filename nil t)
-                buffer-file-name)))
-    (when file
-      (start-process "open-external" nil "open" file)
-      (message "Opened in external app: %s" file))))
+  (let ((file (cond
+               ((derived-mode-p 'dired-mode) (dired-get-filename nil t))
+               ((derived-mode-p 'treemacs-mode)
+                ;; Try multiple ways to get the path (robustness for different treemacs versions)
+                (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                    (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                    (ignore-errors
+                      (treemacs-copy-path-at-point)
+                      (substring-no-properties (current-kill 0)))))
+               (t buffer-file-name))))
+    (if (and file (not (string-empty-p file)))
+        (progn
+          (start-process "open-external" nil "open" file)
+          (message "Opened in external app: %s" file))
+      (message "Could not determine file path."))))
 
 (global-set-key (kbd "C-c o") 'my/open-in-external-app)
+
+;; Bind 'O' in Treemacs to open externally
+(with-eval-after-load 'treemacs
+  (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app))
 
 ;; Vterm Configuration (Requires cmake & libtool)
 (use-package vterm

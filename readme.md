@@ -29,6 +29,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Find File in Tree | `C-x t C-t` | Reveal current file in sidebar |
 | Select Window | `M-0` | Select the treemacs window |
 | Bookmarks | `C-x t B` | Manage bookmarks in treemacs |
+| Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
@@ -52,6 +53,7 @@ Use standard Emacs bookmarks to quick-jump to specific files or folders.
 | Search in File | `C-s` | Visual search within the current file |
 | Paste from History | `M-y` | Paste from the kill ring (clipboard) history |
 | Go to Line | `M-g g` | Go to a specific line with live preview |
+| Kill Buffer | `M-k k` | Open action menu (`M-k`) then press `k` to kill |
 
 ## Project Management (Projectile)
 
