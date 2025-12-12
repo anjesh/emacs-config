@@ -21,12 +21,27 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Delete Char/Go Up | `DEL` (Backspace) | Smarter deletion; goes up directory level at path boundaries |
 | Delete Word/Go Up | `M-DEL` (Option + Backspace) | Delete entire path component (e.g., folder name) |
 
-## File Explorer (Neotree)
+## File Explorer (Treemacs)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
 | Toggle Sidebar | `C-x t t` | Open/Close the file tree |
-| Find File in Tree | `C-x t f` | Reveal current file in sidebar |
+| Find File in Tree | `C-x t C-t` | Reveal current file in sidebar |
+| Select Window | `M-0` | Select the treemacs window |
+| Bookmarks | `C-x t B` | Manage bookmarks in treemacs |
+| Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
+| Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
+
+## Bookmarks & Shortcuts (Built-in)
+
+Use standard Emacs bookmarks to quick-jump to specific files or folders.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Set Bookmark** | `C-x r m` | Bookmark the current location (prompts for name) |
+| **Jump to Bookmark** | `C-x r b` | Jump to a saved bookmark (autocompletes) |
+| List Bookmarks | `C-x r l` | Open a list of all bookmarks to manage/delete |
+| Open Readme | `C-c r` | Custom shortcut to open this README file |
 
 ## Buffer Management (Ibuffer)
 
@@ -113,4 +128,4 @@ For true Vim-like movement and modal editing (Normal, Insert, Visual modes), you
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).
 - Custom Settings: Auto-generated settings (like safe variables) are in `custom.el`.
-- Packages: `neotree` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), and `markdown-mode`.
+- Packages: `treemacs` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), and `markdown-mode`.
