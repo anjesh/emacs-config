@@ -24,13 +24,27 @@
 
 ;; --- End Original Configuration ---
 
+;; Icons (Required for Neotree icons)
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
 ;; Neotree Configuration
 (use-package neotree
   :ensure t
+  :hook (after-find-file . neotree-find) ;; Automatically show current file in Neotree
   :config
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)) ;; Use icons if in GUI
+  
+  (defun neotree-toggle-dev ()
+    "Toggle Neotree, always opening at ~/dev if showing."
+    (interactive)
+    (if (neo-global--window-exists-p)
+        (neotree-hide)
+      (neotree-dir "~/dev")))
+
   :bind (:map global-map
-              ("C-x t t" . neotree-toggle)
+              ("C-x t t" . neotree-toggle-dev)
               ("C-x t f" . neotree-find)))
 
 ;; Auto-Revert Mode (Auto-reload files changed on disk)
@@ -70,14 +84,29 @@
 (use-package vertico
   :ensure t
   :init
-  (vertico-mode))
+  (vertico-mode)
+  ;; Enable vertico-directory extension for smart path deletion
+  :bind (:map vertico-map
+              ("DEL" . vertico-directory-delete-char)))
+
+;; Load vertico-directory (part of vertico)
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word)))
 
 ;; Org Mode Configuration
 (use-package org
   :ensure nil ;; Built-in
+  :hook (org-mode . (lambda () 
+                      (visual-line-mode 1)  ;; Wrap lines at word boundary
+                      (org-indent-mode 1))) ;; Cleaner indentation
   :bind
-  ("C-c a" . org-agenda)
-  ("C-c c" . org-capture)
+  (("C-c a" . org-agenda)
+   ("C-c c" . org-capture))
   :config
   (setq org-directory "~/dev")
   ;; Recursively find .org files in ~/dev for agenda
@@ -94,7 +123,7 @@
 
   ;; Capture Templates
   (setq org-capture-templates
-        '(("t" "Task" entry (file+headline org-default-notes-file "Tasks")
+        '( ("t" "Task" entry (file+headline org-default-notes-file "Tasks")
            "* TODO %?\n  %i\n  %a"))))
 
 ;; Backup Configuration
@@ -104,3 +133,42 @@
 (setq kept-new-versions 6)   ;; Number of newest versions to keep
 (setq kept-old-versions 2)   ;; Number of oldest versions to keep
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/" t)))
+
+;; Markdown Mode
+(use-package markdown-mode
+  :ensure t
+  :mode ("\.md\'" . markdown-mode)
+  :hook (markdown-mode . visual-line-mode)) ;; Wrap lines at word boundary
+
+;; Vterm Configuration (Requires cmake & libtool)
+(use-package vterm
+  :ensure t
+  :bind (:map vterm-mode-map
+              ("C-q" . vterm-send-next-key))
+  :config
+  (setq vterm-max-scrollback 10000))
+
+;; Vterm Toggle (Pop up terminal)
+(use-package vterm-toggle
+  :ensure t
+  :bind ("C-c t v" . vterm-toggle) ;; Changed from C-c t to C-c t v
+  :config
+  (setq vterm-toggle-fullscreen-p nil) ;; Open in split, not fullscreen
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-or-name _)
+                   (let ((buffer (get-buffer buffer-or-name)))
+                     (with-current-buffer buffer
+                       (or (equal major-mode 'vterm-mode)
+                           (string-prefix-p "vterm" (buffer-name buffer))))))
+                 (display-buffer-in-side-window)
+                 (side . right)
+                 (window-width . 0.3))))
+
+;; Enable mouse support in terminal (click, scroll, resize)
+(xterm-mouse-mode 1)
+
+;; Window Resizing
+(global-set-key (kbd "C-c <") 'shrink-window-horizontally)
+(global-set-key (kbd "C-c >") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-c -") 'shrink-window) ; Vertical shrink
+(global-set-key (kbd "C-c +") 'enlarge-window) ; Vertical enlarge
