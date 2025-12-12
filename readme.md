@@ -38,16 +38,20 @@ Use standard Emacs bookmarks to quick-jump to specific files or folders.
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| **Set Bookmark** | `C-x r m` | Bookmark the current location (prompts for name) |
-| **Jump to Bookmark** | `C-x r b` | Jump to a saved bookmark (autocompletes) |
+| Set Bookmark | `C-x r m` | Bookmark the current location (prompts for name) |
+| Jump to Bookmark | `C-x r b` | Jump to a saved bookmark (autocompletes) |
 | List Bookmarks | `C-x r l` | Open a list of all bookmarks to manage/delete |
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
+| Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
 
-## Buffer Management (Ibuffer)
+## Buffer Management (Consult)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| List Buffers | `C-x C-b` | Open a powerful list of all active buffers |
+| Switch Buffer | `C-x b` | Enhanced buffer switcher with previews and grouping |
+| Search in File | `C-s` | Visual search within the current file |
+| Paste from History | `M-y` | Paste from the kill ring (clipboard) history |
+| Go to Line | `M-g g` | Go to a specific line with live preview |
 
 ## Project Management (Projectile)
 
@@ -128,4 +132,4 @@ For true Vim-like movement and modal editing (Normal, Insert, Visual modes), you
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).
 - Custom Settings: Auto-generated settings (like safe variables) are in `custom.el`.
-- Packages: `treemacs` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), and `markdown-mode`.
+- Packages: `treemacs` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), `markdown-mode`, `consult`, and `marginalia`.

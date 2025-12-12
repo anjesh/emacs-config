@@ -167,6 +167,20 @@
               ("DEL" . vertico-directory-delete-char)
               ("M-DEL" . vertico-directory-delete-word)))
 
+;; Consult: Richer search and navigation
+(use-package consult
+  :ensure t
+  :bind (("C-x b" . consult-buffer)       ;; Supercharged buffer switcher
+         ("C-s"   . consult-line)         ;; Search within file (visual)
+         ("M-y"   . consult-yank-pop)     ;; Paste from clipboard history
+         ("M-g g" . consult-goto-line)))  ;; Go to line with preview
+
+;; Marginalia: Annotations (file size, mode, etc.) in the minibuffer
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
+
 ;; Org Mode Configuration
 (use-package org
   :ensure nil ;; Built-in
@@ -208,6 +222,32 @@
   :ensure t
   :mode ("\.md\'" . markdown-mode)
   :hook (markdown-mode . visual-line-mode)) ;; Wrap lines at word boundary
+
+;; PDF Tools (GUI only)
+(use-package pdf-tools
+  :ensure t
+  :if (display-graphic-p)
+  :mode ("\.pdf\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-width) ;; or 'fit-page
+  (setq pdf-view-continuous t) ;; Continuous scroll
+  (add-hook 'pdf-view-mode-hook (lambda ()
+                                  (display-line-numbers-mode -1) ;; Disable line numbers in PDF
+                                  (auto-revert-mode 1))))
+
+;; Helper to open files in external app (macOS Preview, etc.)
+(defun my/open-in-external-app ()
+  "Open the current file or dired-marked file in the default external app."
+  (interactive)
+  (let ((file (if (derived-mode-p 'dired-mode)
+                  (dired-get-filename nil t)
+                buffer-file-name)))
+    (when file
+      (start-process "open-external" nil "open" file)
+      (message "Opened in external app: %s" file))))
+
+(global-set-key (kbd "C-c o") 'my/open-in-external-app)
 
 ;; Vterm Configuration (Requires cmake & libtool)
 (use-package vterm
