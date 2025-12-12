@@ -241,3 +241,6 @@
 (global-set-key (kbd "C-c >") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-c -") 'shrink-window) ; Vertical shrink
 (global-set-key (kbd "C-c +") 'enlarge-window) ; Vertical enlarge
+
+;; Keybinding to open readme.md
+(global-set-key (kbd "C-c r") (lambda () (interactive) (find-file (expand-file-name "readme.md" user-emacs-directory))))
