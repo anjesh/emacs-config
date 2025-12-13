@@ -149,6 +149,17 @@
   :bind (:map projectile-mode-map
               ("C-c p" . projectile-command-map)))
 
+;; Orderless: Fuzzy matching for completion
+(use-package orderless
+  :ensure t
+  :init
+  ;; Configure a custom style dispatcher (optional)
+  ;; (setq orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (setq orderless-component-separator #'orderless-escapable-split-on-space)
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
 ;; Vertico Configuration
 (use-package vertico
   :ensure t
@@ -240,11 +251,36 @@
 (setq kept-old-versions 2)   ;; Number of oldest versions to keep
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/" t)))
 
+;; Adaptive Wrap (Visual indentation for wrapped lines)
+(use-package adaptive-wrap
+  :ensure t
+  :defer t)
+
 ;; Markdown Mode
 (use-package markdown-mode
   :ensure t
   :mode ("\.md\'" . markdown-mode)
-  :hook (markdown-mode . visual-line-mode)) ;; Wrap lines at word boundary
+  :hook (markdown-mode . (lambda () 
+                           (visual-line-mode 1)
+                           (adaptive-wrap-prefix-mode 1))) ;; Visually indent wrapped lines
+  :config
+  (defun my/markdown-on-tab ()
+    "Indent list item/region or cycle visibility."
+    (interactive)
+    (if (or (use-region-p) (markdown-list-item-at-point-p))
+        (markdown-demote-list-item)
+      (markdown-cycle)))
+
+  (defun my/markdown-on-shifttab ()
+    "Outdent list item/region or cycle global visibility."
+    (interactive)
+    (if (or (use-region-p) (markdown-list-item-at-point-p))
+        (markdown-promote-list-item)
+      (markdown-shifttab)))
+  
+  :bind (:map markdown-mode-map
+              ("TAB" . my/markdown-on-tab)
+              ("<backtab>" . my/markdown-on-shifttab)))
 
 ;; PDF Tools (GUI only)
 (use-package pdf-tools
@@ -281,9 +317,59 @@
 
 (global-set-key (kbd "C-c o") 'my/open-in-external-app)
 
-;; Bind 'O' in Treemacs to open externally
+;; Helper to open Ghostty terminal at current location
+(defun my/open-ghostty-here ()
+  "Open Ghostty terminal in the current buffer's directory, dired dir, or treemacs node."
+  (interactive)
+  (let ((path (cond
+               ((derived-mode-p 'dired-mode) (dired-current-directory))
+               ((derived-mode-p 'treemacs-mode)
+                (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors
+                                       (treemacs-copy-path-at-point)
+                                       (substring-no-properties (current-kill 0))))))
+                  (if (and node-path (file-exists-p node-path))
+                      (if (file-directory-p node-path)
+                          node-path
+                        (file-name-directory node-path))
+                    nil)))
+               (t (if buffer-file-name
+                      (file-name-directory buffer-file-name)
+                    default-directory)))))
+    (if (and path (not (string-empty-p path)))
+        (progn
+          (message "Opening Ghostty in: %s" path)
+          (start-process "open-ghostty" nil "open" "-a" "Ghostty" path))
+      (message "Could not determine directory."))))
+
+(global-set-key (kbd "C-c t g") 'my/open-ghostty-here)
+
+;; Bind 'O' in Treemacs to open externally, 'T' to open Ghostty, and 'C' to copy path
 (with-eval-after-load 'treemacs
-  (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app))
+  (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
+  (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
+  (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard))
+
+;; Helper to copy the full path of file/directory
+(defun my/treemacs-copy-path-to-clipboard ()
+  "Copy the full path of the current file, dired-marked file, or treemacs node to clipboard."
+  (interactive)
+  (let ((path (cond
+               ((derived-mode-p 'dired-mode) (dired-get-filename nil t))
+               ((derived-mode-p 'treemacs-mode)
+                ;; Try multiple ways to get the path (robustness for different treemacs versions)
+                (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                    (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                    (ignore-errors
+                      (treemacs-copy-path-at-point)
+                      (substring-no-properties (current-kill 0)))))
+               (t buffer-file-name))))
+    (if (and path (not (string-empty-p path)))
+        (progn
+          (kill-new path)
+          (message "Copied path to clipboard: %s" path))
+      (message "Could not determine path to copy."))))
 
 ;; Vterm Configuration (Requires cmake & libtool)
 (use-package vterm
@@ -312,6 +398,26 @@
 ;; Enable mouse support in terminal (click, scroll, resize)
 (xterm-mouse-mode 1)
 
+;; Clipboard Integration (Ensure Emacs copies to system clipboard)
+(setq select-enable-clipboard t)
+(setq select-enable-primary t)
+
+;; macOS Terminal Clipboard Support (pbcopy/pbpaste)
+;; This connects the Emacs kill ring to the macOS pasteboard when running in the terminal.
+(unless (display-graphic-p)
+  (when (eq system-type 'darwin)
+    (defun my-copy-to-clipboard (text &optional push)
+      (let ((process-connection-type nil))
+        (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+          (process-send-string proc text)
+          (process-send-eof proc))))
+
+    (defun my-paste-from-clipboard ()
+      (shell-command-to-string "pbpaste"))
+
+    (setq interprogram-cut-function 'my-copy-to-clipboard)
+    (setq interprogram-paste-function 'my-paste-from-clipboard)))
+
 ;; Window Resizing
 (global-set-key (kbd "C-c <") 'shrink-window-horizontally)
 (global-set-key (kbd "C-c >") 'enlarge-window-horizontally)
@@ -320,3 +426,45 @@
 
 ;; Keybinding to open readme.md
 (global-set-key (kbd "C-c r") (lambda () (interactive) (find-file (expand-file-name "readme.md" user-emacs-directory))))
+
+;; --- Journal Navigation ---
+
+(defun my/open-daily-journal ()
+  "Open today's daily journal file."
+  (interactive)
+  (let ((daily-path (format-time-string "~/dev/journal/daily/%Y/%m/%Y-%m-%d.md")))
+    (if (file-exists-p daily-path)
+        (find-file daily-path)
+      (if (y-or-n-p (format "Daily journal not found at %s. Create it? " daily-path))
+          (progn
+            (make-directory (file-name-directory daily-path) t)
+            (find-file daily-path))
+        (message "Cancelled.")))))
+
+(defun my/open-weekly-journal ()
+  "Open this week's journal file."
+  (interactive)
+  (let ((weekly-path (format-time-string "~/dev/journal/weekly/%Y/week-%V.md")))
+    (if (file-exists-p weekly-path)
+        (find-file weekly-path)
+      (if (y-or-n-p (format "Weekly journal not found at %s. Create it? " weekly-path))
+          (progn
+             (make-directory (file-name-directory weekly-path) t)
+             (find-file weekly-path))
+        (message "Cancelled.")))))
+
+(defun my/open-monthly-journal ()
+  "Open this month's journal file."
+  (interactive)
+  (let ((monthly-path (format-time-string "~/dev/journal/monthly/%Y/%m-%B.md")))
+    (if (file-exists-p monthly-path)
+        (find-file monthly-path)
+      (if (y-or-n-p (format "Monthly journal not found at %s. Create it? " monthly-path))
+          (progn
+             (make-directory (file-name-directory monthly-path) t)
+             (find-file monthly-path))
+        (message "Cancelled.")))))
+
+(global-set-key (kbd "C-c j d") 'my/open-daily-journal)
+(global-set-key (kbd "C-c j w") 'my/open-weekly-journal)
+(global-set-key (kbd "C-c j m") 'my/open-monthly-journal)

@@ -30,6 +30,8 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Select Window | `M-0` | Select the treemacs window |
 | Bookmarks | `C-x t B` | Manage bookmarks in treemacs |
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
+| Open in Ghostty | `T` (Shift+t) | Open Ghostty terminal in selected directory |
+| Copy Path | `C` (Shift+c) | Copy the full path of the selected file or directory to the clipboard |
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
@@ -45,12 +47,22 @@ Use standard Emacs bookmarks to quick-jump to specific files or folders.
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
 | Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
 
+## Journal Shortcuts
+
+Quickly open your current journal files.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Open Daily Journal | `C-c j d` | Opens `~/dev/journal/daily/YYYY/MM/YYYY-MM-DD.md` |
+| Open Weekly Journal | `C-c j w` | Opens `~/dev/journal/weekly/YYYY/week-WW.md` |
+| Open Monthly Journal | `C-c j m` | Opens `~/dev/journal/monthly/YYYY/MM-MonthName.md` |
+
 ## Buffer Management (Consult)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
 | Switch Buffer | `C-x b` | Enhanced buffer switcher with previews and grouping |
-| Search in File | `C-s` | Visual search within the current file |
+| Search in File | `C-s` | Visual search within the current file (powered by Consult & Orderless). Type keywords in any order to find matches, no leading space needed for substring search. Use `C-n`/`C-p` to navigate matches, `RET` to jump. |
 | Paste from History | `M-y` | Paste from the kill ring (clipboard) history |
 | Go to Line | `M-g g` | Go to a specific line with live preview |
 | Kill Buffer | `M-k k` | Open action menu (`M-k`) then press `k` to kill |
@@ -88,6 +100,11 @@ Use standard Emacs bookmarks to quick-jump to specific files or folders.
     *   Press `M-w` (Meta + w). *Note: On Mac, Meta is usually the Option key.*
 3.  Paste (Yank):
     *   Press `C-y` to paste.
+
+### macOS Terminal Clipboard
+If you are running Emacs in the terminal (e.g., iTerm2, Ghostty), clipboard integration is automatically handled:
+- **Copy (`M-w`)**: Text copied in Emacs is sent to the macOS system clipboard (`pbcopy`).
+- **Paste (`C-y`)**: Text pasted in Emacs is pulled from the macOS system clipboard (`pbpaste`).
 
 ### Copying from the Messages Buffer
 To copy system warnings or error messages:
