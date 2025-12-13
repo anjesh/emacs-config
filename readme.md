@@ -35,17 +35,25 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
-## Bookmarks & Shortcuts (Built-in)
-
-Use standard Emacs bookmarks to quick-jump to specific files or folders.
+## Other Useful Commands
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Set Bookmark | `C-x r m` | Bookmark the current location (prompts for name) |
-| Jump to Bookmark | `C-x r b` | Jump to a saved bookmark (autocompletes) |
-| List Bookmarks | `C-x r l` | Open a list of all bookmarks to manage/delete |
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
 | Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
+
+## Evil Mode (Vim Keybindings)
+
+Evil Mode provides Vim-like keybindings in Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Normal Mode | `ESC` or `C-[` | Default mode for navigation and commands |
+| Insert Mode | `i`, `a`, `o`, `I`, `A`, `O` | For inserting text |
+| Visual Mode | `v`, `V`, `C-v` | For selecting text |
+| Emacs State | `C-z` | Toggle between Evil states and Emacs original behavior |
+
+**Note**: By default, Evil mode is configured not to override existing keybindings, so some Emacs commands will still work as expected even in Normal mode.
 
 ## Journal Shortcuts
 
@@ -114,7 +122,7 @@ To copy system warnings or error messages:
 2.  Navigate to the message you want to copy.
 3.  Select and copy the text using the Select and Copy steps above.
 
-## Movement Keys (Vim-like with Evil Mode)
+## Standard Emacs Movement Keys
 
 By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 
@@ -134,8 +142,6 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Scroll up (backward)     | `M-v`             |
 | Go to beginning of buffer | `M-<`             |
 | Go to end of buffer      | `M->`             |
-
-For true Vim-like movement and modal editing (Normal, Insert, Visual modes), you will need to install the `evil-mode` package. `evil-mode` provides a nearly complete emulation of Vim within Emacs.
 
 ## Window Management
 

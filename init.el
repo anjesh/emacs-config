@@ -427,6 +427,19 @@
 ;; Keybinding to open readme.md
 (global-set-key (kbd "C-c r") (lambda () (interactive) (find-file (expand-file-name "readme.md" user-emacs-directory))))
 
+;; --- Evil Mode (Vim Keybindings) ---
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-keybinding nil) ;; Do not override any existing keybindings
+  (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :init
+  (evil-collection-init))
+
 ;; --- Journal Navigation ---
 
 (defun my/open-daily-journal ()
