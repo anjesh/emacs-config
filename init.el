@@ -175,14 +175,14 @@
   :bind
   (("C-." . embark-act)         ;; Standard key for actions
    ("M-k" . embark-act)         ;; Bind M-k to actions as well (e.g. M-k k to kill)
-   ("C-;" . embark-dwim)        ;; Do What I Mean
+   ("C-;". embark-dwim)        ;; Do What I Mean
    ("C-h B" . embark-bindings)) ;; Help
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+               '("\`\*Embark Collect \(Live\|Completions\)\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
 
@@ -291,7 +291,7 @@
   (pdf-tools-install)
   (setq-default pdf-view-display-size 'fit-width) ;; or 'fit-page
   (setq pdf-view-continuous t) ;; Continuous scroll
-  (add-hook 'pdf-view-mode-hook (lambda ()
+  (add-hook 'pdf-view-mode-hook (lambda () 
                                   (display-line-numbers-mode -1) ;; Disable line numbers in PDF
                                   (auto-revert-mode 1))))
 
@@ -481,3 +481,29 @@
 (global-set-key (kbd "C-c j d") 'my/open-daily-journal)
 (global-set-key (kbd "C-c j w") 'my/open-weekly-journal)
 (global-set-key (kbd "C-c j m") 'my/open-monthly-journal)
+;; --- Ebook Reading Configuration ---
+
+;; nov.el - EPUB Reader
+(use-package nov
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.[eE][pP][uU][bB]\\\'" . nov-mode))
+  (setq nov-text-width 80) ;; comfortable reading width
+  (add-hook 'nov-mode-hook 'visual-line-mode))
+
+;; calibredb - Interface for Calibre
+(use-package calibredb
+  :ensure t
+  :config
+  ;; REQUIRED: Path to your Calibre Library.
+  (setq calibredb-root-dir "~/Calibre/")
+  (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (setq calibredb-library-alist '(("~/Calibre/")))
+  
+  ;; Force calibredb to use Emacs state (standard keys) instead of Evil (Vim)
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'calibredb-search-mode 'emacs)
+    (evil-set-initial-state 'calibredb-show-mode 'emacs))
+  
+  :bind
+  ("C-c e" . calibredb)) ;; Bind C-c e to open CalibreDB
