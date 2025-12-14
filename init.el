@@ -120,6 +120,10 @@
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-buffers t)
 
+;; Auto-save Settings
+(setq auto-save-interval 50)
+(setq auto-save-timeout 30)
+
 ;; macOS Option Key as Meta Fix for GUI Emacs
 (setq mac-option-modifier 'meta)
 (setq mac-right-option-modifier 'meta)
