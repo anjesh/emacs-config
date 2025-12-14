@@ -163,6 +163,24 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Enlarge Vertically | `C-c +` | Make window taller |
 | Mouse Drag | `Left Click + Drag` | Drag status bar or divider to resize (if enabled) |
 
+## Gemini AI (gemini-cli)
+
+Interact with Gemini AI directly from Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start Gemini Chat | `C-c g g` | Start a new chat session (or continue default) |
+| Start in Directory | `C-c g d` | Start chat in a specific directory context |
+| Send Command | `C-c g s` | Send a one-off command from the minibuffer |
+| Send Region | `C-c g r` | Send the selected text (region) to Gemini |
+| Send Current File | `C-c g o` | Send the current buffer's file content to Gemini |
+| Toggle Window | `C-c g t` | Show/Hide the Gemini chat window |
+
+**In the Chat Buffer:**
+*   **`RET`**: Send message.
+*   **`C-c C-k`**: Clear chat.
+*   **`C-c C-q`**: Quit session.
+
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).

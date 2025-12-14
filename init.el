@@ -8,6 +8,13 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+;; Ensure PATH is inherited from shell (Critical for macOS)
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :config
+  (exec-path-from-shell-initialize))
+
 ;; --- Your Original Configuration ---
 
 (org-babel-do-load-languages
@@ -186,7 +193,7 @@
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\`\*Embark Collect \(Live\|Completions\)\*"
+               '("`\*Embark Collect \(Live\|Completions\)\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
 
@@ -399,6 +406,9 @@
                  (side . right)
                  (window-width . 0.3))))
 
+;; Popup package (dependency for gemini-cli.el)
+(use-package popup :ensure t)
+
 ;; Enable mouse support in terminal (click, scroll, resize)
 (xterm-mouse-mode 1)
 
@@ -492,8 +502,8 @@
   :ensure t
   :config
   (progn
-    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-    (add-to-list 'auto-mode-alist '("\\.EPUB\\'" . nov-mode))
+    (add-to-list 'auto-mode-alist '("\.epub\'" . nov-mode))
+    (add-to-list 'auto-mode-alist '("\.EPUB\'" . nov-mode))
     (setq nov-text-width 80) ;; comfortable reading width
     (add-hook 'nov-mode-hook 'visual-line-mode)
     
@@ -534,3 +544,19 @@
         ("RET" . my/calibredb-open-with-nov))
   (:map calibredb-show-mode-map
         ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
+
+;; --- Gemini CLI Integration ---
+(use-package gemini-cli
+  :ensure t
+  :vc (:url "https://github.com/linchen2chris/gemini-cli.el" :rev :newest)
+  :config
+  (setq gemini-cli-terminal-backend 'vterm)
+  (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
+  (gemini-cli-mode)
+  :bind
+  (("C-c g g" . gemini-cli)                  ;; Start Gemini
+   ("C-c g s" . gemini-cli-send-command)     ;; Send command from minibuffer
+   ("C-c g r" . gemini-cli-send-region)      ;; Send selected region
+   ("C-c g o" . gemini-cli-send-buffer-file) ;; Send current file
+   ("C-c g t" . gemini-cli-toggle)           ;; Toggle Gemini window
+   ("C-c g d" . gemini-cli-start-in-directory)))
