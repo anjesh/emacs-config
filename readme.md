@@ -181,6 +181,19 @@ Interact with Gemini AI directly from Emacs.
 *   **`C-c C-k`**: Clear chat.
 *   **`C-c C-q`**: Quit session.
 
+## Claude AI (claude-code)
+
+Interact with Claude AI (Anthropic) directly from Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start Claude Chat | `C-c C c` | Start a new chat session |
+| Start in Directory | `C-c C d` | Start chat in a specific directory |
+| Send Command | `C-c C s` | Send a one-off command from the minibuffer |
+| Send Region | `C-c C r` | Send the selected text (region) to Claude |
+| Send Current File | `C-c C o` | Send the current buffer's file content to Claude |
+| Toggle Window | `C-c C t` | Show/Hide the Claude chat window |
+
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).

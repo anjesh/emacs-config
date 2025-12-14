@@ -5,7 +5,9 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((gemini-cli :url "https://github.com/linchen2chris/gemini-cli.el"))))
+   '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
+     (inheritenv :url "https://github.com/purcell/inheritenv")
+     (gemini-cli :url "https://github.com/linchen2chris/gemini-cli.el"))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

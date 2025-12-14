@@ -560,3 +560,25 @@
    ("C-c g o" . gemini-cli-send-buffer-file) ;; Send current file
    ("C-c g t" . gemini-cli-toggle)           ;; Toggle Gemini window
    ("C-c g d" . gemini-cli-start-in-directory)))
+
+;; --- Claude Code CLI Integration ---
+
+;; Inheritenv (dependency for claude-code)
+(use-package inheritenv
+  :ensure t
+  :vc (:url "https://github.com/purcell/inheritenv" :rev :newest))
+
+(use-package claude-code
+  :ensure t
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :config
+  (setq claude-code-terminal-backend 'vterm)
+  (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
+  (claude-code-mode)
+  :bind
+  (("C-c C c" . claude-code)                  ;; Start Claude
+   ("C-c C s" . claude-code-send-command)     ;; Send command
+   ("C-c C r" . claude-code-send-region)      ;; Send region
+   ("C-c C o" . claude-code-send-buffer-file) ;; Send file
+   ("C-c C t" . claude-code-toggle)           ;; Toggle window
+   ("C-c C d" . claude-code-start-in-directory)))
