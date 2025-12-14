@@ -487,10 +487,11 @@
 (use-package nov
   :ensure t
   :config
-  (add-to-list 'auto-mode-alist '("\\.[eE][pP][uU][bB]\\\'" . nov-mode))
-  (setq nov-text-width 80) ;; comfortable reading width
-  (add-hook 'nov-mode-hook 'visual-line-mode))
-
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    (add-to-list 'auto-mode-alist '("\\.EPUB\\'" . nov-mode))
+    (setq nov-text-width 80) ;; comfortable reading width
+    (add-hook 'nov-mode-hook 'visual-line-mode)))
 ;; calibredb - Interface for Calibre
 (use-package calibredb
   :ensure t
@@ -504,6 +505,22 @@
   (with-eval-after-load 'evil
     (evil-set-initial-state 'calibredb-search-mode 'emacs)
     (evil-set-initial-state 'calibredb-show-mode 'emacs))
+
+  ;; Custom function to force open in nov.el
+  (defun my/calibredb-open-with-nov ()
+    "Open the current book with nov.el."
+    (interactive)
+    (let ((file (calibredb-get-file-path (car (calibredb-find-candidate-at-point)) t)))
+      (if file
+          (progn
+            (find-file file)
+            (when (string-suffix-p "epub" file t)
+              (nov-mode)))
+        (message "No file found."))))
   
   :bind
-  ("C-c e" . calibredb)) ;; Bind C-c e to open CalibreDB
+  ("C-c e" . calibredb)
+  (:map calibredb-search-mode-map
+        ("RET" . my/calibredb-open-with-nov))
+  (:map calibredb-show-mode-map
+        ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
