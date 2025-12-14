@@ -387,7 +387,13 @@
 (with-eval-after-load 'treemacs
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
-  (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard))
+  (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard)
+
+  ;; Disable Evil in Treemacs (use Emacs state)
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'treemacs-mode 'emacs)
+    (evil-define-key 'treemacs treemacs-mode-map (kbd "RET") #'treemacs-RET-action)
+    (evil-define-key 'normal treemacs-mode-map (kbd "RET") #'treemacs-RET-action)))
 
 ;; Helper to copy the full path of file/directory
 (defun my/treemacs-copy-path-to-clipboard ()
