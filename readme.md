@@ -35,6 +35,15 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
+## Ebook Reading (CalibreDB & Nov.el)
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Open CalibreDB | `C-c e` | Open the Calibre database browser |
+| Open Book | `RET` (Enter) | In CalibreDB, open the selected EPUB book for reading in `nov-mode` |
+| Search Books | `s` | In CalibreDB, search for books by keyword |
+| List EPUB Files | `o` | In CalibreDB, list the internal files of the selected EPUB |
+
 ## Other Useful Commands
 
 | Action | Key Sequence | Note |
@@ -53,7 +62,7 @@ Evil Mode provides Vim-like keybindings in Emacs.
 | Visual Mode | `v`, `V`, `C-v` | For selecting text |
 | Emacs State | `C-z` | Toggle between Evil states and Emacs original behavior |
 
-**Note**: By default, Evil mode is configured not to override existing keybindings, so some Emacs commands will still work as expected even in Normal mode.
+**Note**: `calibredb` buffers are configured to use Emacs' native keybindings by default, overriding Evil Mode for a more intuitive experience with book management.
 
 ## Journal Shortcuts
 
