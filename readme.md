@@ -93,6 +93,18 @@ Quickly open your current journal files.
 | Switch Project | `C-c p p` | Switch to another project |
 | Search in Project | `C-c p s g` | Grep (search text) in all project files |
 
+## Git (Magit)
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Open Magit Status | `M-x magit-status` | The main dashboard. Often bound to `C-x g`. |
+| Stage Changes | `s` | In Status buffer: Stage file or hunk at cursor. |
+| Unstage Changes | `u` | In Status buffer: Unstage file or hunk at cursor. |
+| Commit | `c c` | Start commit. Type message, then `C-c C-c` to finish. |
+| Push | `P p` | Push to upstream branch. |
+| View History | `l l` | View commit log graph. |
+| Quit | `q` | Close the Magit window. |
+
 ## Org Mode
 
 | Action | Key Sequence | Note |
