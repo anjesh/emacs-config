@@ -103,6 +103,7 @@ Quickly open your current journal files.
 | Commit | `c c` | Start commit. Type message, then `C-c C-c` to finish. |
 | Push | `P p` | Push to upstream branch. |
 | View History | `l l` | View commit log graph. |
+| Refresh | `g` | Refresh the Magit buffer (important as it doesn't auto-refresh). |
 | Quit | `q` | Close the Magit window. |
 
 ## Org Mode
