@@ -491,7 +491,13 @@
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
     (add-to-list 'auto-mode-alist '("\\.EPUB\\'" . nov-mode))
     (setq nov-text-width 80) ;; comfortable reading width
-    (add-hook 'nov-mode-hook 'visual-line-mode)))
+    (add-hook 'nov-mode-hook 'visual-line-mode)
+    
+    ;; Enable images (works in GUI Emacs)
+    (require 'shr)
+    (setq shr-inhibit-images nil)
+    (setq shr-use-fonts t)
+    (setq shr-max-image-proportion 0.8)))
 ;; calibredb - Interface for Calibre
 (use-package calibredb
   :ensure t
