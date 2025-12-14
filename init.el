@@ -272,7 +272,8 @@
   :ensure t
   :mode ("\.md\'" . markdown-mode)
   :hook (markdown-mode . (lambda () 
-                           (visual-line-mode 1)))
+                           (visual-line-mode 1)
+                           (adaptive-wrap-prefix-mode 1))) ;; Visually indent wrapped lines
   :config
   (defun my/markdown-on-tab ()
     "Indent list item/region or cycle visibility."
