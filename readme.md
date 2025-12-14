@@ -11,6 +11,7 @@
 | Switch Window | `C-x o` | Jump to Other window |
 | Undo | `C-/` | Undo last action |
 | Redo | `C-g C-/` | Redo action (after undo) |
+| Toggle Read-Only | `C-x C-q` | Toggle buffer read-only state |
 
 ## File Navigation (Vertico)
 
@@ -167,3 +168,8 @@ Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).
 - Custom Settings: Auto-generated settings (like safe variables) are in `custom.el`.
 - Packages: `treemacs` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), `markdown-mode`, `consult`, and `marginalia`.
+<!--
+Local Variables:
+buffer-read-only: t
+End:
+-->
