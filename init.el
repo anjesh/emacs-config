@@ -272,8 +272,7 @@
   :ensure t
   :mode ("\.md\'" . markdown-mode)
   :hook (markdown-mode . (lambda () 
-                           (visual-line-mode 1)
-                           (adaptive-wrap-prefix-mode 1))) ;; Visually indent wrapped lines
+                           (visual-line-mode 1)))
   :config
   (defun my/markdown-on-tab ()
     "Indent list item/region or cycle visibility."
@@ -288,6 +287,33 @@
     (if (or (use-region-p) (markdown-list-item-at-point-p))
         (markdown-promote-list-item)
       (markdown-shifttab)))
+
+  ;; --- Performance Fix for Large Files ---
+  (defun my/markdown-get-list-start ()
+    "Return the start position of the current list block (top-level)."
+    (save-excursion
+      (beginning-of-line)
+      ;; Limit search to 2000 lines back to avoid hangs
+      (let ((limit (save-excursion (forward-line -2000) (point))))
+        (if (re-search-backward "^[ \t]*\\([-+*]\\|[0-9]+\\.\\)\\s-" limit t)
+            (progn
+              (while (and (> (current-indentation) 0)
+                          (re-search-backward "^[ \t]*\\([-+*]\\|[0-9]+\\.\\)\\s-" limit t)))
+              (point))
+          (point-min)))))
+
+  (defun my/markdown-limit-context-advice (orig-fun &rest args)
+    "Narrow buffer to current top-level list before indenting to improve performance."
+    (if (> (buffer-size) 5000) ;; Optimization for large files (>5KB)
+        (let ((start (my/markdown-get-list-start)))
+          (save-restriction
+            (narrow-to-region start (point-max))
+            (syntax-propertize (point-max))
+            (apply orig-fun args)))
+      (apply orig-fun args)))
+
+  (advice-add 'markdown-demote-list-item :around #'my/markdown-limit-context-advice)
+  (advice-add 'markdown-promote-list-item :around #'my/markdown-limit-context-advice)
   
   :bind (:map markdown-mode-map
               ("TAB" . my/markdown-on-tab)
