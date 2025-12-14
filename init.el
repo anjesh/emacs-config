@@ -469,9 +469,15 @@
         (message "Cancelled.")))))
 
 (defun my/open-weekly-journal ()
-  "Open this week's journal file."
+  "Open this week's journal file. If today is Sunday, opens next week's file."
   (interactive)
-  (let ((weekly-path (format-time-string "~/dev/journal/weekly/%Y/week-%V.md")))
+  (let* ((now (decode-time))
+         (dow (nth 6 now)) ;; 0 = Sunday
+         ;; If Sunday, use time + 1 day to get into next ISO week
+         (target-time (if (= dow 0)
+                          (time-add (current-time) (* 24 3600))
+                        (current-time)))
+         (weekly-path (format-time-string "~/dev/journal/weekly/%Y/week-%V.md" target-time)))
     (if (file-exists-p weekly-path)
         (find-file weekly-path)
       (if (y-or-n-p (format "Weekly journal not found at %s. Create it? " weekly-path))
