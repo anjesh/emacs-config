@@ -256,6 +256,10 @@
   ;; Capture Templates
   (setq org-capture-templates
         '( ("t" "Task" entry (file+headline org-default-notes-file "Tasks")
+           "* TODO %?\n  %i\n  %a")
+           ("w" "Work Task" entry (file+headline "~/dev/orgfiles/work.org" "Work Tasks")
+           "* TODO %?\n  %i\n  %a")
+           ("p" "Personal Task" entry (file+headline "~/dev/orgfiles/personal.org" "Personal Tasks")
            "* TODO %?\n  %i\n  %a"))))
 
 ;; Backup Configuration
