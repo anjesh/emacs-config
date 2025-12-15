@@ -47,6 +47,8 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Open Book | `RET` (Enter) | In CalibreDB, open the selected EPUB book for reading in `nov-mode` |
 | Search Books | `s` | In CalibreDB, search for books by keyword |
 | List EPUB Files | `o` | In CalibreDB, list the internal files of the selected EPUB |
+| Next Chapter | `n` | Go to the next chapter in `nov-mode` |
+| Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |
 
 ## Other Useful Commands
 

@@ -558,6 +558,8 @@
     (add-to-list 'auto-mode-alist '("\.EPUB\'" . nov-mode))
     (setq nov-text-width 80) ;; comfortable reading width
     (add-hook 'nov-mode-hook 'visual-line-mode)
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'nov-mode 'emacs))
     
     ;; Enable images (works in GUI Emacs)
     (require 'shr)
