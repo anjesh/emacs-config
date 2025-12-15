@@ -30,6 +30,9 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Find File in Tree | `C-x t C-t` | Reveal current file in sidebar |
 | Select Window | `M-0` | Select the treemacs window |
 | Bookmarks | `C-x t B` | Manage bookmarks in treemacs |
+| Create File | `c f` | Create a new file at the current location or under the selected directory. |
+| Create Directory | `c d` | Create a new directory at the current location or under the selected directory. |
+| Move File/Directory | `m` | Move the selected file or directory to a new location. |
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
 | Open in Ghostty | `T` (Shift+t) | Open Ghostty terminal in selected directory |
 | Copy Path | `C` (Shift+c) | Copy the full path of the selected file or directory to the clipboard |
