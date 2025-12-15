@@ -3,6 +3,10 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+;; Enable visual line movement globally
+(setq-default line-move-visual t)
+(global-visual-line-mode t)
+
 ;; Install use-package if missing
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -479,7 +483,12 @@
   :ensure t
   :init
   (setq evil-want-keybinding nil) ;; Do not override any existing keybindings
-  (evil-mode 1))
+  (setq evil-respect-visual-line-mode t) ;; Respect visual line movement
+  (evil-mode 1)
+  :config
+  ;; Force 'j' and 'k' to move by visual lines, not logical lines
+  (define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
+  (define-key evil-motion-state-map (kbd "k") 'evil-previous-visual-line))
 
 (use-package evil-collection
   :after evil
