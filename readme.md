@@ -56,6 +56,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | :--- | :--- | :--- |
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
 | Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
+| Check Major Mode | `C-h v major-mode` | Check the current buffer's major mode |
 
 ## Evil Mode (Vim Keybindings)
 
