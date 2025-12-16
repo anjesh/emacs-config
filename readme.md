@@ -50,6 +50,12 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Next Chapter | `n` | Go to the next chapter in `nov-mode` |
 | Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |
 
+## Markdown Preview
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Toggle Live Preview | `C-c C-p` | Toggles live HTML preview for Markdown files (requires `markdown-mode-live-preview` or similar package) |
+
 ## Other Useful Commands
 
 | Action | Key Sequence | Note |
