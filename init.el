@@ -636,4 +636,5 @@
    ("C-c C r" . claude-code-send-region)      ;; Send region
    ("C-c C o" . claude-code-send-buffer-file) ;; Send file
    ("C-c C t" . claude-code-toggle)           ;; Toggle window
-   ("C-c C d" . claude-code-start-in-directory)))
+   ("C-c C d" . claude-code-start-in-directory)
+   ("C-c C q" . claude-code-kill)))

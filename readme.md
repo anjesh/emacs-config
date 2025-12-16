@@ -215,6 +215,7 @@ Interact with Claude AI (Anthropic) directly from Emacs.
 | Send Region | `C-c C r` | Send the selected text (region) to Claude |
 | Send Current File | `C-c C o` | Send the current buffer's file content to Claude |
 | Toggle Window | `C-c C t` | Show/Hide the Claude chat window |
+| Quit Session | `C-c C q` | Kill the current Claude Code process |
 
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
