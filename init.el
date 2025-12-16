@@ -613,7 +613,8 @@
    ("C-c g r" . gemini-cli-send-region)      ;; Send selected region
    ("C-c g o" . gemini-cli-send-buffer-file) ;; Send current file
    ("C-c g t" . gemini-cli-toggle)           ;; Toggle Gemini window
-   ("C-c g d" . gemini-cli-start-in-directory)))
+   ("C-c g d" . gemini-cli-start-in-directory)
+   ("C-c g q" . gemini-cli-kill)))
 
 ;; --- Claude Code CLI Integration ---
 

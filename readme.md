@@ -201,11 +201,7 @@ Interact with Gemini AI directly from Emacs.
 | Send Region | `C-c g r` | Send the selected text (region) to Gemini |
 | Send Current File | `C-c g o` | Send the current buffer's file content to Gemini |
 | Toggle Window | `C-c g t` | Show/Hide the Gemini chat window |
-
-**In the Chat Buffer:**
-*   **`RET`**: Send message.
-*   **`C-c C-k`**: Clear chat.
-*   **`C-c C-q`**: Quit session.
+| Quit Session | `C-c g q` | Kill the current Gemini CLI process |
 
 ## Claude AI (claude-code)
 
