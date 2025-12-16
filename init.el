@@ -638,3 +638,20 @@
    ("C-c C t" . claude-code-toggle)           ;; Toggle window
    ("C-c C d" . claude-code-start-in-directory)
    ("C-c C q" . claude-code-kill)))
+
+;; --- Qwen CLI Integration ---
+(use-package qwen-cli
+  :ensure t
+  :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
+  :config
+  (setq qwen-cli-terminal-backend 'vterm)
+  (setq qwen-cli-program "/usr/local/bin/qwen-code") ;; Assuming `qwen-code` is in /usr/local/bin after npm global install
+  (qwen-cli-mode)
+  :bind
+  (("C-c Q Q" . qwen-cli)                     ;; Start Qwen
+   ("C-c Q s" . qwen-cli-send-command)        ;; Send command from minibuffer
+   ("C-c Q r" . qwen-cli-send-region)         ;; Send selected region
+   ("C-c Q o" . qwen-cli-send-buffer-file)    ;; Send current file
+   ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
+   ("C-c Q d" . qwen-cli-start-in-directory)
+   ("C-c Q q" . qwen-cli-kill)))

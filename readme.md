@@ -217,6 +217,20 @@ Interact with Claude AI (Anthropic) directly from Emacs.
 | Toggle Window | `C-c C t` | Show/Hide the Claude chat window |
 | Quit Session | `C-c C q` | Kill the current Claude Code process |
 
+## Qwen AI (qwen-cli)
+
+Interact with Qwen AI directly from Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start Qwen Chat | `C-c Q Q` | Start a new chat session |
+| Start in Directory | `C-c Q d` | Start chat in a specific directory |
+| Send Command | `C-c Q s` | Send a one-off command from the minibuffer |
+| Send Region | `C-c Q r` | Send the selected text (region) to Qwen |
+| Send Current File | `C-c Q o` | Send the current buffer's file content to Qwen |
+| Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
+| Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
+
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).
