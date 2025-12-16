@@ -607,6 +607,10 @@
   (setq gemini-cli-terminal-backend 'vterm)
   (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
   (gemini-cli-mode)
+  (add-hook 'gemini-cli-start-hook
+            (lambda ()
+              (evil-emacs-state)
+              (local-set-key (kbd "M-w") 'kill-ring-save)))
   :bind
   (("C-c g g" . gemini-cli)                  ;; Start Gemini
    ("C-c g s" . gemini-cli-send-command)     ;; Send command from minibuffer
@@ -630,6 +634,10 @@
   (setq claude-code-terminal-backend 'vterm)
   (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
   (claude-code-mode)
+  (add-hook 'claude-code-start-hook
+            (lambda ()
+              (evil-emacs-state)
+              (local-set-key (kbd "M-w") 'kill-ring-save)))
   :bind
   (("C-c C c" . claude-code)                  ;; Start Claude
    ("C-c C s" . claude-code-send-command)     ;; Send command
@@ -645,7 +653,7 @@
   :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
   :config
   (setq qwen-cli-terminal-backend 'vterm)
-  (setq qwen-cli-program "/usr/local/bin/qwen-code") ;; Assuming `qwen-code` is in /usr/local/bin after npm global install
+  (setq qwen-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/qwen")
   (qwen-cli-mode)
   :bind
   (("C-c Q Q" . qwen-cli)                     ;; Start Qwen

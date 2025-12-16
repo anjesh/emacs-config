@@ -1,4 +1,4 @@
-;;; qwen-cli.el --- Gemini CLI Emacs integration -*- lexical-binding: t; -*-
+;;; qwen-cli.el --- Qwen CLI Emacs integration -*- lexical-binding: t; -*-
 
 ;; Author: Lin Chen<lc1990linux@gmail.com>
 ;; Version: 0.2.0
@@ -7,9 +7,9 @@
 ;; URL: https://github.com/linchen2chris/qwen-cli.el
 
 ;;; Commentary:
-;; An Emacs interface to Gemini CLI.  This package provides convenient
-;; ways to interact with Gemini from within Emacs, including sending
-;; commands, toggling the Gemini window, and accessing slash commands.
+;; An Emacs interface to Qwen CLI.  This package provides convenient
+;; ways to interact with Qwen from within Emacs, including sending
+;; commands, toggling the Qwen window, and accessing slash commands.
 
 ;;; Code:
 
@@ -21,33 +21,33 @@
 
 ;;;; Customization options
 (defgroup qwen-cli nil
-  "Gemini AI interface for Emacs."
+  "Qwen AI interface for Emacs."
   :group 'tools)
 
 (defgroup qwen-cli-eat nil
-  "Eat terminal backend specific settings for Gemini CLI."
+  "Eat terminal backend specific settings for Qwen CLI."
   :group 'qwen-cli)
 
 (defgroup qwen-cli-vterm nil
-  "Vterm terminal backend specific settings for Gemini CLI."
+  "Vterm terminal backend specific settings for Qwen CLI."
   :group 'qwen-cli)
 
 (defgroup qwen-cli-window nil
-  "Window management settings for Gemini CLI."
+  "Window management settings for Qwen CLI."
   :group 'qwen-cli)
 
 (defface qwen-cli-repl-face
   nil
-  "Face for Gemini REPL."
+  "Face for Qwen REPL."
   :group 'qwen-cli)
 
 (defcustom qwen-cli-term-name "xterm-256color"
-  "Terminal type to use for Gemini REPL."
+  "Terminal type to use for Qwen REPL."
   :type 'string
   :group 'qwen-cli)
 
 (defcustom qwen-cli-start-hook nil
-  "Hook run after Gemini is started."
+  "Hook run after Qwen is started."
   :type 'hook
   :group 'qwen-cli)
 
@@ -78,34 +78,34 @@
     "/vim"
     "/setup-github"
     "/terminal-setup")
-  "List of slash commands available in Gemini."
+  "List of slash commands available in Qwen."
 :type '(repeat (choice string (repeat string)))
 :group 'qwen-cli)
 
 (defcustom qwen-cli-startup-delay 0.1
-  "Delay in seconds after starting Gemini before displaying buffer.
+  "Delay in seconds after starting Qwen before displaying buffer.
 
 This helps fix terminal layout issues that can occur if the buffer
-is displayed before Gemini is fully initialized."
+is displayed before Qwen is fully initialized."
   :type 'number
   :group 'qwen-cli)
 
 (defcustom qwen-cli-large-buffer-threshold 100000
   "Size threshold in characters above which buffers are considered \"large\".
 
-When sending a buffer to Gemini with `qwen-cli-send-region` and no
+When sending a buffer to Qwen with `qwen-cli-send-region` and no
 region is active, prompt for confirmation if buffer size exceeds this value."
   :type 'integer
   :group 'qwen-cli)
 
 (defcustom qwen-cli-program "qwen"
-  "Program to run when starting Gemini.
+  "Program to run when starting Qwen.
 This is passed as the PROGRAM parameter to `eat-make`."
   :type 'string
   :group 'qwen-cli)
 
 (defcustom qwen-cli-program-switches nil
-  "List of command line switches to pass to the Gemini program.
+  "List of command line switches to pass to the Qwen program.
 These are passed as SWITCHES parameters to `eat-make`."
   :type '(repeat string)
   :group 'qwen-cli)
@@ -113,7 +113,7 @@ These are passed as SWITCHES parameters to `eat-make`."
 (defcustom qwen-cli-newline-keybinding-style 'newline-on-shift-return
   "Key binding style for entering newlines and sending messages.
 
-This controls how the return key and its modifiers behave in Gemini buffers:
+This controls how the return key and its modifiers behave in Qwen buffers:
 - \\='newline-on-shift-return: S-return enters a line break, RET sends the
   command (default)
 - \\='newline-on-alt-return: M-return enters a line break, RET sends the command
@@ -129,7 +129,7 @@ This controls how the return key and its modifiers behave in Gemini buffers:
   :group 'qwen-cli)
 
 (defcustom qwen-cli-enable-notifications t
-  "Whether to show notifications when Gemini finishes and awaits input."
+  "Whether to show notifications when Qwen finishes and awaits input."
   :type 'boolean
   :group 'qwen-cli)
 
@@ -142,15 +142,15 @@ The function is called with two arguments:
 
 You can set this to your own custom notification function.
 The default function displays a message and pulses the modeline
-to provide visual feedback when Gemini is ready for input."
+to provide visual feedback when Qwen is ready for input."
   :type 'function
   :group 'qwen-cli)
 
 (defcustom qwen-cli-confirm-kill t
-  "Whether to ask for confirmation before killing Gemini instances.
+  "Whether to ask for confirmation before killing Qwen instances.
 
 When non-nil, qwen-cli-kill will prompt for confirmation.
-When nil, Gemini instances will be killed without confirmation."
+When nil, Qwen instances will be killed without confirmation."
   :type 'boolean
   :group 'qwen-cli)
 
@@ -168,7 +168,7 @@ resizing."
   :group 'qwen-cli)
 
 (defcustom qwen-cli-no-delete-other-windows nil
-  "Whether to prevent Gemini CLI windows from being deleted.
+  "Whether to prevent Qwen CLI windows from being deleted.
 
 When non-nil, qwen-cli will have the `no-delete-other-windows'
 parameter.  This parameter prevents the qwen-cli window from
@@ -181,42 +181,42 @@ launch a new full-screen buffer."
 ;; Eat-specific terminal faces
 (defface qwen-cli-eat-prompt-annotation-running-face
   '((t :inherit eat-shell-prompt-annotation-running))
-  "Face for running prompt annotations in Gemini eat terminal."
+  "Face for running prompt annotations in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-prompt-annotation-success-face
   '((t :inherit eat-shell-prompt-annotation-success))
-  "Face for successful prompt annotations in Gemini eat terminal."
+  "Face for successful prompt annotations in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-prompt-annotation-failure-face
   '((t :inherit eat-shell-prompt-annotation-failure))
-  "Face for failed prompt annotations in Gemini eat terminal."
+  "Face for failed prompt annotations in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-term-bold-face
   '((t :inherit eat-term-bold))
-  "Face for bold text in Gemini eat terminal."
+  "Face for bold text in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-term-faint-face
   '((t :inherit eat-term-faint))
-  "Face for faint text in Gemini eat terminal."
+  "Face for faint text in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-term-italic-face
   '((t :inherit eat-term-italic))
-  "Face for italic text in Gemini eat terminal."
+  "Face for italic text in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-term-slow-blink-face
   '((t :inherit eat-term-slow-blink))
-  "Face for slow blinking text in Gemini eat terminal."
+  "Face for slow blinking text in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (defface qwen-cli-eat-term-fast-blink-face
   '((t :inherit eat-term-fast-blink))
-  "Face for fast blinking text in Gemini eat terminal."
+  "Face for fast blinking text in Qwen eat terminal."
   :group 'qwen-cli-eat)
 
 (dotimes (i 10)
@@ -224,11 +224,11 @@ launch a new full-screen buffer."
         (eat-face (intern (format "eat-term-font-%d" i))))
     (eval `(defface ,face-name
              '((t :inherit ,eat-face))
-             ,(format "Face for font %d in Gemini eat terminal." i)
+             ,(format "Face for font %d in Qwen eat terminal." i)
              :group 'qwen-cli-eat))))
 
 (defcustom qwen-cli-eat-read-only-mode-cursor-type '(box nil nil)
-  "Type of cursor to use as invisible cursor in Gemini CLI terminal buffer.
+  "Type of cursor to use as invisible cursor in Qwen CLI terminal buffer.
 
 The value is a list of form (CURSOR-ON BLINKING-FREQUENCY CURSOR-OFF).
 
@@ -280,12 +280,12 @@ BLINKING-FREQUENCY can be nil (no blinking) or a number."
   :group 'qwen-cli-eat)
 
 (defcustom qwen-cli-eat-never-truncate-qwen-buffer nil
-  "When non-nil, disable truncation of Gemini output buffer.
+  "When non-nil, disable truncation of Qwen output buffer.
 
 By default, Eat will truncate the terminal scrollback buffer when it
-reaches a certain size.  This can cause Gemini's output to be cut off
+reaches a certain size.  This can cause Qwen's output to be cut off
 when dealing with large responses.  Setting this to non-nil disables
-the scrollback size limit, allowing Gemini to output unlimited content
+the scrollback size limit, allowing Qwen to output unlimited content
 without truncation.
 
 Note: Disabling truncation may consume more memory for very large
@@ -294,7 +294,7 @@ outputs."
   :group 'qwen-cli-eat)
 
 (make-obsolete-variable 'qwen-cli-eat-never-truncate-qwen-buffer
-                        "Setting it to t can consume more memory for very large outputs and can cause performance issues with long Gemini sessions"
+                        "Setting it to t can consume more memory for very large outputs and can cause performance issues with long Qwen sessions"
                         "0.4.0")
 
 ;;;;; Vterm terminal customizations
@@ -303,7 +303,7 @@ outputs."
 
 When non-nil, vterm output that appears to be redrawing multi-line
 input boxes will be buffered briefly and processed in a single
-batch. This prevents the flickering that can occur when Gemini redraws
+batch. This prevents the flickering that can occur when Qwen redraws
 its input box as it expands to multiple lines.
 
 This only affects the vterm backend."
@@ -331,9 +331,9 @@ between reducing flickering and maintaining responsiveness."
 
 ;;;; Internal state variables
 (defvar qwen-cli--directory-buffer-map (make-hash-table :test 'equal)
-  "Hash table mapping directories to user-selected Gemini buffers.
+  "Hash table mapping directories to user-selected Qwen buffers.
 Keys are directory paths, values are buffer objects.
-This allows remembering which Gemini instance the user selected
+This allows remembering which Qwen instance the user selected
 for each directory across multiple invocations.")
 
 (defvar qwen-cli--window-widths nil
@@ -373,23 +373,23 @@ for each directory across multiple invocations.")
     (define-key map (kbd "M") 'qwen-cli-cycle-mode)
     (define-key map (kbd "o") 'qwen-cli-send-buffer-file)
     map)
-  "Keymap for Gemini commands.")
+  "Keymap for Qwen commands.")
 
 ;;;; Transient Menus
 ;;;###autoload (autoload 'qwen-cli-transient "qwen-cli" nil t)
 (transient-define-prefix qwen-cli-transient ()
-  "Gemini command menu."
-  ["Gemini Commands"
-   ["Start/Stop Gemini"
-    ("c" "Start Gemini" qwen-cli)
+  "Qwen command menu."
+  ["Qwen Commands"
+   ["Start/Stop Qwen"
+    ("c" "Start Qwen" qwen-cli)
     ("d" "Start in directory" qwen-cli-start-in-directory)
     ("C" "Continue conversation" qwen-cli-continue)
     ("R" "Resume session" qwen-cli-resume)
     ("i" "New instance" qwen-cli-new-instance)
-    ("k" "Kill Gemini" qwen-cli-kill)
-    ("K" "Kill all Gemini instances" qwen-cli-kill-all)
+    ("k" "Kill Qwen" qwen-cli-kill)
+    ("K" "Kill all Qwen instances" qwen-cli-kill-all)
     ]
-   ["Send Commands to Gemini"
+   ["Send Commands to Qwen"
     ("s" "Send command" qwen-cli-send-command)
     ("x" "Send command with context" qwen-cli-send-command-with-context)
     ("r" "Send region or buffer" qwen-cli-send-region)
@@ -397,12 +397,12 @@ for each directory across multiple invocations.")
     ("e" "Fix error at point" qwen-cli-fix-error-at-point)
     ("f" "Fork conversation" qwen-cli-fork)
     ("/" "Slash Commands" qwen-cli-slash-commands-popup)]
-   ["Manage Gemini"
+   ["Manage Qwen"
     ("t" "Toggle qwen window" qwen-cli-toggle)
-    ("b" "Switch to Gemini buffer" qwen-cli-switch-to-buffer)
-    ("B" "Select from all Gemini buffers" qwen-cli-select-buffer)
+    ("b" "Switch to Qwen buffer" qwen-cli-switch-to-buffer)
+    ("B" "Select from all Qwen buffers" qwen-cli-select-buffer)
     ("z" "Toggle read-only mode" qwen-cli-toggle-read-only-mode)
-    ("M" "Cycle Gemini mode" qwen-cli-cycle-mode :transient t)
+    ("M" "Cycle Qwen mode" qwen-cli-cycle-mode :transient t)
     ]
    ["Quick Responses"
     ("1" "Send \"1\"" qwen-cli-send-1)
@@ -413,14 +413,14 @@ for each directory across multiple invocations.")
 
 ;;;; add files to context
 (defun qwen-cli-add-context ()
-  "Add FILE to Gemini context."
+  "Add FILE to Qwen context."
         (interactive)
-        (let ((file (projectile-completing-read "Add file to Gemini: "
+        (let ((file (projectile-completing-read "Add file to Qwen: "
                                                (projectile-project-files (projectile-acquire-root)))))
         (qwen-cli--do-send-command (concat "@" file))))
 
 (defun qwen-cli-quick-response ()
-  "Send a quick response to Gemini."
+  "Send a quick response to Qwen."
 (interactive)
 (let ((response (read-number "choose(1, 2, 3 or 4):" 1)))
 (cond
@@ -437,7 +437,7 @@ for each directory across multiple invocations.")
 
 ;;;; Slash Commands with popup menu
 (defun qwen-cli-slash-commands-popup ()
-  "Display the Gemini slash commands menu."
+  "Display the Qwen slash commands menu."
   (interactive)
   (let ((slash-cmd (popup-cascade-menu  qwen-cli-slash-commands)))
   (qwen-cli--do-send-command slash-cmd)))
@@ -448,7 +448,7 @@ for each directory across multiple invocations.")
 (require 'cl-lib)
 
 (defcustom qwen-cli-terminal-backend 'eat
-  "Terminal backend to use for Gemini CLI.
+  "Terminal backend to use for Qwen CLI.
 Choose between \\='eat (default) and \\='vterm terminal emulators."
   :type '(radio (const :tag "Eat terminal emulator" eat)
                 (const :tag "Vterm terminal emulator" vterm))
@@ -483,7 +483,7 @@ Returns the buffer containing the terminal.")
   "Apply face customizations for the terminal using BACKEND.")
 
 (cl-defgeneric qwen-cli--term-setup-keymap (backend)
-  "Set up the local keymap for Gemini CLI buffers using BACKEND.")
+  "Set up the local keymap for Qwen CLI buffers using BACKEND.")
 
 (cl-defgeneric qwen-cli--term-get-adjust-process-window-size-fn (backend)
   "Get the BACKEND specific function that adjusts window size.")
@@ -626,7 +626,7 @@ _BACKEND is the terminal backend type (should be \\='eat)."
   "Apply face customizations for eat terminal.
 
 _BACKEND is the terminal backend type (should be \\='eat)."
-  ;; Remap eat faces to Gemini-specific faces
+  ;; Remap eat faces to Qwen-specific faces
   (face-remap-add-relative 'eat-shell-prompt-annotation-running 'qwen-cli-eat-prompt-annotation-running-face)
   (face-remap-add-relative 'eat-shell-prompt-annotation-success 'qwen-cli-eat-prompt-annotation-success-face)
   (face-remap-add-relative 'eat-shell-prompt-annotation-failure 'qwen-cli-eat-prompt-annotation-failure-face)
@@ -641,7 +641,7 @@ _BACKEND is the terminal backend type (should be \\='eat)."
       (face-remap-add-relative eat-face qwen-face))))
 
 (cl-defmethod qwen-cli--term-setup-keymap ((_backend (eql eat)))
-  "Set up the local keymap for Gemini CLI buffers.
+  "Set up the local keymap for Qwen CLI buffers.
 
 _BACKEND is the terminal backend type (should be \\='eat)."
   (let ((map (make-sparse-keymap)))
@@ -718,7 +718,7 @@ SWITCHES are optional command-line arguments for PROGRAM."
          (buffer (get-buffer-create buffer-name)))
     (with-current-buffer buffer
       ;; vterm needs to have an open window before starting the qwen
-      ;; process; otherwise Gemini doesn't seem to know how wide its
+      ;; process; otherwise Qwen doesn't seem to know how wide its
       ;; terminal window is and it draws the input box too wide. But
       ;; the user may not want to pop to the buffer. For some reason
       ;; `display-buffer' also leads to wonky results, it has to be
@@ -845,7 +845,7 @@ _BACKEND is the terminal backend type (should be \\='vterm)."
 ;;   (vterm-send-key "" nil t))
 
 (cl-defmethod qwen-cli--term-setup-keymap ((_backend (eql vterm)))
-  "Set up the local keymap for Gemini CLI buffers.
+  "Set up the local keymap for Qwen CLI buffers.
 
 _BACKEND is the terminal backend type (should be \\='vterm)."
   (let ((map (make-sparse-keymap)))
@@ -881,9 +881,9 @@ _BACKEND is the terminal backend type (should be \\='vterm)."
 
 ;;;; Private util functions
 (defmacro qwen-cli--with-buffer (&rest body)
-  "Execute BODY with the Gemini buffer, handling buffer selection and display.
+  "Execute BODY with the Qwen buffer, handling buffer selection and display.
 
-Gets or prompts for the Gemini buffer, executes BODY within that buffer's
+Gets or prompts for the Qwen buffer, executes BODY within that buffer's
 context, displays the buffer, and shows not-running message if no buffer
 is found."
   `(if-let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
@@ -893,7 +893,7 @@ is found."
      (qwen-cli--show-not-running-message)))
 
 (defun qwen-cli--buffer-p (buffer)
-  "Return non-nil if BUFFER is a Gemini buffer.
+  "Return non-nil if BUFFER is a Qwen buffer.
 
 BUFFER can be either a buffer object or a buffer name string."
   (let ((name (if (stringp buffer)
@@ -902,7 +902,7 @@ BUFFER can be either a buffer object or a buffer name string."
     (and name (string-match-p "^\\*qwen:" name))))
 
 (defun qwen-cli--directory ()
-  "Get get the root Gemini directory for the current buffer.
+  "Get get the root Qwen directory for the current buffer.
 
 If not in a project and no buffer file return `default-directory'."
   (let* ((project (project-current))
@@ -916,7 +916,7 @@ If not in a project and no buffer file return `default-directory'."
      (t default-directory))))
 
 (defun qwen-cli--find-all-qwen-buffers ()
-  "Find all active Gemini buffers across all directories.
+  "Find all active Qwen buffers across all directories.
 
 Returns a list of buffer objects."
   (cl-remove-if-not
@@ -924,7 +924,7 @@ Returns a list of buffer objects."
    (buffer-list)))
 
 (defun qwen-cli--find-qwen-buffers-for-directory (directory)
-  "Find all active Gemini buffers for a specific DIRECTORY.
+  "Find all active Qwen buffers for a specific DIRECTORY.
 
 Returns a list of buffer objects."
   (cl-remove-if-not
@@ -936,7 +936,7 @@ Returns a list of buffer objects."
    (qwen-cli--find-all-qwen-buffers)))
 
 (defun qwen-cli--extract-directory-from-buffer-name (buffer-name)
-  "Extract the directory path from a Gemini BUFFER-NAME.
+  "Extract the directory path from a Qwen BUFFER-NAME.
 
 For example, *qwen:/path/to/project/* returns /path/to/project/.
 For example, *qwen:/path/to/project/:tests* returns /path/to/project/."
@@ -944,7 +944,7 @@ For example, *qwen:/path/to/project/:tests* returns /path/to/project/."
     (match-string 1 buffer-name)))
 
 (defun qwen-cli--extract-instance-name-from-buffer-name (buffer-name)
-  "Extract the instance name from a Gemini BUFFER-NAME.
+  "Extract the instance name from a Qwen BUFFER-NAME.
 
 For example, *qwen:/path/to/project/:tests* returns \"tests\".
 For example, *qwen:/path/to/project/* returns nil."
@@ -952,7 +952,7 @@ For example, *qwen:/path/to/project/* returns nil."
     (match-string 2 buffer-name)))
 
 (defun qwen-cli--buffer-display-name (buffer)
-  "Create a display name for Gemini BUFFER.
+  "Create a display name for Qwen BUFFER.
 
 Returns a formatted string like `project:instance (directory)' or
 `project (directory)'."
@@ -994,7 +994,7 @@ Returns the selected buffer or nil."
       (cdr (assoc selection choices)))))
 
 (defun qwen-cli--prompt-for-qwen-buffer ()
-  "Prompt user to select from available Gemini buffers.
+  "Prompt user to select from available Qwen buffers.
 
 Returns the selected buffer or nil if canceled. If a buffer is selected,
 it's remembered for the current directory."
@@ -1002,7 +1002,7 @@ it's remembered for the current directory."
          (qwen-buffers (qwen-cli--find-all-qwen-buffers)))
     (when qwen-buffers
       (let* ((prompt (substitute-command-keys
-                      (format "No Gemini instance running in %s. Cancel (\\[keyboard-quit]), or select Gemini instance: "
+                      (format "No Qwen instance running in %s. Cancel (\\[keyboard-quit]), or select Qwen instance: "
                               (abbreviate-file-name current-dir))))
              (selected-buffer (qwen-cli--select-buffer-from-choices prompt qwen-buffers)))
         ;; Remember the selection for this directory
@@ -1011,12 +1011,12 @@ it's remembered for the current directory."
         selected-buffer))))
 
 (defun qwen-cli--get-or-prompt-for-buffer ()
-  "Get Gemini buffer for current directory or prompt for selection.
+  "Get Qwen buffer for current directory or prompt for selection.
 
-First checks for Gemini buffers in the current directory. If there are
+First checks for Qwen buffers in the current directory. If there are
 multiple, prompts the user to select one. If there are none, checks if
 there's a remembered selection for this directory. If not, and there are
-other Gemini buffers running, prompts the user to select one. Returns
+other Qwen buffers running, prompts the user to select one. Returns
 the buffer or nil."
   (let* ((current-dir (qwen-cli--directory))
          (dir-buffers (qwen-cli--find-qwen-buffers-for-directory current-dir)))
@@ -1024,7 +1024,7 @@ the buffer or nil."
      ;; Multiple buffers for this directory - prompt for selection
      ((> (length dir-buffers) 1)
       (qwen-cli--select-buffer-from-choices
-       (format "Select Gemini instance for %s: "
+       (format "Select Qwen instance for %s: "
                (abbreviate-file-name current-dir))
        dir-buffers
        t))  ; Use simple format (just instance names)
@@ -1037,7 +1037,7 @@ the buffer or nil."
       (let ((remembered-buffer (gethash current-dir qwen-cli--directory-buffer-map)))
         (if (and remembered-buffer (buffer-live-p remembered-buffer))
             remembered-buffer
-          ;; No valid remembered buffer, check for other Gemini instances
+          ;; No valid remembered buffer, check for other Qwen instances
           (let ((other-buffers (qwen-cli--find-all-qwen-buffers)))
             (when other-buffers
               (qwen-cli--prompt-for-qwen-buffer)))))))))
@@ -1046,13 +1046,13 @@ the buffer or nil."
   "Switch to SELECTED-BUFFER if it's not the current buffer.
 
 This is used after command functions to ensure we switch to the
-selected Gemini buffer when the user chose a different instance."
+selected Qwen buffer when the user chose a different instance."
   (when (and selected-buffer
              (not (eq selected-buffer (current-buffer))))
     (pop-to-buffer selected-buffer)))
 
 (defun qwen-cli--buffer-name (&optional instance-name)
-  "Generate the Gemini buffer name based on project or current buffer file.
+  "Generate the Qwen buffer name based on project or current buffer file.
 
 If INSTANCE-NAME is provided, include it in the buffer name.
 If not in a project and no buffer file, raise an error."
@@ -1061,7 +1061,7 @@ If not in a project and no buffer file, raise an error."
         (if instance-name
             (format "*qwen:%s:%s*" (abbreviate-file-name (file-truename dir)) instance-name)
           (format "*qwen:%s*" (abbreviate-file-name (file-truename dir))))
-      (error "Cannot determine Gemini directory - no `default-directory'!"))))
+      (error "Cannot determine Qwen directory - no `default-directory'!"))))
 
 (defun qwen-cli--prompt-for-instance-name (dir existing-instance-names &optional force-prompt)
   "Prompt user for a new instance name for directory DIR.
@@ -1090,11 +1090,11 @@ If FORCE-PROMPT is non-nil, always prompt even if no instances exist."
     "default"))
 
 (defun qwen-cli--show-not-running-message ()
-  "Show a message that Gemini is not running in any directory."
-  (message "Gemini is not running"))
+  "Show a message that Qwen is not running in any directory."
+  (message "Qwen is not running"))
 
 (defun qwen-cli--kill-buffer (buffer)
-  "Kill a Gemini BUFFER by cleaning up hooks and processes."
+  "Kill a Qwen BUFFER by cleaning up hooks and processes."
   (when (buffer-live-p buffer)
     (with-current-buffer buffer
       ;; Remove the adjust window size advice if it was added
@@ -1113,7 +1113,7 @@ If FORCE-PROMPT is non-nil, always prompt even if no instances exist."
 (defun qwen-cli--cleanup-directory-mapping ()
   "Remove entries from directory-buffer map when this buffer is killed.
 
-This function is added to `kill-buffer-hook' in Gemini buffers to clean up
+This function is added to `kill-buffer-hook' in Qwen buffers to clean up
 the remembered directory->buffer associations."
   (let ((dying-buffer (current-buffer)))
     (maphash (lambda (dir buffer)
@@ -1141,10 +1141,10 @@ LINE-END is the ending line number for a range.  If nil, format single line."
         (format "@%s:%d" file start)))))
 
 (defun qwen-cli--do-send-command (cmd)
-  "Send a command CMD to Gemini if Gemini buffer exists.
+  "Send a command CMD to Qwen if Qwen buffer exists.
 
 After sending the command, move point to the end of the buffer.
-Returns the selected Gemini buffer or nil."
+Returns the selected Qwen buffer or nil."
   (if-let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
       (progn
         (with-current-buffer qwen-cli-buffer
@@ -1157,12 +1157,12 @@ Returns the selected Gemini buffer or nil."
     nil))
 
 (defun qwen-cli--start (arg extra-switches &optional force-prompt force-switch-to-buffer)
-  "Start Gemini with given command-line EXTRA-SWITCHES.
+  "Start Qwen with given command-line EXTRA-SWITCHES.
 
 ARG is the prefix argument controlling directory and buffer switching.
-EXTRA-SWITCHES is a list of additional command-line switches to pass to Gemini.
+EXTRA-SWITCHES is a list of additional command-line switches to pass to Qwen.
 If FORCE-PROMPT is non-nil, always prompt for instance name.
-If FORCE-SWITCH-TO-BUFFER is non-nil, always switch to the Gemini buffer.
+If FORCE-SWITCH-TO-BUFFER is non-nil, always switch to the Qwen buffer.
 
 With single prefix ARG (\\[universal-argument]), switch to buffer after creating.
 With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt for the project directory."
@@ -1171,7 +1171,7 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
                 (qwen-cli--directory)))
          (switch-after (or (equal arg '(4)) force-switch-to-buffer)) ; Single prefix or force-switch-to-buffer
          (default-directory dir)
-         ;; Check for existing Gemini instances in this directory
+         ;; Check for existing Qwen instances in this directory
          (existing-buffers (qwen-cli--find-qwen-buffers-for-directory dir))
          ;; Get existing instance names
          (existing-instance-names (mapcar (lambda (buf)
@@ -1186,7 +1186,7 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
                                (append qwen-cli-program-switches extra-switches)
                              qwen-cli-program-switches))
 
-         ;; Set process-adaptive-read-buffering to nil to avoid flickering while Gemini is processing
+         ;; Set process-adaptive-read-buffering to nil to avoid flickering while Qwen is processing
          (process-adaptive-read-buffering nil)
 
          ;; Start the terminal process
@@ -1194,11 +1194,11 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
 
     ;; Check if the qwen program is available
     (unless (executable-find qwen-cli-program)
-      (error "Gemini CLI program '%s' not found in PATH" qwen-cli-program))
+      (error "Qwen CLI program '%s' not found in PATH" qwen-cli-program))
 
     ;; Check if buffer was successfully created
     (unless (buffer-live-p buffer)
-      (error "Failed to create Gemini CLI buffer"))
+      (error "Failed to create Qwen CLI buffer"))
 
     ;; setup qwen buffer
     (with-current-buffer buffer
@@ -1241,7 +1241,7 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
       ;; Display buffer, setting window parameters
       (let ((window (display-buffer-in-side-window buffer '((side . right)(window-width . 0.4)))))
         (when window
-          ;; turn off fringes and margins in the Gemini buffer
+          ;; turn off fringes and margins in the Qwen buffer
           (set-window-parameter window 'left-margin-width 0)
           (set-window-parameter window 'right-margin-width 0)
           (set-window-parameter window 'left-fringe-width 0)
@@ -1249,15 +1249,15 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
           ;; set no-delete-other-windows parameter for qwen-cli window
           (set-window-parameter window 'no-delete-other-windows qwen-cli-no-delete-other-windows))))
 
-    ;; switch to the Gemini buffer if asked to
+    ;; switch to the Qwen buffer if asked to
     (when switch-after
       (pop-to-buffer buffer))))
 
 ;;;###autoload
 (defun qwen-cli (&optional arg)
-  "Start Gemini in an eat terminal and enable `qwen-cli-mode'.
+  "Start Qwen in an eat terminal and enable `qwen-cli-mode'.
 
-If current buffer belongs to a project start Gemini in the project's
+If current buffer belongs to a project start Qwen in the project's
 root directory. Otherwise start in the directory of the current buffer
 file, or the current value of `default-directory' if no project and no
 buffer file.
@@ -1269,7 +1269,7 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
 
 ;;;###autoload
 (defun qwen-cli-start-in-directory (&optional arg)
-  "Prompt for a directory and start Gemini there.
+  "Prompt for a directory and start Qwen there.
 
 This is a convenience command equivalent to using `qwen-cli` with
 double prefix arg (\\[universal-argument] \\[universal-argument]).
@@ -1285,12 +1285,12 @@ With prefix ARG (\\[universal-argument]), switch to buffer after creating."
 
 ;;;###autoload
 (defun qwen-cli-continue (&optional arg)
-  "Start Gemini and continue the previous conversation.
+  "Start Qwen and continue the previous conversation.
 
-This command starts Gemini with the --continue flag to resume
+This command starts Qwen with the --continue flag to resume
 where you left off in your last session.
 
-If current buffer belongs to a project start Gemini in the project's
+If current buffer belongs to a project start Qwen in the project's
 root directory. Otherwise start in the directory of the current buffer
 file, or the current value of `default-directory' if no project and no
 buffer file.
@@ -1302,13 +1302,13 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
 
 ;;;###autoload
 (defun qwen-cli-resume (arg)
-  "Resume a specific Gemini session.
+  "Resume a specific Qwen session.
 
-This command starts Gemini with the --resume flag to resume a specific
-past session. Gemini will present an interactive list of past sessions
+This command starts Qwen with the --resume flag to resume a specific
+past session. Qwen will present an interactive list of past sessions
 to choose from.
 
-If current buffer belongs to a project start Gemini in the project's
+If current buffer belongs to a project start Qwen in the project's
 root directory. Otherwise start in the directory of the current buffer
 file, or the current value of `default-directory' if no project and no
  buffer file.
@@ -1323,12 +1323,12 @@ With double prefix ARG (\\[universal-argument] \\[universal-argument]), prompt f
 
 ;;;###autoload
 (defun qwen-cli-new-instance (&optional arg)
-  "Create a new Gemini instance, prompting for instance name.
+  "Create a new Qwen instance, prompting for instance name.
 
 This command always prompts for an instance name, unlike `qwen-cli'
 which uses \"default\" when no instances exist.
 
-If current buffer belongs to a project start Gemini in the project's
+If current buffer belongs to a project start Qwen in the project's
 root directory. Otherwise start in the directory of the current buffer
 file, or the current value of `default-directory' if no project and no
 buffer file.
@@ -1402,12 +1402,12 @@ MESSAGE is the notification body."
   (message "%s: %s" title message))
 
 (defun qwen-cli--notify (_terminal)
-  "Notify the user that Gemini has finished and is awaiting input.
+  "Notify the user that Qwen has finished and is awaiting input.
 
 TERMINAL is the eat terminal parameter (not used)."
   (when qwen-cli-enable-notifications
     (funcall qwen-cli-notification-function
-             "Gemini Ready"
+             "Qwen Ready"
              "Waiting for your response")))
 
 (defun qwen-cli--vterm-bell-detector (orig-fun process input)
@@ -1432,7 +1432,7 @@ INPUT is the terminal output string."
 
 (defun qwen-cli--vterm-multiline-buffer-filter (orig-fun process input)
   "Buffer vterm output when it appears to be redrawing multi-line input.
-This prevents flickering when Gemini redraws its input box as it expands
+This prevents flickering when Qwen redraws its input box as it expands
 to multiple lines. We detect this by looking for escape sequences that
 indicate cursor positioning and line clearing operations.
 
@@ -1493,13 +1493,13 @@ INPUT is the terminal output string."
 Works with `eat--adjust-process-window-size' or
 `vterm--adjust-process-window-size' to prevent unnecessary reflows.
 
-Returns the size returned by ORIG-FUN only when the width of any Gemini
+Returns the size returned by ORIG-FUN only when the width of any Qwen
 window has changed, not when only the height has changed. This prevents
 unnecessary terminal reflows when only vertical space changes.
 
 ARGS is passed to ORIG-FUN unchanged."
   (let ((result (apply orig-fun args)))
-    ;; Check all windows for Gemini buffers
+    ;; Check all windows for Qwen buffers
     (let ((width-changed nil))
       (dolist (window (window-list))
         (let ((buffer (window-buffer window)))
@@ -1511,9 +1511,9 @@ ARGS is passed to ORIG-FUN unchanged."
                 (setq width-changed t)
                 ;; Update stored width
                 (puthash window current-width qwen-cli--window-widths))))))
-      ;; Return result only if a Gemini window width changed and
+      ;; Return result only if a Qwen window width changed and
       ;; we're not in read-only mode. otherwise nil. Nil means do
-      ;; not send a window size changed event to the Gemini process.
+      ;; not send a window size changed event to the Qwen process.
       (if (and width-changed (not (qwen-cli--term-in-read-only-p qwen-cli-terminal-backend)))
           result
         nil))))
@@ -1522,14 +1522,14 @@ ARGS is passed to ORIG-FUN unchanged."
 
 ;;;###autoload
 (defun qwen-cli-send-region (&optional arg)
-  "Send the current region to Gemini.
+  "Send the current region to Qwen.
 
 If no region is active, send the entire buffer if it's not too large.
 For large buffers, ask for confirmation first.
 
 With prefix ARG, prompt for instructions to add to the text before
 sending. With two prefix ARGs (C-u C-u), both add instructions and
-switch to Gemini buffer."
+switch to Qwen buffer."
   (interactive "P")
   (let* ((text (if (use-region-p)
                    (buffer-substring-no-properties (region-beginning) (region-end))
@@ -1551,9 +1551,9 @@ switch to Gemini buffer."
 
 ;;;###autoload
 (defun qwen-cli-toggle ()
-  "Show or hide the Gemini window.
+  "Show or hide the Qwen window.
 
-If the Gemini buffer doesn't exist, create it."
+If the Qwen buffer doesn't exist, create it."
   (interactive)
   (let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
     (if qwen-cli-buffer
@@ -1566,7 +1566,7 @@ If the Gemini buffer doesn't exist, create it."
 
 ;;;###autoload
 (defun qwen-cli--switch-to-all-instances-helper ()
-  "Helper function to switch to a Gemini buffer from all available instances.
+  "Helper function to switch to a Qwen buffer from all available instances.
 
 Returns t if a buffer was selected and switched to, nil otherwise."
   (let ((all-buffers (qwen-cli--find-all-qwen-buffers)))
@@ -1581,19 +1581,19 @@ Returns t if a buffer was selected and switched to, nil otherwise."
      (t
       ;; Multiple buffers, let user choose
       (let ((selected-buffer (qwen-cli--select-buffer-from-choices
-                              "Select Gemini instance: "
+                              "Select Qwen instance: "
                               all-buffers)))
         (when selected-buffer
           (pop-to-buffer selected-buffer)
           t))))))
 
 (defun qwen-cli-switch-to-buffer (&optional arg)
-  "Switch to the Gemini buffer if it exists.
+  "Switch to the Qwen buffer if it exists.
 
-With prefix ARG, show all Gemini instances across all directories."
+With prefix ARG, show all Qwen instances across all directories."
   (interactive "P")
   (if arg
-      ;; With prefix arg, show all Gemini instances
+      ;; With prefix arg, show all Qwen instances
       (qwen-cli--switch-to-all-instances-helper)
     ;; Without prefix arg, use normal behavior
     (if-let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
@@ -1602,53 +1602,53 @@ With prefix ARG, show all Gemini instances across all directories."
 
 ;;;###autoload
 (defun qwen-cli-select-buffer ()
-  "Select and switch to a Gemini buffer from all running instances.
+  "Select and switch to a Qwen buffer from all running instances.
 
-This command shows all Gemini instances across all projects and
+This command shows all Qwen instances across all projects and
 directories, allowing you to choose which one to switch to."
   (interactive)
   (qwen-cli--switch-to-all-instances-helper))
 
 (defun qwen-cli--kill-all-instances ()
-  "Kill all Gemini instances across all directories."
+  "Kill all Qwen instances across all directories."
   (let ((all-buffers (qwen-cli--find-all-qwen-buffers)))
     (if all-buffers
         (let* ((buffer-count (length all-buffers))
                (plural-suffix (if (= buffer-count 1) "" "s")))
           (if qwen-cli-confirm-kill
-              (when (yes-or-no-p (format "Kill %d Gemini instance%s? " buffer-count plural-suffix))
+              (when (yes-or-no-p (format "Kill %d Qwen instance%s? " buffer-count plural-suffix))
                 (dolist (buffer all-buffers)
                   (qwen-cli--kill-buffer buffer))
-                (message "%d Gemini instance%s killed" buffer-count plural-suffix))
+                (message "%d Qwen instance%s killed" buffer-count plural-suffix))
             (dolist (buffer all-buffers)
               (qwen-cli--kill-buffer buffer))
-            (message "%d Gemini instance%s killed" buffer-count plural-suffix)))
+            (message "%d Qwen instance%s killed" buffer-count plural-suffix)))
       (qwen-cli--show-not-running-message))))
 
 ;;;###autoload
 (defun qwen-cli-kill ()
-  "Kill Gemini process and close its window."
+  "Kill Qwen process and close its window."
   (interactive)
   (if-let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
       (if qwen-cli-confirm-kill
-          (when (yes-or-no-p "Kill Gemini instance? ")
+          (when (yes-or-no-p "Kill Qwen instance? ")
             (qwen-cli--kill-buffer qwen-cli-buffer)
-            (message "Gemini instance killed"))
+            (message "Qwen instance killed"))
         (qwen-cli--kill-buffer qwen-cli-buffer)
-        (message "Gemini instance killed"))
+        (message "Qwen instance killed"))
     (qwen-cli--show-not-running-message)))
 
 ;;;###autoload
 (defun qwen-cli-kill-all ()
-  "Kill ALL Gemini processes across all directories."
+  "Kill ALL Qwen processes across all directories."
   (interactive)
   (qwen-cli--kill-all-instances))
 
 ;;;###autoload
 (defun qwen-cli-send-command (&optional arg)
-  "Read a Gemini command from the minibuffer and send it.
+  "Read a Qwen command from the minibuffer and send it.
 
-With prefix ARG, switch to the Gemini buffer after sending CMD."
+With prefix ARG, switch to the Qwen buffer after sending CMD."
   (interactive)
   (let ((selected-buffer (qwen-cli--do-send-command
                           (read-string "Prompt: "))))
@@ -1657,10 +1657,10 @@ With prefix ARG, switch to the Gemini buffer after sending CMD."
 
 ;;;##autoload
 (defun qwen-cli-send-shell (cmd &optional arg)
-  "Read a Gemini command from the minibuffer and send it.
+  "Read a Qwen command from the minibuffer and send it.
 
-With prefix ARG, switch to the Gemini buffer after sending CMD."
-  (interactive "sGemini command: !\nP")
+With prefix ARG, switch to the Qwen buffer after sending CMD."
+  (interactive "sQwen command: !\nP")
   (let ((selected-buffer (qwen-cli--do-send-command (concat "!" cmd))))
     (when selected-buffer
       (with-current-buffer selected-buffer
@@ -1670,10 +1670,10 @@ With prefix ARG, switch to the Gemini buffer after sending CMD."
 
 ;;;###autoload
 (defun qwen-cli-send-command-with-context (&optional arg)
-  "Read a Gemini command and send it with current file and line context.
+  "Read a Qwen command and send it with current file and line context.
 
 If region is active, include region line numbers.
-With prefix ARG, switch to the Gemini buffer after sending CMD."
+With prefix ARG, switch to the Qwen buffer after sending CMD."
   (interactive)
   (let* ((cmd (read-string "Prompt:"))
          (file-ref (if (use-region-p)
@@ -1691,50 +1691,50 @@ With prefix ARG, switch to the Gemini buffer after sending CMD."
 
 ;;;###autoload
 (defun qwen-cli-send-return ()
-  "Send <return> to the Gemini CLI REPL.
+  "Send <return> to the Qwen CLI REPL.
 
-This is useful for saying Yes when Gemini asks for confirmation without
+This is useful for saying Yes when Qwen asks for confirmation without
 having to switch to the REPL buffer."
   (interactive)
   (qwen-cli--do-send-command ""))
 
 ;;;###autoload
 (defun qwen-cli-send-1 ()
-  "Send \"1\" to the Gemini CLI REPL.
+  "Send \"1\" to the Qwen CLI REPL.
 
-This selects the first option when Gemini presents a numbered menu."
+This selects the first option when Qwen presents a numbered menu."
   (interactive)
   (qwen-cli--do-send-command "1"))
 
 ;;;###autoload
 (defun qwen-cli-send-2 ()
-  "Send \"2\" to the Gemini CLI REPL.
+  "Send \"2\" to the Qwen CLI REPL.
 
-This selects the second option when Gemini presents a numbered menu."
+This selects the second option when Qwen presents a numbered menu."
   (interactive)
   (qwen-cli--do-send-command "2"))
 
 ;;;###autoload
 (defun qwen-cli-send-3 ()
-  "Send \"3\" to the Gemini CLI REPL.
+  "Send \"3\" to the Qwen CLI REPL.
 
-This selects the third option when Gemini presents a numbered menu."
+This selects the third option when Qwen presents a numbered menu."
   (interactive)
   (qwen-cli--do-send-command "3"))
 
 ;;;###autoload
 (defun qwen-cli-send-4 ()
-  "Send \"4\" to the Gemini CLI REPL.
+  "Send \"4\" to the Qwen CLI REPL.
 
-This selects the third option when Gemini presents a numbered menu."
+This selects the third option when Qwen presents a numbered menu."
   (interactive)
   (qwen-cli--do-send-command "4"))
 
 ;;;###autoload
 (defun qwen-cli-send-escape ()
-  "Send <escape> to the Gemini CLI REPL.
+  "Send <escape> to the Qwen CLI REPL.
 
-This is useful for saying \"No\" when Gemini asks for confirmation without
+This is useful for saying \"No\" when Qwen asks for confirmation without
 having to switch to the REPL buffer."
   (interactive)
   (qwen-cli--with-buffer
@@ -1742,19 +1742,19 @@ having to switch to the REPL buffer."
 
 ;;;###autoload
 (defun qwen-cli-send-file (file-path)
-  "Send the specified FILE-PATH to Gemini prefixed with `@'.
+  "Send the specified FILE-PATH to Qwen prefixed with `@'.
 
 FILE-PATH should be an absolute path to the file to send."
-  (interactive "fFile to send to Gemini: ")
+  (interactive "fFile to send to Qwen: ")
   (let ((command (format "@%s" (expand-file-name file-path))))
     (qwen-cli--do-send-command command)))
 
 ;;;###autoload
 (defun qwen-cli-send-buffer-file (&optional arg)
-  "Send the file associated with current buffer to Gemini prefixed with `@'.
+  "Send the file associated with current buffer to Qwen prefixed with `@'.
 
 With prefix ARG, prompt for instructions to add to the file before sending.
-With two prefix ARGs, both add instructions and switch to Gemini buffer."
+With two prefix ARGs, both add instructions and switch to Qwen buffer."
   (interactive "P")
   (let ((file-path (qwen-cli--get-buffer-file-name)))
     (if file-path
@@ -1780,9 +1780,9 @@ With two prefix ARGs, both add instructions and switch to Gemini buffer."
 
 ;;;###autoload
 (defun qwen-cli-cycle-mode ()
-  "Send Shift-Tab to Gemini to cycle between modes.
+  "Send Shift-Tab to Qwen to cycle between modes.
 
-Gemini uses Shift-Tab to cycle through:
+Qwen uses Shift-Tab to cycle through:
 - Default mode
 - Auto-accept edits mode
 - Plan mode"
@@ -1794,9 +1794,9 @@ Gemini uses Shift-Tab to cycle through:
 
 ;;;###autoload
 (defun qwen-cli-fork ()
-  "Jump to a previous conversation by invoking the Gemini fork command.
+  "Jump to a previous conversation by invoking the Qwen fork command.
 
-Sends <escape><escape> to the Gemini CLI REPL."
+Sends <escape><escape> to the Qwen CLI REPL."
   (interactive)
   (if-let ((qwen-cli-buffer (qwen-cli--get-or-prompt-for-buffer)))
       (with-current-buffer qwen-cli-buffer
@@ -1807,13 +1807,13 @@ Sends <escape><escape> to the Gemini CLI REPL."
 
 ;;;###autoload
 (defun qwen-cli-fix-error-at-point (&optional arg)
-  "Ask Gemini to fix the error at point.
+  "Ask Qwen to fix the error at point.
 
-Gets the error message, file name, and line number, and instructs Gemini
+Gets the error message, file name, and line number, and instructs Qwen
 to fix the error. Supports both flycheck and flymake error systems, as well
 as any system that implements help-at-pt.
 
-With prefix ARG, switch to the Gemini buffer after sending."
+With prefix ARG, switch to the Qwen buffer after sending."
   (interactive "P")
   (let* ((error-text (qwen-cli--format-errors-at-point))
          (file-ref (qwen-cli--format-file-reference)))
@@ -1827,18 +1827,18 @@ With prefix ARG, switch to the Gemini buffer after sending."
 
 ;;;###autoload
 (defun qwen-cli-read-only-mode ()
-  "Enter read-only mode in Gemini buffer with visible cursor.
+  "Enter read-only mode in Qwen buffer with visible cursor.
 
 In this mode, you can interact with the terminal buffer just like a
-regular buffer. This mode is useful for selecting text in the Gemini
+regular buffer. This mode is useful for selecting text in the Qwen
 buffer. However, you are not allowed to change the buffer contents or
-enter Gemini commands.
+enter Qwen commands.
 
 Use `qwen-cli-exit-read-only-mode' to switch back to normal mode."
   (interactive)
   (qwen-cli--with-buffer
    (qwen-cli--term-read-only-mode qwen-cli-terminal-backend)
-   (message "Gemini read-only mode enabled")))
+   (message "Qwen read-only mode enabled")))
 
 ;;;###autoload
 (defun qwen-cli-exit-read-only-mode ()
@@ -1846,16 +1846,16 @@ Use `qwen-cli-exit-read-only-mode' to switch back to normal mode."
   (interactive)
   (qwen-cli--with-buffer
    (qwen-cli--term-interactive-mode qwen-cli-terminal-backend)
-   (message "Gemini read-only disabled")))
+   (message "Qwen read-only disabled")))
 
 ;;;###autoload
 (defun qwen-cli-toggle-read-only-mode ()
   "Toggle between read-only mode and normal mode.
 
 In read-only mode you can interact with the terminal buffer just like a
-regular buffer. This mode is useful for selecting text in the Gemini
+regular buffer. This mode is useful for selecting text in the Qwen
 buffer. However, you are not allowed to change the buffer contents or
-enter Gemini commands."
+enter Qwen commands."
   (interactive)
   (qwen-cli--with-buffer
    (if (not (qwen-cli--term-in-read-only-p qwen-cli-terminal-backend))
@@ -1865,12 +1865,12 @@ enter Gemini commands."
 ;;;; Mode definition
 ;;;###autoload
 (define-minor-mode qwen-cli-mode
-  "Minor mode for interacting with Gemini AI CLI.
+  "Minor mode for interacting with Qwen AI CLI.
 
 When enabled, provides functionality for starting, sending commands to,
-and managing Gemini sessions."
+and managing Qwen sessions."
   :init-value nil
-  :lighter " Gemini"
+  :lighter " Qwen"
   :global t
   :group 'qwen-cli)
 
