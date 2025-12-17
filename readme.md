@@ -129,11 +129,12 @@ Quickly open your current journal files.
 | Add Tags | `C-c C-q` | Add tags to the current headline |
 | Open Link | `C-c C-o` | Open a link at point (file, URL, etc.) |
 
-## Terminal (Vterm)
+## Terminal (Vterm & Mistty)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Toggle Terminal | `C-c t v` | Open/Close a fast terminal in a split window |
+| Toggle Terminal | `C-c t v` | Open/Close a fast terminal in a split window (Vterm) |
+| Open Mistty | `C-c t m` | Open Mistty terminal (better shell integration) |
 
 ## Copying & Pasting
 

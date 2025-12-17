@@ -456,6 +456,11 @@
                  (side . right)
                  (window-width . 0.3))))
 
+;; Mistty Configuration (Alternative to Vterm with better shell integration)
+(use-package mistty
+  :ensure t
+  :bind ("C-c t m" . mistty))
+
 ;; Popup package (dependency for gemini-cli.el)
 (use-package popup :ensure t)
 
