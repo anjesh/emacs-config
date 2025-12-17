@@ -250,6 +250,15 @@
   (setq org-todo-keywords
         '((sequence "TODO(t)" "DOING(i!)" "WAITING(w@/!)" "FUTURE(f)" "|" "DONE(d!)" "CANCELLED(c@/!)")))
 
+  ;; Custom TODO keyword faces
+  (setq org-todo-keyword-faces
+        '(("TODO" :foreground "red" :weight bold)
+          ("DOING" :foreground "orange" :weight bold)
+          ("WAITING" :foreground "yellow" :weight bold)
+          ("FUTURE" :foreground "gray")
+          ("DONE" :foreground "green" :weight bold)
+          ("CANCELLED" :foreground "light gray")))
+
   ;; Default Capture File
   (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
@@ -632,6 +641,22 @@
    ("C-c g t" . gemini-cli-toggle)           ;; Toggle Gemini window
    ("C-c g d" . gemini-cli-start-in-directory)
    ("C-c g q" . gemini-cli-kill)))
+
+;; --- Agent Shell Integration ---
+;; Ensure agent-shell is installed
+(unless (package-installed-p 'agent-shell)
+  (package-refresh-contents)
+  (package-install 'agent-shell))
+
+(require 'agent-shell)
+
+;; Configure agent-shell (Force global setq)
+(setq agent-shell-agent-configs
+      '((:name "Gemini" 
+         :command "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini" 
+         :args ("chat"))))
+
+(global-set-key (kbd "C-c A") 'agent-shell)
 
 ;; --- Claude Code CLI Integration ---
 
