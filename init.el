@@ -622,7 +622,7 @@
   :ensure t
   :vc (:url "https://github.com/linchen2chris/gemini-cli.el" :rev :newest)
   :config
-  (setq gemini-cli-terminal-backend 'eat)
+  (setq gemini-cli-terminal-backend 'vterm)
   (setq gemini-cli-optimize-window-resize nil)
   (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
   (gemini-cli-mode)
@@ -669,7 +669,7 @@
   :ensure t
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   :config
-  (setq claude-code-terminal-backend 'eat)
+  (setq claude-code-terminal-backend 'vterm)
   (setq claude-code-optimize-window-resize nil)
   (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
   (claude-code-mode)
@@ -694,7 +694,7 @@
   :ensure t
   :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
   :config
-  (setq qwen-cli-terminal-backend 'eat)
+  (setq qwen-cli-terminal-backend 'vterm)
   (setq qwen-cli-optimize-window-resize nil)
   (setq qwen-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/qwen")
   (qwen-cli-mode)

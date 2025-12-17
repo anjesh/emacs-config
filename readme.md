@@ -126,6 +126,8 @@ Quickly open your current journal files.
 | Open Agenda | `C-c a` | View tasks, deadlines, and schedules |
 | Capture Note/Task | `C-c c` | Quickly capture ideas into `~/dev/inbox.org` |
 | Cycle TODO State | `C-c C-t` | Change task status (TODO, DOING, DONE, etc.) |
+| Add Tags | `C-c C-q` | Add tags to the current headline |
+| Open Link | `C-c C-o` | Open a link at point (file, URL, etc.) |
 
 ## Terminal (Vterm)
 
