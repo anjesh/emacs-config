@@ -663,6 +663,40 @@
   (:map calibredb-show-mode-map
         ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
 
+;; --- Hacker News Reader ---
+(use-package hackernews
+  :ensure t
+  :config
+  (setq hackernews-default-browser 'eww-browse-url) ;; Open links in EWW (inside Emacs)
+  
+  (defun my/hackernews-copy-url ()
+    "Copy the URL of the Hacker News item at point."
+    (interactive)
+    (let ((url (get-text-property (point) 'help-echo))) ;; hackernews puts URL in help-echo
+      (if (and url (string-prefix-p "http" url))
+          (progn
+            (kill-new url)
+            (message "Copied URL: %s" url))
+        (message "No URL found at point."))))
+  
+  (defun my/hackernews-open-comments ()
+    "Jump to the 'comments' button and open it in EWW."
+    (interactive)
+    (save-excursion
+      (end-of-line)
+      (if (search-backward "comments" (line-beginning-position) t)
+          (let ((url (get-text-property (point) 'help-echo)))
+            (if url
+                (eww-browse-url url)
+              (message "No URL found for comments.")))
+        (message "No comments link found on this line."))))
+
+  :bind
+  ("C-c h n" . hackernews)
+  (:map hackernews-mode-map
+        ("w" . my/hackernews-copy-url)
+        ("c" . my/hackernews-open-comments)))
+
 ;; --- Gemini CLI Integration ---
 (use-package eat
   :ensure t

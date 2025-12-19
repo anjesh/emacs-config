@@ -51,7 +51,16 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Search Books | `s` | In CalibreDB, search for books by keyword |
 | List EPUB Files | `o` | In CalibreDB, list the internal files of the selected EPUB |
 | Next Chapter | `n` | Go to the next chapter in `nov-mode` |
-| Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |
+| Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |## Hacker News (hackernews)
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Open Hacker News | `C-c h n` | View top stories |
+| Open in Browser | `RET` | Open story link in default system browser |
+| Open in Text Browser | `t` | Open story (or comments if cursor is on "comments") in EWW |
+| Copy Link | `w` | Copy the URL of the story at point to clipboard |
+| View Comments | `c` | Open the comments section for the story |
+| Next/Prev Story | `n` / `p` | Navigate the list |
 
 ## Markdown Mode
 
