@@ -71,16 +71,17 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 
 ## Evil Mode (Vim Keybindings)
 
-Evil Mode provides Vim-like keybindings in Emacs.
+Evil Mode provides Vim-like keybindings. It is **DISABLED** by default.
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Normal Mode | `ESC` or `C-[` | Default mode for navigation and commands |
+| Toggle Evil Mode | `C-c v` | Switch between Emacs (standard) and Vim (Evil) states |
+| Normal Mode | `ESC` or `C-[` | Default mode for navigation and commands (when Evil is ON) |
 | Insert Mode | `i`, `a`, `o`, `I`, `A`, `O` | For inserting text |
 | Visual Mode | `v`, `V`, `C-v` | For selecting text |
-| Emacs State | `C-z` | Toggle between Evil states and Emacs original behavior |
+| Emacs State | `C-z` | Temporary toggle between Evil and Emacs behavior |
 
-**Note**: `calibredb` buffers are configured to use Emacs' native keybindings by default, overriding Evil Mode for a more intuitive experience with book management.
+**Note**: `calibredb` and `treemacs` buffers are configured to use Emacs' native keybindings by default.
 
 ## Journal Shortcuts
 
@@ -132,9 +133,9 @@ Quickly open your current journal files.
 | Cycle TODO State | `C-c C-t` | Change task status (TODO, DOING, DONE, etc.) |
 | Add Tags | `C-c C-q` | Add tags to the current headline |
 | Open Link | `C-c C-o` | Open a link at point (file, URL, etc.) |
-| Promote Bullet/Heading | `M-Left` | Outdent bullet or heading (Move left) |
-| Demote Bullet/Heading | `M-Right` | Indent bullet or heading (Move right) |
-| Move Bullet Up/Down | `M-Up` / `M-Down` | Move current item (and children) up or down |
+| Promote Bullet/Heading | `M-Left` or `C-c Left` | Outdent bullet or heading (Move left) |
+| Demote Bullet/Heading | `M-Right` or `C-c Right` | Indent bullet or heading (Move right) |
+| Move Bullet Up/Down | `M-Up/Down` or `C-c Up/Down` | Move current item (and children) up or down |
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
 
 ## Terminal (Vterm & Mistty)
@@ -187,8 +188,8 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Move to previous paragraph | `M-{`           |
 | Scroll down (forward)    | `C-v`             |
 | Scroll up (backward)     | `M-v`             |
-| Go to beginning of buffer | `M-<`             |
-| Go to end of buffer      | `M->`             |
+| Go to beginning of buffer | `M-<` or `C-c u`  |
+| Go to end of buffer      | `M->` or `C-c d`  |
 
 ## Window Management
 

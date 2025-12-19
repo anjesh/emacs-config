@@ -472,11 +472,15 @@
     (setq interprogram-cut-function 'my-copy-to-clipboard)
     (setq interprogram-paste-function 'my-paste-from-clipboard)))
 
-;; Window Resizing
+;; Window Management
 (global-set-key (kbd "C-c <") 'shrink-window-horizontally)
 (global-set-key (kbd "C-c >") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-c -") 'shrink-window) ; Vertical shrink
 (global-set-key (kbd "C-c +") 'enlarge-window) ; Vertical enlarge
+
+;; macOS-style Beginning/End of Buffer (Reliable Alternatives)
+(global-set-key (kbd "C-c u") 'beginning-of-buffer)    ;; Up to Top
+(global-set-key (kbd "C-c d") 'end-of-buffer)          ;; Down to Bottom
 
 ;; Keybinding to open readme.md
 (global-set-key (kbd "C-c r") (lambda () (interactive) (find-file (expand-file-name "readme.md" user-emacs-directory))))
@@ -487,11 +491,23 @@
   :init
   (setq evil-want-keybinding nil) ;; Do not override any existing keybindings
   (setq evil-respect-visual-line-mode t) ;; Respect visual line movement
-  (evil-mode 1)
+  ;; (evil-mode 1) ;; Disabled by default
   :config
   ;; Force 'j' and 'k' to move by visual lines, not logical lines
   (define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-motion-state-map (kbd "k") 'evil-previous-visual-line))
+
+(defun my/toggle-evil-mode ()
+  "Toggle Evil mode on/off."
+  (interactive)
+  (if (bound-and-true-p evil-mode)
+      (progn
+        (evil-mode -1)
+        (message "Evil Mode DISABLED (Emacs Standard)"))
+    (evil-mode 1)
+    (message "Evil Mode ENABLED (Vim Bindings)")))
+
+(global-set-key (kbd "C-c v") 'my/toggle-evil-mode)
 
 (use-package evil-collection
   :after evil
@@ -505,14 +521,25 @@
   (define-key org-mode-map (kbd "TAB") 'org-cycle)
   (define-key org-mode-map (kbd "<tab>") 'org-cycle)
   (define-key org-mode-map (kbd "M-<left>") 'org-metaleft)
-  (define-key org-mode-map (kbd "M-<right>") 'org-metaright))
+  (define-key org-mode-map (kbd "M-<right>") 'org-metaright)
+  
+  ;; Reliable C-c Arrow key alternatives
+  (define-key org-mode-map (kbd "C-c <left>") 'org-metaleft)
+  (define-key org-mode-map (kbd "C-c <right>") 'org-metaright)
+  (define-key org-mode-map (kbd "C-c <up>") 'org-metaup)
+  (define-key org-mode-map (kbd "C-c <down>") 'org-metadown))
 
 (with-eval-after-load 'evil
   ;; Force Evil Normal state to respect these Org bindings
-  (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
-  (evil-define-key 'normal org-mode-map (kbd "<tab>") 'org-cycle)
-  (evil-define-key 'normal org-mode-map (kbd "M-<left>") 'org-metaleft)
-  (evil-define-key 'normal org-mode-map (kbd "M-<right>") 'org-metaright))
+  (let ((map org-mode-map))
+    (evil-define-key 'normal map (kbd "TAB") 'org-cycle)
+    (evil-define-key 'normal map (kbd "<tab>") 'org-cycle)
+    (evil-define-key 'normal map (kbd "M-<left>") 'org-metaleft)
+    (evil-define-key 'normal map (kbd "M-<right>") 'org-metaright)
+    (evil-define-key 'normal map (kbd "C-c <left>") 'org-metaleft)
+    (evil-define-key 'normal map (kbd "C-c <right>") 'org-metaright)
+    (evil-define-key 'normal map (kbd "C-c <up>") 'org-metaup)
+    (evil-define-key 'normal map (kbd "C-c <down>") 'org-metadown)))
 
 ;; --- Journal Navigation ---
 
