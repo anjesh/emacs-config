@@ -594,7 +594,7 @@
 (defun my/insert-daily-journal-entry ()
   "Insert a daily journal template with Review and Time blocks."
   (interactive)
-  (let ((date-string (format-time-string "%Y-%m-%d %A")))
+  (let ((date-string (format-time-string "%Y-%m-%d %a")))
     (insert "* " date-string "\n")
     (insert "** Review\n")
     (insert "*** Win\n")
