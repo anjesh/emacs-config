@@ -390,6 +390,7 @@
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
   (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard)
+  (define-key treemacs-mode-map (kbd "L") #'org-store-link)
 
   ;; Disable Evil in Treemacs (use Emacs state)
   (with-eval-after-load 'evil
@@ -482,8 +483,12 @@
 (global-set-key (kbd "C-c u") 'beginning-of-buffer)    ;; Up to Top
 (global-set-key (kbd "C-c d") 'end-of-buffer)          ;; Down to Bottom
 
-;; Keybinding to open readme.md
+;; Helper to open readme.md
 (global-set-key (kbd "C-c r") (lambda () (interactive) (find-file (expand-file-name "readme.md" user-emacs-directory))))
+
+;; Org Link Support
+(global-set-key (kbd "C-c l") 'org-store-link)
+(define-key global-map (kbd "C-c C-l") 'org-insert-link)
 
 ;; --- Evil Mode (Vim Keybindings) ---
 (use-package evil

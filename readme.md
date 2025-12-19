@@ -11,6 +11,8 @@
 | Switch Window | `C-x o` | Jump to Other window |
 | Undo | `C-/` | Undo last action |
 | Redo | `C-g C-/` | Redo action (after undo) |
+| Kill to End of Line | `C-k` | Delete text from cursor to end of line |
+| Kill Whole Line | `C-a C-k` | Go to start then kill line |
 | Toggle Read-Only | `C-x C-q` | Toggle buffer read-only state |
 
 ## File Navigation (Vertico)
@@ -36,6 +38,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
 | Open in Ghostty | `T` (Shift+t) | Open Ghostty terminal in selected directory |
 | Copy Path | `C` (Shift+c) | Copy the full path of the selected file or directory to the clipboard |
+| Store Org Link | `L` (Shift+l) | Store an Org-mode link to the selected file |
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
@@ -99,7 +102,7 @@ Quickly open your current journal files.
 | :--- | :--- | :--- |
 | Switch Buffer | `C-x b` | Enhanced buffer switcher with previews and grouping |
 | Search in File | `C-s` | Visual search within the current file (powered by Consult & Orderless). Type keywords in any order to find matches, no leading space needed for substring search. Use `C-n`/`C-p` to navigate matches, `RET` to jump. |
-| Paste from History | `M-y` | Paste from the kill ring (clipboard) history |
+| Paste from History | `M-y` | Open the Kill Ring (clipboard history) to browse and paste previous items with live preview |
 | Go to Line | `M-g g` | Go to a specific line with live preview |
 | Kill Buffer | `M-k k` | Open action menu (`M-k`) then press `k` to kill |
 
@@ -133,6 +136,8 @@ Quickly open your current journal files.
 | Cycle TODO State | `C-c C-t` | Change task status (TODO, DOING, DONE, etc.) |
 | Add Tags | `C-c C-q` | Add tags to the current headline |
 | Open Link | `C-c C-o` | Open a link at point (file, URL, etc.) |
+| Store Link | `C-c l` | "Copy" a link to the current file/line |
+| Insert Link | `C-c C-l` | "Paste" a stored link (or create new one) |
 | Promote Bullet/Heading | `M-Left` or `C-c Left` | Outdent bullet or heading (Move left) |
 | Demote Bullet/Heading | `M-Right` or `C-c Right` | Indent bullet or heading (Move right) |
 | Move Bullet Up/Down | `M-Up/Down` or `C-c Up/Down` | Move current item (and children) up or down |
