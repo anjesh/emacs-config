@@ -292,20 +292,6 @@
                            (visual-line-mode 1)
                            (adaptive-wrap-prefix-mode 1))) ;; Visually indent wrapped lines
   :config
-  (defun my/markdown-on-tab ()
-    "Indent list item/region or cycle visibility."
-    (interactive)
-    (if (or (use-region-p) (markdown-list-item-at-point-p))
-        (markdown-demote-list-item)
-      (markdown-cycle)))
-
-  (defun my/markdown-on-shifttab ()
-    "Outdent list item/region or cycle global visibility."
-    (interactive)
-    (if (or (use-region-p) (markdown-list-item-at-point-p))
-        (markdown-promote-list-item)
-      (markdown-shifttab)))
-
   ;; --- Performance Fix for Large Files ---
   (defun my/markdown-get-list-start ()
     "Return the start position of the current list block (top-level)."
@@ -334,8 +320,7 @@
   (advice-add 'markdown-promote-list-item :around #'my/markdown-limit-context-advice)
   
   :bind (:map markdown-mode-map
-              ("TAB" . my/markdown-on-tab)
-              ("<backtab>" . my/markdown-on-shifttab)))
+              ))
 
 ;; PDF Tools (GUI only)
 (use-package pdf-tools
@@ -513,6 +498,21 @@
   :ensure t
   :init
   (evil-collection-init))
+
+;; --- Org Mode Keybinding Fixes (Evil Compatibility) ---
+(with-eval-after-load 'org
+  ;; Force standard Emacs bindings in Org Mode map
+  (define-key org-mode-map (kbd "TAB") 'org-cycle)
+  (define-key org-mode-map (kbd "<tab>") 'org-cycle)
+  (define-key org-mode-map (kbd "M-<left>") 'org-metaleft)
+  (define-key org-mode-map (kbd "M-<right>") 'org-metaright))
+
+(with-eval-after-load 'evil
+  ;; Force Evil Normal state to respect these Org bindings
+  (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
+  (evil-define-key 'normal org-mode-map (kbd "<tab>") 'org-cycle)
+  (evil-define-key 'normal org-mode-map (kbd "M-<left>") 'org-metaleft)
+  (evil-define-key 'normal org-mode-map (kbd "M-<right>") 'org-metaright))
 
 ;; --- Journal Navigation ---
 
