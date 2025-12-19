@@ -94,7 +94,8 @@ Quickly open your current journal files.
 | :--- | :--- | :--- |
 | Open Daily Journal | `C-c j d` | Opens `~/dev/journal/daily/YYYY/MM/YYYY-MM-DD.md` |
 | Open Weekly Journal | `C-c j w` | Opens `~/dev/journal/weekly/YYYY/week-WW.md` |
-| Open Monthly Journal | `C-c j m` | Opens `~/dev/journal/monthly/YYYY/MM-MonthName.md` |
+| Open Monthly Journal | `C-c j m` | Opens `~/dev/journal/monthly/YYYY/MM-MonthName.org` |
+| Insert Daily Entry | `C-c j n` | Inserts a new daily template (Review, Intermittent logs) at cursor |
 
 ## Buffer Management (Consult)
 
