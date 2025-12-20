@@ -11,6 +11,7 @@
 | Switch Window | `C-x o` | Jump to Other window |
 | Undo | `C-/` | Undo last action |
 | Redo | `C-g C-/` | Redo action (after undo) |
+| Undo Tree | `C-x u` | Visual undo history graph |
 | Kill to End of Line | `C-k` | Delete text from cursor to end of line |
 | Kill Whole Line | `C-a C-k` | Go to start then kill line |
 | Toggle Read-Only | `C-x C-q` | Toggle buffer read-only state |
@@ -79,6 +80,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
 | Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
 | Check Major Mode | `C-h v major-mode` | Check the current buffer's major mode |
+| Toggle Line Numbers | `C-c n` | Show/Hide line numbers in the current buffer |
 | Describe Mode | `C-h m` | Display documentation for the current major and minor modes |
 
 ## Evil Mode (Vim Keybindings)

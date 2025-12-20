@@ -7,6 +7,22 @@
 (setq-default line-move-visual t)
 (global-visual-line-mode t)
 
+;; Highlight current line
+(global-hl-line-mode 1)
+(set-face-background 'hl-line "#f2f2f2") ; Very light gray
+
+;; Undo Tree (Visual Undo History)
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode)
+  :config
+  ;; Persist undo history to a file
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+  (setq undo-tree-auto-save-history t)
+  :bind
+  ("C-x u" . undo-tree-visualize))
+
 ;; Install use-package if missing
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -241,10 +257,13 @@
    ("C-c c" . org-capture))
   :config
   (setq org-directory "~/dev")
-  ;; Recursively find .org files in ~/dev for agenda
-  ;; Note: This can be slow if you have thousands of files.
-  ;; Using 'directory-files-recursively' to build the list.
-  (setq org-agenda-files (directory-files-recursively "~/dev" "\.org$"))
+  
+  ;; Find .org files recursively but exclude journal and obsidian-notes
+  (setq org-agenda-files 
+        (seq-filter 
+         (lambda (file)
+           (not (string-match-p "/\\(journal\\|obsidian-notes\\)/" file)))
+         (directory-files-recursively "~/dev" "\\.org$")))
   
   ;; Custom TODO keywords
   (setq org-todo-keywords
@@ -355,6 +374,7 @@
           (message "Opened in external app: %s" file))
       (message "Could not determine file path."))))
 
+(global-set-key (kbd "C-c n") 'display-line-numbers-mode)
 (global-set-key (kbd "C-c o") 'my/open-in-external-app)
 
 ;; Helper to open Ghostty terminal at current location
