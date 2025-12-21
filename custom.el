@@ -13,7 +13,10 @@
      "/Users/anjesh/dev/inbox.org"))
  '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
+   '((slack :url "https://github.com/yuya373/emacs-slack")
+     (wasabi :url "https://github.com/xenodium/wasabi" :branch "main")
+     (claude-code :url
+		  "https://github.com/stevemolitor/claude-code.el")
      (inheritenv :url "https://github.com/purcell/inheritenv")
      (gemini-cli :url "https://github.com/linchen2chris/gemini-cli.el"))))
 

@@ -231,6 +231,7 @@ Interact with Gemini AI directly from Emacs.
 | Send Current File | `C-c g o` | Send the current buffer's file content to Gemini |
 | Toggle Window | `C-c g t` | Show/Hide the Gemini chat window |
 | Quit Session | `C-c g q` | Kill the current Gemini CLI process |
+| Agent Shell | `C-c A` | Open Agent Shell (configured for Gemini) |
 
 ## Claude AI (claude-code)
 
@@ -259,6 +260,16 @@ Interact with Qwen AI directly from Emacs.
 | Send Current File | `C-c Q o` | Send the current buffer's file content to Qwen |
 | Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
 | Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
+
+## Slack Integration (emacs-slack)
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start Slack | `C-c s s` | Connect to Slack and choose team |
+| Embed Mention | `C-c s m` | Mention a user in a message |
+| Quit Slack | `C-c s q` | Disconnect from Slack |
+| Select Channel | `M-x slack-channel-select` | Browse and jump to channels |
+| Select Group/DM | `M-x slack-group-select` | Browse and jump to DMs |
 
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.

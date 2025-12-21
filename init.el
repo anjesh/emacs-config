@@ -822,3 +822,28 @@
    ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
    ("C-c Q d" . qwen-cli-start-in-directory)
    ("C-c Q q" . qwen-cli-kill)))
+
+;; --- Slack Integration ---
+(use-package slack
+  :ensure t
+  :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
+  :commands (slack-start)
+  :bind (("C-c s s" . slack-start)
+         ("C-c s m" . slack-message-embed-mention)
+         ("C-c s q" . slack-ws-close))
+  :init
+  (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
+  (setq slack-prefer-current-team t)
+  :config
+  (slack-register-team
+   :name "younginnovations"
+   :default t
+   :token (auth-source-pick-first-password
+           :host "younginnovations.slack.com"
+           :user "anjesh@yipl.com.np")
+   :cookie (auth-source-pick-first-password
+            :host "younginnovations.slack.com"
+            :user "anjesh@yipl.com.np^cookie")))
+
+(provide 'init)
+;;; init.el ends here
