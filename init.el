@@ -1,3 +1,9 @@
+;;; init.el --- User configuration file  -*- lexical-binding: t; -*-
+
+;; Enable Syntax Highlighting Early
+(global-font-lock-mode 1)
+(setq font-lock-maximum-decoration t)
+
 ;; Initialize Package Manager and MELPA
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -11,7 +17,7 @@
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "#f2f2f2") ; Very light gray
 
-;; Solarized Theme
+;; Theme
 (use-package solarized-theme
   :ensure t
   :config
@@ -278,10 +284,12 @@
 ;; Run once for currently loaded modes
 (my/reset-header-styles)
 
-;; --- Org Mode Configuration ---
+;; Org Mode Configuration
 (use-package org
   :ensure nil ;; Built-in
   :hook (org-mode . (lambda () 
+                      (font-lock-mode 1)
+                      (font-lock-ensure)
                       (visual-line-mode 1)  ;; Wrap lines at word boundary
                       (org-indent-mode 1))) ;; Cleaner indentation
   :bind
@@ -338,40 +346,15 @@
 ;; Markdown Mode
 (use-package markdown-mode
   :ensure t
-  :mode ("\.md\'" . markdown-mode)
+  :mode ("\\.md\\'" . markdown-mode)
+  :init
+  (setq markdown-command "multimarkdown")
   :hook (markdown-mode . (lambda () 
-                           (visual-line-mode 1)
-                           (adaptive-wrap-prefix-mode 1))) ;; Visually indent wrapped lines
+                           (font-lock-mode 1)
+                           (font-lock-ensure) ;; Force refontification
+                           (visual-line-mode 1)))
   :config
-  ;; --- Performance Fix for Large Files ---
-  (defun my/markdown-get-list-start ()
-    "Return the start position of the current list block (top-level)."
-    (save-excursion
-      (beginning-of-line)
-      ;; Limit search to 2000 lines back to avoid hangs
-      (let ((limit (save-excursion (forward-line -2000) (point))))
-        (if (re-search-backward "^[ \t]*\\([-+*]\\|[0-9]+\\.\\)\\s-" limit t)
-            (progn
-              (while (and (> (current-indentation) 0)
-                          (re-search-backward "^[ \t]*\\([-+*]\\|[0-9]+\\.\\)\\s-" limit t)))
-              (point))
-          (point-min)))))
-
-  (defun my/markdown-limit-context-advice (orig-fun &rest args)
-    "Narrow buffer to current top-level list before indenting to improve performance."
-    (if (> (buffer-size) 5000) ;; Optimization for large files (>5KB)
-        (let ((start (my/markdown-get-list-start)))
-          (save-restriction
-            (narrow-to-region start (point-max))
-            (syntax-propertize (point-max))
-            (apply orig-fun args)))
-      (apply orig-fun args)))
-
-  (advice-add 'markdown-demote-list-item :around #'my/markdown-limit-context-advice)
-  (advice-add 'markdown-promote-list-item :around #'my/markdown-limit-context-advice)
-  
-  :bind (:map markdown-mode-map
-              ))
+  (setq markdown-fontify-code-blocks-natively t))
 
 ;; PDF Tools (GUI only)
 (use-package pdf-tools
@@ -785,19 +768,17 @@
 
 ;; --- Agent Shell Integration ---
 ;; Ensure agent-shell is installed
-(unless (package-installed-p 'agent-shell)
-  (package-refresh-contents)
-  (package-install 'agent-shell))
+(use-package agent-shell
+  :ensure t
+  :config
+  (setq agent-shell-agent-configs
+        '((:name "Gemini" 
+           :command "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini" 
+           :args ("chat"))))
+  (global-set-key (kbd "C-c A") 'agent-shell))
 
-(require 'agent-shell)
+;; (require 'agent-shell) ;; Removed to prevent startup error if missing
 
-;; Configure agent-shell (Force global setq)
-(setq agent-shell-agent-configs
-      '((:name "Gemini" 
-         :command "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini" 
-         :args ("chat"))))
-
-(global-set-key (kbd "C-c A") 'agent-shell)
 
 ;; --- Claude Code CLI Integration ---
 
