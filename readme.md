@@ -154,6 +154,7 @@ Quickly open your current journal files.
 | Demote Bullet/Heading | `M-Right` or `C-c Right` | Indent bullet or heading (Move right) |
 | Move Bullet Up/Down | `M-Up/Down` or `C-c Up/Down` | Move current item (and children) up or down |
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
+| Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
 
 ## Terminal (Vterm & Mistty)
 

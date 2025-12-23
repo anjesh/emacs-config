@@ -291,12 +291,43 @@
                       (font-lock-mode 1)
                       (font-lock-ensure)
                       (visual-line-mode 1)  ;; Wrap lines at word boundary
-                      (org-indent-mode 1))) ;; Cleaner indentation
+                      (org-indent-mode 1)   ;; Cleaner indentation
+                      (org-bullets-mode 1))) ;; Use org-bullets for clean headers
   :bind
   (("C-c a" . org-agenda)
    ("C-c c" . org-capture))
   :config
   (setq org-directory "~/dev")
+  (setq org-hide-leading-stars t) ;; Hide all but the last star
+  
+  ;; Use org-bullets to replace the last star with a space
+  (use-package org-bullets
+    :ensure t
+    :config
+    (setq org-bullets-bullet-list '(" "))) ;; Use a space as the bullet
+
+  (defun my/toggle-org-bullets ()
+    "Toggle between hidden bullets (spaces) and visible stars."
+    (interactive)
+    (if (bound-and-true-p org-bullets-mode)
+        (progn
+          (org-bullets-mode -1)
+          (setq org-hide-leading-stars nil)
+          (font-lock-flush)
+          (message "Org Bullets: Visible"))
+      (org-bullets-mode 1)
+      (setq org-hide-leading-stars t)
+      (font-lock-flush)
+      (message "Org Bullets: Hidden")))
+
+  :bind
+  (("C-c a" . org-agenda)
+   ("C-c c" . org-capture)
+   :map org-mode-map
+   ("C-c b" . my/toggle-org-bullets)) ;; Toggle bullets
+  :config
+  (setq org-directory "~/dev")
+  (setq org-hide-leading-stars t) ;; Hide all but the last star
   
   ;; Find .org files recursively but exclude journal and obsidian-notes
   (setq org-agenda-files 
