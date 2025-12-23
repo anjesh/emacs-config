@@ -291,14 +291,15 @@
                       (font-lock-mode 1)
                       (font-lock-ensure)
                       (visual-line-mode 1)  ;; Wrap lines at word boundary
-                      (org-indent-mode 1)   ;; Cleaner indentation
-                      (org-bullets-mode 1))) ;; Use org-bullets for clean headers
+                      (org-indent-mode 1))) ;; Cleaner indentation
   :bind
   (("C-c a" . org-agenda)
-   ("C-c c" . org-capture))
+   ("C-c c" . org-capture)
+   :map org-mode-map
+   ("C-c b" . my/toggle-org-bullets)) ;; Toggle bullets
   :config
   (setq org-directory "~/dev")
-  (setq org-hide-leading-stars t) ;; Hide all but the last star
+  (setq org-hide-leading-stars nil) ;; Show stars by default
   
   ;; Use org-bullets to replace the last star with a space
   (use-package org-bullets
@@ -314,11 +315,11 @@
           (org-bullets-mode -1)
           (setq org-hide-leading-stars nil)
           (font-lock-flush)
-          (message "Org Bullets: Visible"))
+          (message "Org Bullets: Visible (Stars)"))
       (org-bullets-mode 1)
       (setq org-hide-leading-stars t)
       (font-lock-flush)
-      (message "Org Bullets: Hidden")))
+      (message "Org Bullets: Hidden (Spaces)")))
 
   :bind
   (("C-c a" . org-agenda)
@@ -329,16 +330,16 @@
   (setq org-directory "~/dev")
   (setq org-hide-leading-stars t) ;; Hide all but the last star
   
-  ;; Find .org files recursively but exclude journal and obsidian-notes
+  ;; Find .org files recursively but exclude journal, obsidian-notes, and client-projects
   (setq org-agenda-files 
         (seq-filter 
          (lambda (file)
-           (not (string-match-p "/\\(journal\\|obsidian-notes\\)/" file)))
+           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\)/" file)))
          (directory-files-recursively "~/dev" "\\.org$")))
   
   ;; Custom TODO keywords
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "DOING(i!)" "WAITING(w@/!)" "FUTURE(f)" "|" "DONE(d!)" "CANCELLED(c@/!)")))
+        '((sequence "TODO(t)" "DOING(i!)" "WAITING(w@/!)" "FUTURE(f)" "|" "DONE(d@)" "CANCELLED(c@/!)")))
 
   ;; Custom TODO keyword faces
   (setq org-todo-keyword-faces
