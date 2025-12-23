@@ -318,6 +318,13 @@
           ("DONE" :foreground "green" :weight bold)
           ("CANCELLED" :foreground "light gray")))
 
+  ;; Show parent headings (breadcrumbs) in Agenda
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c %b%?-12t% s")
+          (todo   . " %i %-12:c %b")
+          (tags   . " %i %-12:c")
+          (search . " %i %-12:c")))
+
   ;; Default Capture File
   (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
