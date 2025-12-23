@@ -156,6 +156,17 @@ Quickly open your current journal files.
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
 | Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
 
+### Agenda Navigation
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Next Period (Day/Week) | `f` | Move forward one day/week |
+| Prev Period (Day/Week) | `b` | Move backward one day/week |
+| Go to Today | `.` | Jump back to the current date |
+| Jump to Date | `j` | Jump to a specific date |
+| Day View | `v d` | Switch agenda to Day view |
+| Week View | `v w` | Switch agenda to Week view |
+| Month View | `v m` | Switch agenda to Month view |
+
 ## Terminal (Vterm & Mistty)
 
 | Action | Key Sequence | Note |
