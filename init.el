@@ -20,7 +20,7 @@
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode))
   :bind (("C-c s C" . my/toggle-spell-check)
-         ("C-c s c" . ispell-word))
+         ("C-c s c" . flyspell-correct-word-before-point))
   :config
   (cond
    ;; Prefer Hunspell
