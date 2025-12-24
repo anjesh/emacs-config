@@ -167,6 +167,14 @@ Quickly open your current journal files.
 | Week View | `v w` | Switch agenda to Week view |
 | Month View | `v m` | Switch agenda to Month view |
 
+## Writing & Spelling
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Toggle Spell Check | `C-c s C` | Enable/Disable automatic spell checking (Flyspell) |
+| Correct Word | `C-c s c` | Show suggestions for word at cursor |
+| Correct Word (Alt) | `M-$` | Standard Emacs shortcut for suggestions |
+
 ## Terminal (Vterm & Mistty)
 
 | Action | Key Sequence | Note |
