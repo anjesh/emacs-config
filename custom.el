@@ -4,9 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
-   '("/Users/anjesh/dev/client-projects/CM/MovingPlace-2025/_tmp/agent-notes.org"
-     "/Users/anjesh/dev/client-projects/YIPL/Customs-Single-Window-2025/notes.org"
-     "/Users/anjesh/dev/orgfiles/personal.org"
+   '("/Users/anjesh/dev/orgfiles/personal.org"
      "/Users/anjesh/dev/orgfiles/work.org"
      "/Users/anjesh/dev/research/cold-leads-mgmt/automated-lead-generation-plan.org"
      "/Users/anjesh/dev/inbox.org"))

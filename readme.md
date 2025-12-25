@@ -155,6 +155,7 @@ Quickly open your current journal files.
 | Move Bullet Up/Down | `M-Up/Down` or `C-c Up/Down` | Move current item (and children) up or down |
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
 | Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
+| Export | `C-c C-e` | Open the export dispatcher (e.g., HTML, PDF, Markdown) |
 
 ### Agenda Navigation
 | Action | Key Sequence | Note |
@@ -286,10 +287,15 @@ Interact with Qwen AI directly from Emacs.
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
 | Start Slack | `C-c s s` | Connect to Slack and choose team |
+| Channel List | `C-c s r` | View all channels/DMs (shows unread status) |
+| Unread Rooms | `C-c s u` | View ONLY channels/DMs with unread messages |
+| Threads | `C-c s t` | View all followed threads in one place |
 | Embed Mention | `C-c s m` | Mention a user in a message |
 | Quit Slack | `C-c s q` | Disconnect from Slack |
 | Select Channel | `M-x slack-channel-select` | Browse and jump to channels |
 | Select Group/DM | `M-x slack-group-select` | Browse and jump to DMs |
+
+**Notifications:** Slack notifications are enabled via the `alert` package and will appear in the minibuffer by default.
 
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
