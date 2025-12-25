@@ -37,6 +37,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Create Directory | `c d` | Create a new directory at the current location or under the selected directory. |
 | Move File/Directory | `m` | Move the selected file or directory to a new location. |
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
+| Open in vterm | `v` | Open internal vterm in selected directory |
 | Open in Ghostty | `T` (Shift+t) | Open Ghostty terminal in selected directory |
 | Copy Path | `C` (Shift+c) | Copy the full path of the selected file or directory to the clipboard |
 | Store Org Link | `L` (Shift+l) | Store an Org-mode link to the selected file |
@@ -197,7 +198,8 @@ Quickly open your current journal files.
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Toggle Terminal | `C-c t v` | Open/Close a fast terminal in a split window (Vterm) |
+| Open New vterm | `C-c t t` | Open a new internal vterm in current directory |
+| Toggle Terminal | `C-c t v` | Open/Close a fast terminal in a split window (Vterm Toggle) |
 | Open Mistty | `C-c t m` | Open Mistty terminal (better shell integration) |
 
 ## Copying & Pasting
