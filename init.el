@@ -60,8 +60,17 @@
   (load-theme 'solarized-light t))
 
 ;; Font Configuration (GUI)
-(when (display-graphic-p)
-  (set-face-attribute 'default nil :family "Iosevka" :height 140))
+(defun my/set-gui-font ()
+  "Set the font family and size for GUI Emacs."
+  (when (display-graphic-p)
+    (set-face-attribute 'default nil :family "Iosevka" :height 140)
+    (set-face-attribute 'fixed-pitch nil :family "Iosevka" :height 140)
+    (set-face-attribute 'variable-pitch nil :family "Iosevka" :height 140)))
+
+;; Apply font settings at startup and when creating new frames
+(my/set-gui-font)
+(add-hook 'window-setup-hook 'my/set-gui-font)
+(add-hook 'server-after-make-frame-hook 'my/set-gui-font)
 
 ;; Undo Tree (Visual Undo History)
 (use-package undo-tree
