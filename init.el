@@ -359,6 +359,7 @@
    ("C-c b" . my/toggle-org-bullets)) ;; Toggle bullets
   :config
   (setq org-directory "~/dev")
+  (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
   (setq org-hide-leading-stars t) ;; Hide all but the last star
   
   ;; Find .org files recursively but exclude journal, obsidian-notes, and client-projects
@@ -425,6 +426,19 @@
                            (visual-line-mode 1)))
   :config
   (setq markdown-fontify-code-blocks-natively t))
+
+;; CSV Mode
+(use-package csv-mode
+  :ensure t
+  :mode ("\\.csv\\'" . csv-mode)
+  :hook (csv-mode . (lambda ()
+                      (csv-align-mode 1)
+                      (csv-header-line-mode 1))))
+
+;; Iedit - Edit all occurrences of a symbol/region simultaneously
+(use-package iedit
+  :ensure t
+  :bind ("C-;" . iedit-mode))
 
 ;; PDF Tools (GUI only)
 (use-package pdf-tools

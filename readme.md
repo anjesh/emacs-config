@@ -73,6 +73,21 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Visibility Cycle | `TAB` | Toggle folding of current section |
 | Global Visibility | `S-TAB` | Toggle folding for entire buffer |
 
+## CSV Mode
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Align Columns | `C-c C-a` | Align columns visually (Auto-enabled) |
+| Toggle Header | `C-c C-h` | Show/hide the first row as a header line |
+| Sort by Column | `C-c C-s` | Sort rows based on the current column |
+| Kill Column | `C-c C-k` | Remove the current column |
+
+## Multi-Edit (Iedit)
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Toggle Multi-Edit | `C-;` | Highlight text/symbol and press this to edit all occurrences at once |
+
 ## Other Useful Commands
 
 | Action | Key Sequence | Note |
@@ -156,6 +171,8 @@ Quickly open your current journal files.
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
 | Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
 | Export | `C-c C-e` | Open the export dispatcher (e.g., HTML, PDF, Markdown) |
+
+**Export Note:** Numbered headings are **disabled** globally. To enable them for a specific file, add `#+OPTIONS: num:t` to the top of the file.
 
 ### Agenda Navigation
 | Action | Key Sequence | Note |
