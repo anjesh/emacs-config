@@ -9,6 +9,11 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+;; Clean up UI
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1))
+
 ;; Enable visual line movement globally
 (setq-default line-move-visual t)
 (global-visual-line-mode t)
@@ -53,6 +58,10 @@
   :ensure t
   :config
   (load-theme 'solarized-light t))
+
+;; Font Configuration (GUI)
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :family "Iosevka" :height 140))
 
 ;; Undo Tree (Visual Undo History)
 (use-package undo-tree
@@ -148,7 +157,7 @@
           treemacs-user-mode-line-format         nil
           treemacs-user-header-line-format       nil
           treemacs-width                         35
-          treemacs-width-is-initially-locked     t
+          treemacs-width-is-initially-locked     nil
           treemacs-workspace-switch-cleanup      nil)
 
     ;; The default width and height of the icons is 22 pixels. If you are
@@ -425,7 +434,10 @@
                            (font-lock-ensure) ;; Force refontification
                            (visual-line-mode 1)))
   :config
-  (setq markdown-fontify-code-blocks-natively t))
+  (setq markdown-fontify-code-blocks-natively t)
+  ;; Ensure tables use the default monospace font for alignment
+  (with-eval-after-load 'markdown-mode
+    (set-face-attribute 'markdown-table-face nil :family (face-attribute 'default :family))))
 
 ;; CSV Mode
 (use-package csv-mode
