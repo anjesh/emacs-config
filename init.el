@@ -380,11 +380,11 @@
   (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
   (setq org-hide-leading-stars t) ;; Hide all but the last star
   
-  ;; Find .org files recursively but exclude journal, obsidian-notes, and client-projects
+  ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, and slack
   (setq org-agenda-files 
         (seq-filter 
          (lambda (file)
-           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\)/" file)))
+           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\|slack\\)/" file)))
          (directory-files-recursively "~/dev" "\\.org$")))
   
   ;; Custom TODO keywords
