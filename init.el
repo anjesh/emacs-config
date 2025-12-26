@@ -1112,5 +1112,17 @@
 (advice-add 'slack-ws-handle-message :before #'my/log-incoming-slack-message)
 (advice-add 'slack-message-send-internal :before #'my/log-outgoing-slack-message)
 
+(defun my/open-latest-slack-log ()
+  "Open the most recent Slack log file."
+  (interactive)
+  (let* ((log-dir (expand-file-name "~/dev/slack/"))
+         (files (directory-files log-dir t "slack-log-.*\\.org$"))
+         (latest-file (car (sort files #'string-greaterp)))) ;; Sort descending to get latest
+    (if latest-file
+        (find-file latest-file)
+      (message "No Slack log files found in %s" log-dir))))
+
+(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
+
 (provide 'init)
 ;;; init.el ends here
