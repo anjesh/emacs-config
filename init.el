@@ -1003,5 +1003,114 @@
             :host "younginnovations.slack.com"
             :user "anjesh@yipl.com.np^cookie")))
 
+;; --- Slack Logging & Linking ---
+(with-eval-after-load 'org
+  (org-link-set-parameters "slack"
+                           :follow #'my/slack-org-link-follow))
+
+(defun my/slack-org-link-follow (path)
+  "Follow a Slack link of the form team-id:room-id."
+  (let* ((parts (split-string path ":"))
+         (team-id (nth 0 parts))
+         (room-id (nth 1 parts))
+         ;; Fix: Use (hash-table-values slack-teams-by-token) instead of non-existent slack-teams
+         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (t) (oref t id)) :test #'string=))
+         (room (when team
+                 (or (gethash room-id (oref team channels))
+                     (gethash room-id (oref team groups))
+                     (gethash room-id (oref team ims))))))
+    (if (and team room)
+        (slack-room-display room team)
+      (message "Slack team or room not found"))))
+
+(defun my/slack-user-org-link-follow (path)
+  "Follow a Slack user link of the form team-id:user-id."
+  (let* ((parts (split-string path ":"))
+         (team-id (nth 0 parts))
+         (user-id (nth 1 parts))
+         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (t) (oref t id)) :test #'string=)))
+    (if team
+        (slack-buffer-display (slack-create-user-profile-buffer team user-id))
+      (message "Slack team not found"))))
+
+(with-eval-after-load 'org
+  (org-link-set-parameters "slack" :follow #'my/slack-org-link-follow)
+  (org-link-set-parameters "slack-user" :follow #'my/slack-user-org-link-follow))
+
+;; --- Slack Global Logging (Incoming & Outgoing) ---
+(defvar my/slack-log-exclude-rooms '("slack-bot" "github")
+  "List of room names or IDs to exclude from logging.")
+
+(defun my/process-slack-mentions (text team)
+  "Replace <@USERID> with [[slack-user:TEAMID:USERID][@Name]]."
+  (if (stringp text)
+      (replace-regexp-in-string 
+       "<@\\([WU][A-Z0-9]+\\)\\(|.*?\\)?>"
+       (lambda (match)
+         (let* ((id (match-string 1 match))
+                (name (slack-user-name id team)))
+           (format "[[slack-user:%s:%s][@%s]]" 
+                   (oref team id)
+                   id
+                   (or name id))))
+       text t)
+    text))
+
+(defun my/write-to-slack-log (text sender-name room-name team-name team-id room-id team)
+  "Helper to append to the log file."
+  (unless (or (member room-name my/slack-log-exclude-rooms)
+              (member room-id my/slack-log-exclude-rooms))
+    (let* ((log-dir (expand-file-name "~/dev/slack/"))
+           (log-filename (format-time-string "slack-log-%Y-%m.org"))
+           (log-file (expand-file-name log-filename log-dir))
+           (timestamp (format-time-string "[%Y-%m-%d %H:%M:%S]"))
+           (link (format "[[slack:%s:%s][%s - %s]]" 
+                         team-id room-id team-name room-name))
+           (processed-text (my/process-slack-mentions text team)))
+      ;; Ensure the directory exists
+      (unless (file-directory-p log-dir)
+        (make-directory log-dir t))
+      (with-current-buffer (find-file-noselect log-file)
+        (let ((inhibit-read-only t))
+          (save-excursion
+            (goto-char (point-max))
+            (insert (format "* %s %s\n%s: %s\n\n" timestamp link sender-name processed-text))
+            (save-buffer)))))))
+
+(defun my/slack-log-read-only-hook ()
+  "Make slack log files read-only."
+  (when (and buffer-file-name
+             (string-match-p "slack-log-.*\\.org$" buffer-file-name))
+    (read-only-mode 1)))
+
+(add-hook 'find-file-hook #'my/slack-log-read-only-hook)
+
+(defun my/log-incoming-slack-message (payload team)
+  "Handle incoming messages (others)."
+  (let* ((type (plist-get payload :type))
+         (subtype (plist-get payload :subtype))
+         (user-id (plist-get payload :user))
+         (channel-id (plist-get payload :channel))
+         (text (plist-get payload :text)))
+    (when (and (string= type "message")
+               (or (null subtype) (string= subtype "me_message"))
+               text
+               user-id
+               (not (slack-user-self-p user-id team))) ;; Ignore self (handled by outgoing)
+      (let* ((room (slack-room-find channel-id team))
+             (room-name (if room (slack-room-name room team) channel-id))
+             (sender-name (or (slack-user-name user-id team) user-id)))
+        (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (or (and room (oref room id)) channel-id) team)))))
+
+(defun my/log-outgoing-slack-message (message room team &rest args)
+  "Handle outgoing messages (self)."
+  (let ((sender-name (or (slack-user-name (oref team self-id) team) "Me"))
+        (room-name (slack-room-name room team)))
+    (my/write-to-slack-log message sender-name room-name (oref team name) (oref team id) (oref room id) team)))
+
+;; Hooks for both incoming and outgoing
+(advice-add 'slack-ws-handle-message :before #'my/log-incoming-slack-message)
+(advice-add 'slack-message-send-internal :before #'my/log-outgoing-slack-message)
+
 (provide 'init)
 ;;; init.el ends here
