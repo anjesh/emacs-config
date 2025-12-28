@@ -1009,10 +1009,11 @@
                            :follow #'my/slack-org-link-follow))
 
 (defun my/slack-org-link-follow (path)
-  "Follow a Slack link of the form team-id:room-id."
+  "Follow a Slack link of the form team-id:room-id or team-id:room-id:thread-ts."
   (let* ((parts (split-string path ":"))
          (team-id (nth 0 parts))
          (room-id (nth 1 parts))
+         (thread-ts (nth 2 parts))
          ;; Fix: Use (hash-table-values slack-teams-by-token) instead of non-existent slack-teams
          (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (t) (oref t id)) :test #'string=))
          (room (when team
@@ -1020,7 +1021,9 @@
                      (gethash room-id (oref team groups))
                      (gethash room-id (oref team ims))))))
     (if (and team room)
-        (slack-room-display room team)
+        (if thread-ts
+            (slack-open-message team room thread-ts thread-ts)
+          (slack-room-display room team))
       (message "Slack team or room not found"))))
 
 (defun my/slack-user-org-link-follow (path)
@@ -1056,7 +1059,7 @@
        text t)
     text))
 
-(defun my/write-to-slack-log (text sender-name room-name team-name team-id room-id team)
+(defun my/write-to-slack-log (text sender-name room-name team-name team-id room-id team &optional thread-ts)
   "Helper to append to the log file."
   (unless (or (member room-name my/slack-log-exclude-rooms)
               (member room-id my/slack-log-exclude-rooms))
@@ -1064,8 +1067,11 @@
            (log-filename (format-time-string "slack-log-%Y-%m.org"))
            (log-file (expand-file-name log-filename log-dir))
            (timestamp (format-time-string "[%Y-%m-%d %H:%M:%S]"))
-           (link (format "[[slack:%s:%s][%s - %s]]" 
-                         team-id room-id team-name room-name))
+           (link (if thread-ts
+                     (format "[[slack:%s:%s:%s][%s - %s (Thread)]]" 
+                             team-id room-id thread-ts team-name room-name)
+                   (format "[[slack:%s:%s][%s - %s]]" 
+                           team-id room-id team-name room-name)))
            (processed-text (my/process-slack-mentions text team)))
       ;; Ensure the directory exists
       (unless (file-directory-p log-dir)
@@ -1091,7 +1097,8 @@
          (subtype (plist-get payload :subtype))
          (user-id (plist-get payload :user))
          (channel-id (plist-get payload :channel))
-         (text (plist-get payload :text)))
+         (text (plist-get payload :text))
+         (thread-ts (plist-get payload :thread_ts)))
     (when (and (string= type "message")
                (or (null subtype) (string= subtype "me_message"))
                text
@@ -1100,13 +1107,17 @@
       (let* ((room (slack-room-find channel-id team))
              (room-name (if room (slack-room-name room team) channel-id))
              (sender-name (or (slack-user-name user-id team) user-id)))
-        (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (or (and room (oref room id)) channel-id) team)))))
+        (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (or (and room (oref room id)) channel-id) team thread-ts)))))
 
 (defun my/log-outgoing-slack-message (message room team &rest args)
   "Handle outgoing messages (self)."
   (let ((sender-name (or (slack-user-name (oref team self-id) team) "Me"))
-        (room-name (slack-room-name room team)))
-    (my/write-to-slack-log message sender-name room-name (oref team name) (oref team id) (oref room id) team)))
+        (room-name (slack-room-name room team))
+        (payload (plist-get args :payload))
+        (thread-ts nil))
+    (when payload
+      (setq thread-ts (plist-get payload :thread_ts)))
+    (my/write-to-slack-log message sender-name room-name (oref team name) (oref team id) (oref room id) team thread-ts)))
 
 ;; Hooks for both incoming and outgoing
 (advice-add 'slack-ws-handle-message :before #'my/log-incoming-slack-message)
@@ -1122,7 +1133,23 @@
         (find-file latest-file)
       (message "No Slack log files found in %s" log-dir))))
 
+(defun my/slack-log-message-at-point ()
+  "Log the message at point in the current Slack buffer to the daily log."
+  (interactive)
+  (slack-if-let* ((ts (slack-get-ts))
+                  (buffer slack-current-buffer)
+                  (team (slack-buffer-team buffer))
+                  (room (slack-buffer-room buffer))
+                  (message (slack-room-find-message room ts)))
+    (let ((text (slack-message-get-text message team))
+          (sender-name (slack-message-sender-name message team))
+          (room-name (slack-room-name room team))
+          (thread-ts (slack-thread-ts message)))
+      (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (oref room id) team thread-ts)
+      (message "Message logged."))))
+
 (global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
+(global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
 
 (provide 'init)
 ;;; init.el ends here
