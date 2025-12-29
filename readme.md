@@ -185,6 +185,10 @@ Quickly open your current journal files.
 | Day View | `v d` | Switch agenda to Day view |
 | Week View | `v w` | Switch agenda to Week view |
 | Month View | `v m` | Switch agenda to Month view |
+| Toggle Follow Mode | `Shift-f` | Automatically open the source Org file in a side pane as you move |
+| Open in Other Window | `TAB` | Peek at the source file in another window (keeps focus on Agenda) |
+| Open in Current Window | `RET` | Open the source file in the current window (replaces Agenda) |
+| Follow Link | `C-c C-o` | Open the link at point (e.g., a Slack log link) |
 
 ## Writing & Spelling
 
@@ -313,6 +317,8 @@ Interact with Qwen AI directly from Emacs.
 | Quit Slack | `C-c s q` | Disconnect from Slack |
 | Select Channel | `M-x slack-channel-select` | Browse and jump to channels |
 | Select Group/DM | `M-x slack-group-select` | Browse and jump to DMs |
+| Open Latest Log | `C-c s l` | Open the most recent Slack log file |
+| Log Msg at Point | `C-c s L` | Manually log the message at point in a Slack buffer |
 
 **Notifications:** Slack notifications are enabled via the `alert` package and will appear in the minibuffer by default.
 
