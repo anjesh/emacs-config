@@ -68,7 +68,9 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Toggle Live Preview | `C-c C-p` | Toggles live HTML preview for Markdown files |
+| Export Menu | `C-c C-c e` | Open export dispatcher (similar to Org-mode) |
+| Preview in Browser | `C-c C-c p` | Render HTML and open static preview in browser |
+| Live Preview | `M-x markdown-preview-mode` | Toggle live-syncing preview in your web browser |
 | Promote List Item | `M-Left` or `C-c <` | Outdent the current list item |
 | Demote List Item | `M-Right` or `C-c >` | Indent the current list item |
 | Visibility Cycle | `TAB` | Toggle folding of current section |

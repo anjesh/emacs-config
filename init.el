@@ -437,7 +437,7 @@
   :ensure t
   :mode ("\\.md\\'" . markdown-mode)
   :init
-  (setq markdown-command "multimarkdown")
+  (setq markdown-command "pandoc")
   :hook (markdown-mode . (lambda () 
                            (font-lock-mode 1)
                            (font-lock-ensure) ;; Force refontification
@@ -447,6 +447,13 @@
   ;; Ensure tables use the default monospace font for alignment
   (with-eval-after-load 'markdown-mode
     (set-face-attribute 'markdown-table-face nil :family (face-attribute 'default :family))))
+
+(use-package markdown-preview-mode
+  :ensure t
+  :defer t
+  :config
+  (setq markdown-preview-stylesheets
+        (list "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css")))
 
 ;; CSV Mode
 (use-package csv-mode
