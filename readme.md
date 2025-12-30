@@ -176,6 +176,13 @@ Quickly open your current journal files.
 | Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
 | Export | `C-c C-e` | Open the export dispatcher (e.g., HTML, PDF, Markdown) |
 
+| Comment Line/Region | `M-;` | Comment or uncomment the current line or selection |
+
+**Org Tips:**
+- **Comments:** Start a line with `# ` to make it a comment.
+- **Separators:** Use a comment line (`# ---`) to separate bullets or headings without affecting the export.
+- **Horizontal Rule:** Use `-----` (5+ dashes) on a line by itself to create a visible divider line.
+
 **Export Note:** Numbered headings are **disabled** globally. To enable them for a specific file, add `#+OPTIONS: num:t` to the top of the file.
 
 ### Agenda Navigation
@@ -265,20 +272,14 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Enlarge Vertically | `C-c +` | Make window taller |
 | Mouse Drag | `Left Click + Drag` | Drag status bar or divider to resize (if enabled) |
 
-## Web Browsing (EWW)
-
-Emacs has a fast, text-based built-in browser called **EWW**.
+## Zooming & Text Scaling
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| **Open URL** | `C-c w b` | Enter a URL to browse |
-| **Open EWW** | `C-c w e` | Start the browser or search |
-| Reload | `g` | Refresh current page |
-| History Back | `l` | Go back in history |
-| History Forward | `r` | Go forward in history |
-| External Browser | `&` | Open current page in system browser (Chrome/Safari) |
-| Page Source | `v` | View HTML source |
-| Exit EWW | `q` | Quit the browser buffer |
+| Increase Font Size | `C-x C-+` | Standard Emacs zoom in |
+| Decrease Font Size | `C-x C--` | Standard Emacs zoom out |
+| Reset Font Size | `C-x C-0` | Reset to default |
+| Toggle Mouse Zoom | `C-c z` | Enable/Disable zooming with **Ctrl + Mouse Wheel** |
 
 ## Gemini AI (gemini-cli)
 
