@@ -836,7 +836,30 @@
   (:map calibredb-show-mode-map
         ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
 
-;; --- Hacker News Reader ---
+;; --- Web Browsing (EWW) ---
+
+;; EWW (Text-based, built-in)
+(use-package eww
+  :ensure nil
+  :config
+  (setq eww-search-prefix "https://google.com/search?q=")
+  (setq eww-download-directory "~/Downloads/")
+  (setq eww-form-checkbox-selected-symbol "[X]")
+  (setq eww-form-checkbox-symbol "[ ]")
+  ;; Rename buffer to page title
+  (add-hook 'eww-after-render-hook
+            (lambda ()
+              (rename-buffer (format "*eww: %s*"
+                                     (or (plist-get eww-data :title) "Web Page"))
+                             t))))
+
+(defun my/browse-url (url &optional new-window)
+  "Browse URL using EWW."
+  (interactive (browse-url-interactive-arg "URL: "))
+  (eww-browse-url url))
+
+(global-set-key (kbd "C-c w e") 'eww)
+(global-set-key (kbd "C-c w b") 'my/browse-url)
 (use-package hackernews
   :ensure t
   :config

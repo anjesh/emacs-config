@@ -97,6 +97,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | :--- | :--- | :--- |
 | Open Readme | `C-c r` | Custom shortcut to open this README file |
 | Open Externally | `C-c o` | Open file in default system app (e.g., Preview) |
+| Check Keybindings | `C-h m` | **Describe Mode**: Show all available keys for the current mode |
 | Check Major Mode | `C-h v major-mode` | Check the current buffer's major mode |
 | Toggle Line Numbers | `C-c n` | Show/Hide line numbers in the current buffer |
 | Describe Mode | `C-h m` | Display documentation for the current major and minor modes |
@@ -263,6 +264,21 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Shrink Vertically | `C-c -` | Make window shorter |
 | Enlarge Vertically | `C-c +` | Make window taller |
 | Mouse Drag | `Left Click + Drag` | Drag status bar or divider to resize (if enabled) |
+
+## Web Browsing (EWW)
+
+Emacs has a fast, text-based built-in browser called **EWW**.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Open URL** | `C-c w b` | Enter a URL to browse |
+| **Open EWW** | `C-c w e` | Start the browser or search |
+| Reload | `g` | Refresh current page |
+| History Back | `l` | Go back in history |
+| History Forward | `r` | Go forward in history |
+| External Browser | `&` | Open current page in system browser (Chrome/Safari) |
+| Page Source | `v` | View HTML source |
+| Exit EWW | `q` | Quit the browser buffer |
 
 ## Gemini AI (gemini-cli)
 
