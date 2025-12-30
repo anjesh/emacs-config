@@ -281,6 +281,29 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Reset Font Size | `C-x C-0` | Reset to default |
 | Toggle Mouse Zoom | `C-c z` | Enable/Disable zooming with **Ctrl + Mouse Wheel** |
 
+## Web Browsing (EWW)
+
+Emacs has a fast, text-based built-in browser called **EWW**.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Open URL / Search** | `C-c w b` | Enter a URL or search term |
+| Reload | `g` | Refresh current page |
+| History Back / Forward | `l` / `r` | Go back or forward in history |
+| Scroll Up / Down | `SPC` / `DEL` | Scroll by full screen |
+| Open Link in New Buffer | `M-RET` | Open link at point in a new EWW buffer |
+| List Buffers | `s` | Switch between multiple open EWW buffers |
+| External Browser | `&` | Open current page in system browser (Chrome/Safari) |
+| Copy URL at point | `w` | Copy the link under the cursor |
+| Copy Page URL | `M-w` | Copy the URL of the current page |
+| Page Source | `v` | View HTML source |
+| Exit EWW | `q` | Quit the browser buffer |
+
+**EWW Tips:**
+- **Search:** If you enter something that isn't a URL into `C-c w b`, EWW will automatically search Google for it.
+- **Images:** Press `I` (Shift-i) to toggle image display on/off.
+- **Readability:** EWW naturally strips away most ads and tracking, making it a great "Reader Mode" for the whole web.
+
 ## Gemini AI (gemini-cli)
 
 Interact with Gemini AI directly from Emacs.
