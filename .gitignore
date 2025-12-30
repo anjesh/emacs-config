@@ -19,3 +19,4 @@ url/
 secrets.el
 wasabi/
 multisession/
+tramp
