@@ -1,3 +1,0 @@
-(setq gptel-api-key "sk-proj-FsPaQgmqoPmjoP8BfNSCHtKbhhyCvms2BW6CESqyyrvSmhsTFU
-t6vboGL3UVe2LGV4bzFUyh9lT3BlbkFJRYXW9gYwcEgEu0Vm-m1Kzwlvq-uoIv7xVU2vhsIo2PYt5c3
-eQxHrEQ1-zx_mUoRZspnFcZoK4A")
