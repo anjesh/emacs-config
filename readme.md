@@ -270,6 +270,7 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Enlarge Horizontally | `C-c >` | Make window wider |
 | Shrink Vertically | `C-c -` | Make window shorter |
 | Enlarge Vertically | `C-c +` | Make window taller |
+| Toggle Highlighting | `C-c w h` | Toggle dimming of inactive windows (Highlight active) |
 | Mouse Drag | `Left Click + Drag` | Drag status bar or divider to resize (if enabled) |
 
 ## Zooming & Text Scaling

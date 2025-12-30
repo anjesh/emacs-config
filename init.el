@@ -861,6 +861,39 @@
   (:map calibredb-show-mode-map
         ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
 
+;; --- Window Highlighting (Dimmer) ---
+(use-package dimmer
+  :ensure t
+  :config
+  (setq dimmer-fraction 0.2) ;; 20% dimming
+  (setq dimmer-adjustment-mode :foreground) ;; Dim foreground colors
+  (setq dimmer-use-colors-space :rgb)
+  
+  ;; Don't dim specific temporary/popup buffers
+  (dimmer-configure-which-key)
+  (dimmer-configure-helm)
+  (dimmer-configure-hydra)
+  (dimmer-configure-magit)
+  (dimmer-configure-posframe)
+  
+  ;; Exclude minibuffer and echo area
+  (add-to-list 'dimmer-buffer-exclusion-regexps "^ \\*Minibuf-[0-9]+\\*")
+  (add-to-list 'dimmer-buffer-exclusion-regexps "^ \\*Echo Area[0-9]+\\*")
+
+  (dimmer-mode t))
+
+(defun my/toggle-window-highlighting ()
+  "Toggle the dimmer mode for window highlighting."
+  (interactive)
+  (if (bound-and-true-p dimmer-mode)
+      (progn
+        (dimmer-mode -1)
+        (message "Window Highlighting: DISABLED"))
+    (dimmer-mode 1)
+    (message "Window Highlighting: ENABLED")))
+
+(global-set-key (kbd "C-c w h") 'my/toggle-window-highlighting)
+
 ;; --- Web Browsing (EWW) ---
 
 ;; EWW (Text-based, built-in)
