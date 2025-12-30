@@ -865,16 +865,21 @@
 (use-package dimmer
   :ensure t
   :config
-  (setq dimmer-fraction 0.2) ;; 20% dimming
-  (setq dimmer-adjustment-mode :foreground) ;; Dim foreground colors
+  (setq dimmer-fraction 0.5) ;; Strong 50% dimming
+  (setq dimmer-adjustment-mode :foreground) 
   (setq dimmer-use-colors-space :rgb)
   
-  ;; Don't dim specific temporary/popup buffers
+  ;; IMPORTANT: Ensure it works on splits within the same frame
+  (setq dimmer-watch-frame-focus-events nil) ;; Don't dim everything when switching apps
+  
+  ;; Explicitly set the dimmed face to a very light gray for high contrast
+  (custom-set-faces
+   '(dimmer-dim-face ((t (:foreground "#bcc5c5")))))
+  
   (dimmer-configure-which-key)
   (dimmer-configure-helm)
   (dimmer-configure-hydra)
   (dimmer-configure-magit)
-  (dimmer-configure-posframe)
   
   ;; Exclude minibuffer and echo area
   (add-to-list 'dimmer-buffer-exclusion-regexps "^ \\*Minibuf-[0-9]+\\*")
