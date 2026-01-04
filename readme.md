@@ -44,6 +44,20 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Add Project | `C-c C-p` | Add a project to the workspace (when in Treemacs) |
 | Remove Project | `C-c C-d` | Remove a project from the workspace (when in Treemacs) |
 
+## PDF Viewing (GUI Only)
+
+Emacs uses `pdf-tools` for a high-quality, searchable PDF experience.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Open PDF | `C-x C-f` | Just open any `.pdf` file |
+| Next/Prev Page | `n` / `p` (or `SPC` / `DEL`) | Navigate through pages |
+| Scroll Up/Down | `C-n` / `C-p` | Smooth scrolling within the page |
+| Zoom In/Out | `+` / `-` | Scale the document |
+| Fit Page/Width | `H` / `W` | Adjust zoom to fit height or width |
+| Search Text | `C-s` | Search within the PDF |
+| Outline/Index | `o` | Show the PDF table of contents |
+
 ## Ebook Reading (CalibreDB & Nov.el)
 
 | Action | Key Sequence | Note |
@@ -100,6 +114,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Check Keybindings | `C-h m` | **Describe Mode**: Show all available keys for the current mode |
 | Check Major Mode | `C-h v major-mode` | Check the current buffer's major mode |
 | Toggle Line Numbers | `C-c n` | Show/Hide line numbers in the current buffer |
+| Reload Config | `M-x eval-buffer` | Run this while inside your `init.el` to apply changes immediately |
 | Describe Mode | `C-h m` | Display documentation for the current major and minor modes |
 
 ## Evil Mode (Vim Keybindings)
@@ -175,6 +190,7 @@ Quickly open your current journal files.
 | Change Parent (Refile) | `C-c C-w` | Move item to a different parent or file |
 | Toggle Bullets | `C-c b` | Toggle between hidden (spaces) and visible stars |
 | Export | `C-c C-e` | Open the export dispatcher (e.g., HTML, PDF, Markdown) |
+| New Line/Heading | `S-C-RET` | Insert a new heading or item with the same level (Shift+Ctrl+Enter) |
 
 | Comment Line/Region | `M-;` | Comment or uncomment the current line or selection |
 
@@ -294,7 +310,7 @@ Emacs has a fast, text-based built-in browser called **EWW**.
 | Scroll Up / Down | `SPC` / `DEL` | Scroll by full screen |
 | Open Link in New Buffer | `M-RET` | Open link at point in a new EWW buffer |
 | List Buffers | `s` | Switch between multiple open EWW buffers |
-| External Browser | `&` | Open current page in system browser (Chrome/Safari) |
+| External Browser | `&` | **Open current page in system browser (Chrome/Safari)** |
 | Copy URL at point | `w` | Copy the link under the cursor |
 | Copy Page URL | `M-w` | Copy the URL of the current page |
 | Page Source | `v` | View HTML source |

@@ -349,6 +349,7 @@
   :config
   (setq org-directory "~/dev")
   (setq org-hide-leading-stars nil) ;; Show stars by default
+  (setq browse-url-browser-function 'eww-browse-url) ;; Open links in EWW by default
   
   ;; Use org-bullets to replace the last star with a space
   (use-package org-bullets
@@ -471,14 +472,16 @@
 ;; PDF Tools (GUI only)
 (use-package pdf-tools
   :ensure t
-  :if (display-graphic-p)
-  :mode ("\.pdf\'" . pdf-view-mode)
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :bind (:map pdf-view-mode-map
+              ("C-s" . isearch-forward))
   :config
   (pdf-tools-install)
   (setq-default pdf-view-display-size 'fit-width) ;; or 'fit-page
   (setq pdf-view-continuous t) ;; Continuous scroll
   (add-hook 'pdf-view-mode-hook (lambda () 
                                   (display-line-numbers-mode -1) ;; Disable line numbers in PDF
+                                  (pdf-isearch-minor-mode)
                                   (auto-revert-mode 1))))
 
 ;; Helper to open files in external app (macOS Preview, etc.)
@@ -923,6 +926,15 @@
 
 (global-set-key (kbd "C-c w e") 'eww)
 (global-set-key (kbd "C-c w b") 'my/browse-url)
+
+;; --- Dictionary (Minibuffer) ---
+;; (Dictionary configuration removed)
+
+;; --- YAML Support ---
+(use-package yaml-mode
+  :ensure t
+  :mode ("\\.yaml\\'" "\\.yml\\'"))
+
 (use-package hackernews
   :ensure t
   :config
