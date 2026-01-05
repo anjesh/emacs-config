@@ -830,7 +830,47 @@
     (require 'shr)
     (setq shr-inhibit-images nil)
     (setq shr-use-fonts t)
-    (setq shr-max-image-proportion 0.8)))
+    (setq shr-max-image-proportion 0.8)
+
+    ;; Custom image handling: small images, clickable to enlarge
+    (defun my-nov-view-image (path)
+      "View the image at PATH in a new buffer."
+      (interactive)
+      (let ((buf (find-file-noselect path)))
+        (with-current-buffer buf
+          (image-mode)
+          (pop-to-buffer buf))))
+
+    (defun my-nov-insert-image (path alt)
+      "Insert an image for PATH at point, falling back to ALT.
+Images are resized to a smaller dimension (30% of window) and are clickable."
+      (let ((type (if (or (and (fboundp 'image-transforms-p) (image-transforms-p))
+                          (not (fboundp 'imagemagick-types)))
+                      nil
+                    'imagemagick)))
+        (if (not (display-graphic-p))
+            (insert alt)
+          (seq-let (x1 y1 x2 y2) (window-inside-pixel-edges
+                                  (get-buffer-window (current-buffer)))
+            (let* ((max-width (truncate (* 0.3 (- x2 x1))))
+                   (max-height (truncate (* 0.3 (- y2 y1))))
+                   (image
+                    (ignore-errors
+                      (create-image path type nil
+                                    :ascent 100
+                                    :max-width max-width
+                                    :max-height max-height))))
+              (if image
+                  (let ((map (make-sparse-keymap)))
+                    (define-key map [mouse-1] (lambda () (interactive) (my-nov-view-image path)))
+                    (define-key map (kbd "RET") (lambda () (interactive) (my-nov-view-image path)))
+                    (insert (propertize " "
+                                        'display image
+                                        'keymap map
+                                        'help-echo "Click to enlarge")))
+                (insert alt)))))))
+
+    (advice-add 'nov-insert-image :override #'my-nov-insert-image)))
 ;; calibredb - Interface for Calibre
 (use-package calibredb
   :ensure t

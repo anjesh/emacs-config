@@ -67,7 +67,10 @@ Emacs uses `pdf-tools` for a high-quality, searchable PDF experience.
 | Search Books | `s` | In CalibreDB, search for books by keyword |
 | List EPUB Files | `o` | In CalibreDB, list the internal files of the selected EPUB |
 | Next Chapter | `n` | Go to the next chapter in `nov-mode` |
-| Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |## Hacker News (hackernews)
+| Previous Chapter | `p` | Go to the previous chapter in `nov-mode` |
+| View Image | `Click` / `RET` | Images are shown as thumbnails. Click to view full size. |
+
+## Hacker News (hackernews)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
