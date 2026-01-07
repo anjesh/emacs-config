@@ -20,3 +20,4 @@ secrets.el
 wasabi/
 multisession/
 tramp
+var/

@@ -1,3 +1,4 @@
+
 ;;; init.el --- User configuration file  -*- lexical-binding: t; -*-
 
 ;; Enable Syntax Highlighting Early
@@ -1185,115 +1186,14 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (org-link-set-parameters "slack" :follow #'my/slack-org-link-follow)
   (org-link-set-parameters "slack-user" :follow #'my/slack-user-org-link-follow))
 
-;; --- Slack Global Logging (Incoming & Outgoing) ---
-(defvar my/slack-log-exclude-rooms '("slack-bot" "github")
-  "List of room names or IDs to exclude from logging.")
+;; --- Slack Global Logging (SQLite) ---
+(add-to-list 'load-path user-emacs-directory)
+(require 'my-slack-db)
+(my/setup-slack-db-logging)
 
-(defun my/process-slack-mentions (text team)
-  "Replace <@USERID> with [[slack-user:TEAMID:USERID][@Name]]."
-  (if (stringp text)
-      (replace-regexp-in-string 
-       "<@\\([WU][A-Z0-9]+\\)\\(|.*?\\)?>"
-       (lambda (match)
-         (let* ((id (match-string 1 match))
-                (name (slack-user-name id team)))
-           (format "[[slack-user:%s:%s][@%s]]" 
-                   (oref team id)
-                   id
-                   (or name id))))
-       text t)
-    text))
-
-(defun my/write-to-slack-log (text sender-name room-name team-name team-id room-id team &optional thread-ts)
-  "Helper to append to the log file."
-  (unless (or (member room-name my/slack-log-exclude-rooms)
-              (member room-id my/slack-log-exclude-rooms))
-    (let* ((log-dir (expand-file-name "~/dev/slack/"))
-           (log-filename (format-time-string "slack-log-%Y-%m.org"))
-           (log-file (expand-file-name log-filename log-dir))
-           (timestamp (format-time-string "[%Y-%m-%d %H:%M:%S]"))
-           (link (if thread-ts
-                     (format "[[slack:%s:%s:%s][%s - %s (Thread)]]" 
-                             team-id room-id thread-ts team-name room-name)
-                   (format "[[slack:%s:%s][%s - %s]]" 
-                           team-id room-id team-name room-name)))
-           (processed-text (my/process-slack-mentions text team)))
-      ;; Ensure the directory exists
-      (unless (file-directory-p log-dir)
-        (make-directory log-dir t))
-      (with-current-buffer (find-file-noselect log-file)
-        (let ((inhibit-read-only t))
-          (save-excursion
-            (goto-char (point-max))
-            (insert (format "* %s %s\n%s: %s\n\n" timestamp link sender-name processed-text))
-            (save-buffer)))))))
-
-(defun my/slack-log-read-only-hook ()
-  "Make slack log files read-only."
-  (when (and buffer-file-name
-             (string-match-p "slack-log-.*\\.org$" buffer-file-name))
-    (read-only-mode 1)))
-
-(add-hook 'find-file-hook #'my/slack-log-read-only-hook)
-
-(defun my/log-incoming-slack-message (payload team)
-  "Handle incoming messages (others)."
-  (let* ((type (plist-get payload :type))
-         (subtype (plist-get payload :subtype))
-         (user-id (plist-get payload :user))
-         (channel-id (plist-get payload :channel))
-         (text (plist-get payload :text))
-         (thread-ts (plist-get payload :thread_ts)))
-    (when (and (string= type "message")
-               (or (null subtype) (string= subtype "me_message"))
-               text
-               user-id
-               (not (slack-user-self-p user-id team))) ;; Ignore self (handled by outgoing)
-      (let* ((room (slack-room-find channel-id team))
-             (room-name (if room (slack-room-name room team) channel-id))
-             (sender-name (or (slack-user-name user-id team) user-id)))
-        (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (or (and room (oref room id)) channel-id) team thread-ts)))))
-
-(defun my/log-outgoing-slack-message (message room team &rest args)
-  "Handle outgoing messages (self)."
-  (let ((sender-name (or (slack-user-name (oref team self-id) team) "Me"))
-        (room-name (slack-room-name room team))
-        (payload (plist-get args :payload))
-        (thread-ts nil))
-    (when payload
-      (setq thread-ts (plist-get payload :thread_ts)))
-    (my/write-to-slack-log message sender-name room-name (oref team name) (oref team id) (oref room id) team thread-ts)))
-
-;; Hooks for both incoming and outgoing
-(advice-add 'slack-ws-handle-message :before #'my/log-incoming-slack-message)
-(advice-add 'slack-message-send-internal :before #'my/log-outgoing-slack-message)
-
-(defun my/open-latest-slack-log ()
-  "Open the most recent Slack log file."
-  (interactive)
-  (let* ((log-dir (expand-file-name "~/dev/slack/"))
-         (files (directory-files log-dir t "slack-log-.*\\.org$"))
-         (latest-file (car (sort files #'string-greaterp)))) ;; Sort descending to get latest
-    (if latest-file
-        (find-file latest-file)
-      (message "No Slack log files found in %s" log-dir))))
-
-(defun my/slack-log-message-at-point ()
-  "Log the message at point in the current Slack buffer to the daily log."
-  (interactive)
-  (slack-if-let* ((ts (slack-get-ts))
-                  (buffer slack-current-buffer)
-                  (team (slack-buffer-team buffer))
-                  (room (slack-buffer-room buffer))
-                  (message (slack-room-find-message room ts)))
-    (let ((text (slack-message-get-text message team))
-          (sender-name (slack-message-sender-name message team))
-          (room-name (slack-room-name room team))
-          (thread-ts (slack-thread-ts message)))
-      (my/write-to-slack-log text sender-name room-name (oref team name) (oref team id) (oref room id) team thread-ts)
-      (message "Message logged."))))
-
-(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
+(global-set-key (kbd "C-c s D") 'my/slack-show-logs)
+(global-set-key (kbd "C-c s S") 'my/slack-sync-current-team)
+(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log) ;; Keeping this for backward compatibility if needed, or remove if you want to fully switch.
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
 
 (provide 'init)
