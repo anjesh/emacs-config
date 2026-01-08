@@ -1187,7 +1187,7 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (org-link-set-parameters "slack-user" :follow #'my/slack-user-org-link-follow))
 
 ;; --- Slack Global Logging (SQLite) ---
-(add-to-list 'load-path user-emacs-directory)
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (require 'my-slack-db)
 (my/setup-slack-db-logging)
 
