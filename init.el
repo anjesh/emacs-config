@@ -908,16 +908,16 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 (use-package dimmer
   :ensure t
   :config
-  (setq dimmer-fraction 0.5) ;; Strong 50% dimming
-  (setq dimmer-adjustment-mode :foreground) 
+  (setq dimmer-fraction 0.2) ;; Gentle background dimming
+  (setq dimmer-adjustment-mode :background) 
   (setq dimmer-use-colors-space :rgb)
   
   ;; IMPORTANT: Ensure it works on splits within the same frame
   (setq dimmer-watch-frame-focus-events nil) ;; Don't dim everything when switching apps
   
-  ;; Explicitly set the dimmed face to a very light gray for high contrast
+  ;; Explicitly set the dimmed face to a neutral gray background
   (custom-set-faces
-   '(dimmer-dim-face ((t (:foreground "#bcc5c5")))))
+   '(dimmer-dim-face ((t (:background "#e0e0e0")))))
   
   (dimmer-configure-which-key)
   (dimmer-configure-helm)
@@ -1022,7 +1022,7 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   :ensure t
   :vc (:url "https://github.com/linchen2chris/gemini-cli.el" :rev :newest)
   :config
-  (setq gemini-cli-terminal-backend 'vterm)
+  (setq gemini-cli-terminal-backend 'eat)
   (setq gemini-cli-optimize-window-resize nil)
   (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
   (gemini-cli-mode)
@@ -1111,6 +1111,15 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
    ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
    ("C-c Q d" . qwen-cli-start-in-directory)
    ("C-c Q q" . qwen-cli-kill)))
+
+;; --- Life Calendar ---
+(use-package life-calendar
+  :ensure t
+  :vc (:url "https://github.com/vshender/emacs-life-calendar")
+  :custom
+  (life-calendar-past-char "■")
+  (life-calendar-current-char "▣")
+  (life-calendar-future-char "□"))
 
 ;; --- Slack Integration ---
 (use-package alert
