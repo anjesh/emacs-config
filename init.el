@@ -108,8 +108,7 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file 'noerror)
 
-;; Load API keys from secrets.el
-(load (locate-user-emacs-file "secrets.el") 'noerror)
+
 
 ;; --- End Original Configuration ---
 
