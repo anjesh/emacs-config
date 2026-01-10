@@ -315,32 +315,6 @@
   :init
   (marginalia-mode))
 
-;; --- Uniform Font Style for Headers ---
-(defun my/reset-header-styles ()
-  "Force headers to use the default font family and size."
-  (interactive)
-  (let ((font-family (face-attribute 'default :family)))
-    ;; Org Mode Headers
-    (with-eval-after-load 'org
-      ;; Only bold the highest level (level 1)
-      (set-face-attribute 'org-level-1 nil :family font-family :height 1.0 :weight 'bold)
-      ;; Set others to normal weight
-      (dolist (face '(org-level-2 org-level-3 org-level-4
-                      org-level-5 org-level-6 org-level-7 org-level-8))
-        (set-face-attribute face nil :family font-family :height 1.0 :weight 'normal)))
-    
-    ;; Markdown Mode Headers
-    (with-eval-after-load 'markdown-mode
-      (dolist (face '(markdown-header-face-1 markdown-header-face-2
-                      markdown-header-face-3 markdown-header-face-4
-                      markdown-header-face-5 markdown-header-face-6))
-        (set-face-attribute face nil :family font-family :height 1.0 :weight 'bold)))))
-
-;; Apply on startup and after theme load
-(add-hook 'enable-theme-functions (lambda (&rest _) (my/reset-header-styles)))
-;; Run once for currently loaded modes
-(my/reset-header-styles)
-
 ;; Org Mode Configuration
 (use-package org
   :ensure nil ;; Built-in
@@ -450,13 +424,9 @@
   (setq markdown-command "pandoc")
   :hook (markdown-mode . (lambda () 
                            (font-lock-mode 1)
-                           (font-lock-ensure) ;; Force refontification
                            (visual-line-mode 1)))
   :config
-  (setq markdown-fontify-code-blocks-natively t)
-  ;; Ensure tables use the default monospace font for alignment
-  (with-eval-after-load 'markdown-mode
-    (set-face-attribute 'markdown-table-face nil :family (face-attribute 'default :family))))
+  (setq markdown-fontify-code-blocks-natively t))
 
 (use-package markdown-preview-mode
   :ensure t
