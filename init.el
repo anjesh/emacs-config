@@ -334,9 +334,8 @@
   (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
   (setq org-hide-leading-stars t) ;; Hide all but the last star
   
-  ;; Custom Font Styling for Headers: Level 1 bold, others normal weight, all same size
-  (set-face-attribute 'org-level-1 nil :height 1.0 :weight 'bold)
-  (dolist (face '(org-level-2 org-level-3 org-level-4
+  ;; Custom Font Styling for Headers: All normal weight, all same size
+  (dolist (face '(org-level-1 org-level-2 org-level-3 org-level-4
                   org-level-5 org-level-6 org-level-7 org-level-8))
     (set-face-attribute face nil :height 1.0 :weight 'normal))
 
