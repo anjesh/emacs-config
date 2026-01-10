@@ -10,7 +10,15 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
-;; Clean up UI
+;; Clean up UI & Silent Bell (Mode Line Flash)
+(setq ring-bell-function
+      (lambda ()
+        (let ((orig-bg (face-background 'mode-line)))
+          (set-face-background 'mode-line "#F2804F") ;; Flash Orange
+          (run-with-idle-timer 0.1 nil
+                               (lambda (bg) (set-face-background 'mode-line bg))
+                               orig-bg))))
+
 (when (display-graphic-p)
   (tool-bar-mode -1)
   (scroll-bar-mode -1))
@@ -402,6 +410,7 @@
           ("CANCELLED" :foreground "light gray")))
 
   ;; Show parent headings (breadcrumbs) in Agenda
+  (setq org-agenda-start-on-weekday 0) ;; Start week on Sunday
   (setq org-agenda-prefix-format
         '((agenda . " %i %-12:c %b%?-12t% s")
           (todo   . " %i %-12:c %b")

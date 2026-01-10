@@ -104,7 +104,7 @@ Emacs uses `pdf-tools` for a high-quality, searchable PDF experience.
 
 ## Multi-Edit (Iedit)
 
-| Action | Key Sequence | Note |
+| Action | Key Sequence | Note |	
 | :--- | :--- | :--- |
 | Toggle Multi-Edit | `C-;` | Highlight text/symbol and press this to edit all occurrences at once |
 
@@ -218,6 +218,12 @@ Quickly open your current journal files.
 | Open in Other Window | `TAB` | Peek at the source file in another window (keeps focus on Agenda) |
 | Open in Current Window | `RET` | Open the source file in the current window (replaces Agenda) |
 | Follow Link | `C-c C-o` | Open the link at point (e.g., a Slack log link) |
+
+### Viewing Daily Activities
+To see what you did on a specific day (even if not scheduled):
+- **Completed Tasks:** In Agenda view, press `l` (log mode) to see tasks closed on that day.
+- **Dated Items:** Press `[` to toggle inactive timestamps (items with just a date mentioned like `[2026-01-09 Fri]`).
+- **Search:** Press `C-c a s` to search for a specific date string (e.g., "2026-01-09") across all files.
 
 ## Writing & Spelling
 
