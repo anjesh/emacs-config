@@ -1007,7 +1007,10 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
               (display-line-numbers-mode -1)
               (visual-line-mode -1)
               (setq truncate-lines t)
-              (local-set-key (kbd "M-w") 'kill-ring-save)))
+              (local-set-key (kbd "M-w") 'kill-ring-save)
+              ;; Fix visibility for light themes in eat
+              (face-remap-add-relative 'eat-term-color-7 :foreground "black")
+              (face-remap-add-relative 'eat-term-color-15 :foreground "black")))
   :bind
   (("C-c g g" . gemini-cli)                  ;; Start Gemini
    ("C-c g s" . gemini-cli-send-command)     ;; Send command from minibuffer
