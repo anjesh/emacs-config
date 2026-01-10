@@ -330,9 +330,15 @@
    ("C-c b" . my/toggle-org-bullets)) ;; Toggle bullets
   :config
   (setq org-directory "~/dev")
-  (setq org-hide-leading-stars nil) ;; Show stars by default
   (setq browse-url-browser-function 'eww-browse-url) ;; Open links in EWW by default
+  (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
+  (setq org-hide-leading-stars t) ;; Hide all but the last star
   
+  ;; Custom Font Styling for Headers: All bold, same size
+  (dolist (face '(org-level-1 org-level-2 org-level-3 org-level-4
+                  org-level-5 org-level-6 org-level-7 org-level-8))
+    (set-face-attribute face nil :height 1.0 :weight 'bold))
+
   ;; Use org-bullets to replace the last star with a space
   (use-package org-bullets
     :ensure t
@@ -353,16 +359,6 @@
       (font-lock-flush)
       (message "Org Bullets: Hidden (Spaces)")))
 
-  :bind
-  (("C-c a" . org-agenda)
-   ("C-c c" . org-capture)
-   :map org-mode-map
-   ("C-c b" . my/toggle-org-bullets)) ;; Toggle bullets
-  :config
-  (setq org-directory "~/dev")
-  (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
-  (setq org-hide-leading-stars t) ;; Hide all but the last star
-  
   ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, and slack
   (setq org-agenda-files 
         (seq-filter 
