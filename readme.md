@@ -225,6 +225,21 @@ To see what you did on a specific day (even if not scheduled):
 - **Dated Items:** Press `[` to toggle inactive timestamps (items with just a date mentioned like `[2026-01-09 Fri]`).
 - **Search:** Press `C-c a s` to search for a specific date string (e.g., "2026-01-09") across all files.
 
+### Time Tracking
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Clock In | `C-c C-x C-i` | Start timer for current task |
+| Clock Out | `C-c C-x C-o` | Stop timer (records time in LOGBOOK) |
+| Jump to Task | `C-c C-x C-j` | Jump to the currently clocked task |
+| Cancel Clock | `C-c C-x C-q` | Cancel the current timer (discard time) |
+| Display Report | `C-c C-x C-r` | Insert a time summary table (clock table) |
+| Agenda Report | `v R` | Toggle "Clock Report Mode" in Agenda view |
+
+**Time Tracking Tips:**
+- **Automatic Logging:** Clocking out creates a `:LOGBOOK:` drawer under the task.
+- **Editing Time:** You can manually edit timestamps in the `:LOGBOOK:` and press `C-c C-c` to update the total.
+- **Agenda View:** Press `I` to clock in and `O` to clock out of tasks directly from the agenda.
+
 ## Writing & Spelling
 
 | Action | Key Sequence | Note |
