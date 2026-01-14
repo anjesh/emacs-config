@@ -532,14 +532,40 @@
           (vterm t))
       (message "Could not determine directory."))))
 
+(defun my/open-eshell-here ()
+  "Open eshell in the current buffer's directory, dired dir, or treemacs node."
+  (interactive)
+  (let ((path (cond
+               ((derived-mode-p 'dired-mode) (dired-current-directory))
+               ((derived-mode-p 'treemacs-mode)
+                (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors
+                                       (treemacs-copy-path-at-point)
+                                       (substring-no-properties (current-kill 0))))))
+                  (if (and node-path (file-exists-p node-path))
+                      (if (file-directory-p node-path)
+                          node-path
+                        (file-name-directory node-path))
+                    nil)))
+               (t (if buffer-file-name
+                      (file-name-directory buffer-file-name)
+                    default-directory)))))
+    (if (and path (not (string-empty-p path)))
+        (let ((default-directory path))
+          (eshell t))
+      (message "Could not determine directory."))))
+
 (global-set-key (kbd "C-c t g") 'my/open-ghostty-here)
 (global-set-key (kbd "C-c t t") 'my/open-vterm-here)
+(global-set-key (kbd "C-c t e") 'my/open-eshell-here)
 
 ;; Bind 'O' in Treemacs to open externally, 'T' to open Ghostty, and 'C' to copy path
 (with-eval-after-load 'treemacs
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
   (define-key treemacs-mode-map (kbd "v") #'my/open-vterm-here)
+  (define-key treemacs-mode-map (kbd "E") #'my/open-eshell-here)
   (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard)
   (define-key treemacs-mode-map (kbd "L") #'org-store-link)
 
@@ -875,7 +901,9 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   :bind
   ("C-c e" . calibredb)
   (:map calibredb-search-mode-map
-        ("RET" . my/calibredb-open-with-nov))
+        ("RET" . my/calibredb-open-with-nov)
+        ("s" . calibredb-search-live-filter) ;; Bind 's' to live search (titles, etc.)
+        ("?" . calibredb-dispatch))          ;; Bind '?' to the main dispatch menu
   (:map calibredb-show-mode-map
         ("RET" . my/calibredb-open-with-nov))) ;; Bind C-c e to open CalibreDB
 
