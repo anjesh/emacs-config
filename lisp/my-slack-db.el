@@ -274,7 +274,7 @@ Prioritizes unread rooms and only updates rooms with new activity compared to DB
                  (team-id (nth 4 row))
                  (team (slack-team-find team-id))
                  (room (and team (slack-room-find room-id team)))
-                 (room-label (if room (substring-no-properties (slack-room-label room team)) (format "%s" room-id))))
+                 (room-label (if room (slack-room-name room team) (format "%s" room-id))))
             (insert (format "** %s [[slack:%s:%s][%s]] %s: %s\n%s\n\n" 
                             time 
                             team-id room-id room-label

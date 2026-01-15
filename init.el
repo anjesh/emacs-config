@@ -1126,7 +1126,7 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
         (if thread-ts
             (slack-open-message team room thread-ts thread-ts)
           (slack-room-display room team))
-      (message "Slack team or room not found"))))
+      (message "Debug: Team found? %s | Room found? %s (ID: %s)" (if team "Yes" "No") (if room "Yes" "No") room-id))))
 
 (defun my/slack-user-org-link-follow (path)
   "Follow a Slack user link of the form team-id:user-id."
