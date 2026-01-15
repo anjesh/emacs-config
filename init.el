@@ -120,7 +120,7 @@
 
 ;; --- End Original Configuration ---
 
-;; Icons (Required for Neotree icons)
+  ;; Icons (Required for Neotree icons)
 (use-package all-the-icons
   :ensure t
   :if (display-graphic-p))
@@ -567,13 +567,7 @@
   (define-key treemacs-mode-map (kbd "v") #'my/open-vterm-here)
   (define-key treemacs-mode-map (kbd "E") #'my/open-eshell-here)
   (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard)
-  (define-key treemacs-mode-map (kbd "L") #'org-store-link)
-
-  ;; Disable Evil in Treemacs (use Emacs state)
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'treemacs-mode 'emacs)
-    (evil-define-key 'treemacs treemacs-mode-map (kbd "RET") #'treemacs-RET-action)
-    (evil-define-key 'normal treemacs-mode-map (kbd "RET") #'treemacs-RET-action)))
+  (define-key treemacs-mode-map (kbd "L") #'org-store-link))
 
 ;; Helper to copy the full path of file/directory
 (defun my/treemacs-copy-path-to-clipboard ()
@@ -692,37 +686,7 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (define-key global-map (kbd "C-c C-l") 'org-insert-link)
 
-;; --- Evil Mode (Vim Keybindings) ---
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-keybinding nil) ;; Do not override any existing keybindings
-  (setq evil-respect-visual-line-mode t) ;; Respect visual line movement
-  ;; (evil-mode 1) ;; Disabled by default
-  :config
-  ;; Force 'j' and 'k' to move by visual lines, not logical lines
-  (define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-motion-state-map (kbd "k") 'evil-previous-visual-line))
-
-(defun my/toggle-evil-mode ()
-  "Toggle Evil mode on/off."
-  (interactive)
-  (if (bound-and-true-p evil-mode)
-      (progn
-        (evil-mode -1)
-        (message "Evil Mode DISABLED (Emacs Standard)"))
-    (evil-mode 1)
-    (message "Evil Mode ENABLED (Vim Bindings)")))
-
-(global-set-key (kbd "C-c v") 'my/toggle-evil-mode)
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :init
-  (evil-collection-init))
-
-;; --- Org Mode Keybinding Fixes (Evil Compatibility) ---
+;; --- Org Mode Keybinding Fixes ---
 (with-eval-after-load 'org
   ;; Force standard Emacs bindings in Org Mode map
   (define-key org-mode-map (kbd "TAB") 'org-cycle)
@@ -735,18 +699,6 @@
   (define-key org-mode-map (kbd "C-c <right>") 'org-metaright)
   (define-key org-mode-map (kbd "C-c <up>") 'org-metaup)
   (define-key org-mode-map (kbd "C-c <down>") 'org-metadown))
-
-(with-eval-after-load 'evil
-  ;; Force Evil Normal state to respect these Org bindings
-  (let ((map org-mode-map))
-    (evil-define-key 'normal map (kbd "TAB") 'org-cycle)
-    (evil-define-key 'normal map (kbd "<tab>") 'org-cycle)
-    (evil-define-key 'normal map (kbd "M-<left>") 'org-metaleft)
-    (evil-define-key 'normal map (kbd "M-<right>") 'org-metaright)
-    (evil-define-key 'normal map (kbd "C-c <left>") 'org-metaleft)
-    (evil-define-key 'normal map (kbd "C-c <right>") 'org-metaright)
-    (evil-define-key 'normal map (kbd "C-c <up>") 'org-metaup)
-    (evil-define-key 'normal map (kbd "C-c <down>") 'org-metadown)))
 
 ;; --- Journal Navigation ---
 
@@ -824,8 +776,6 @@
     (add-to-list 'auto-mode-alist '("\.EPUB\'" . nov-mode))
     (setq nov-text-width 80) ;; comfortable reading width
     (add-hook 'nov-mode-hook 'visual-line-mode)
-    (with-eval-after-load 'evil
-      (evil-set-initial-state 'nov-mode 'emacs))
     
     ;; Enable images (works in GUI Emacs)
     (require 'shr)
@@ -880,11 +830,6 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (setq calibredb-root-dir "~/Calibre/")
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
   (setq calibredb-library-alist '(("~/Calibre/")))
-  
-  ;; Force calibredb to use Emacs state (standard keys) instead of Evil (Vim)
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'calibredb-search-mode 'emacs)
-    (evil-set-initial-state 'calibredb-show-mode 'emacs))
 
   ;; Custom function to force open in nov.el
   (defun my/calibredb-open-with-nov ()
@@ -1031,7 +976,6 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (gemini-cli-mode)
   (add-hook 'gemini-cli-start-hook
             (lambda ()
-              (evil-emacs-state)
               (display-line-numbers-mode -1)
               (visual-line-mode -1)
               (setq truncate-lines t)
@@ -1079,7 +1023,6 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (claude-code-mode)
   (add-hook 'claude-code-start-hook
             (lambda ()
-              (evil-emacs-state)
               (display-line-numbers-mode -1)
               (visual-line-mode -1)
               (setq truncate-lines t)
@@ -1104,7 +1047,6 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   (qwen-cli-mode)
   (add-hook 'qwen-cli-start-hook
             (lambda ()
-              (evil-emacs-state)
               (display-line-numbers-mode -1)
               (visual-line-mode -1)
               (setq truncate-lines t)

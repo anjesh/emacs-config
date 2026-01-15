@@ -121,19 +121,6 @@ Emacs uses `pdf-tools` for a high-quality, searchable PDF experience.
 | Reload Config | `M-x eval-buffer` | Run this while inside your `init.el` to apply changes immediately |
 | Describe Mode | `C-h m` | Display documentation for the current major and minor modes |
 
-## Evil Mode (Vim Keybindings)
-
-Evil Mode provides Vim-like keybindings. It is **DISABLED** by default.
-
-| Action | Key Sequence | Note |
-| :--- | :--- | :--- |
-| Toggle Evil Mode | `C-c v` | Switch between Emacs (standard) and Vim (Evil) states |
-| Normal Mode | `ESC` or `C-[` | Default mode for navigation and commands (when Evil is ON) |
-| Insert Mode | `i`, `a`, `o`, `I`, `A`, `O` | For inserting text |
-| Visual Mode | `v`, `V`, `C-v` | For selecting text |
-| Emacs State | `C-z` | Temporary toggle between Evil and Emacs behavior |
-
-**Note**: `calibredb` and `treemacs` buffers are configured to use Emacs' native keybindings by default.
 
 ## Journal Shortcuts
 
