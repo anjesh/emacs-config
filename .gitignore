@@ -22,3 +22,4 @@ multisession/
 tramp
 var/
 /.authinfo
+/eshell/

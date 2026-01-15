@@ -1117,7 +1117,7 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
          (room-id (nth 1 parts))
          (thread-ts (nth 2 parts))
          ;; Fix: Use (hash-table-values slack-teams-by-token) instead of non-existent slack-teams
-         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (t) (oref t id)) :test #'string=))
+         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (tm) (oref tm id)) :test #'string=))
          (room (when team
                  (or (gethash room-id (oref team channels))
                      (gethash room-id (oref team groups))

@@ -8,7 +8,7 @@
 
 (defvar my/slack-db-path (expand-file-name "var/slack-messages.db" user-emacs-directory))
 
-(defcustom my/slack-ignored-channels '("cm-tea-time")
+(defcustom my/slack-ignored-channels '("cm-tea-time" "yi-general" "cm-celebrations" "yi-aidstream-finances")
   "List of channel names (strings) to ignore for DB logging."
   :type '(repeat string)
   :group 'slack)
@@ -274,13 +274,12 @@ Prioritizes unread rooms and only updates rooms with new activity compared to DB
                  (team-id (nth 4 row))
                  (team (slack-team-find team-id))
                  (room (and team (slack-room-find room-id team)))
-                 (room-label (if room (slack-room-name room team) (format "%s" room-id))))
-            (insert (format "** [%s] [[elisp:(my/slack-open-room \"%s\" \"%s\")][%s]] %s: %s\n:PROPERTIES:\n:TEAM: %s\n:ROOM: %s\n:END:\n%s\n\n" 
+                 (room-label (if room (substring-no-properties (slack-room-label room team)) (format "%s" room-id))))
+            (insert (format "** %s [[slack:%s:%s][%s]] %s: %s\n%s\n\n" 
                             time 
                             team-id room-id room-label
                             sender 
                             (replace-regexp-in-string "\n" " " (substring text 0 (min 50 (length text))))
-                            team-id room-id
                             text)))))
       (read-only-mode 1)
       (switch-to-buffer buffer))
