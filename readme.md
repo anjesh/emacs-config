@@ -36,6 +36,9 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Create File | `c f` | Create a new file at the current location or under the selected directory. |
 | Create Directory | `c d` | Create a new directory at the current location or under the selected directory. |
 | Move File/Directory | `m` | Move the selected file or directory to a new location. |
+| **Bulk Actions** | `M-m` | Open the bulk actions menu to mark/unmark, move, or delete multiple files. |
+| Mark/Unmark File | `M-m` then `m` | Mark or unmark the file at point for bulk actions. |
+| Move Marked Files | `M-m` then `o` | Move all currently marked files to a different folder. |
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
 | Open in vterm | `v` | Open internal vterm in selected directory |
 | Open in Eshell | `E` (Shift+e) | Open internal Eshell in selected directory |

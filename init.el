@@ -992,11 +992,23 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
    ("C-c g d" . gemini-cli-start-in-directory)
    ("C-c g q" . gemini-cli-kill)))
 
+;; --- Shell Maker (Dependency for Agent Shell / Gemini CLI) ---
+(use-package shell-maker
+  :ensure t
+  :vc (:url "https://github.com/xenodium/shell-maker" :rev :newest))
+
+;; --- ACP (Dependency for Agent Shell) ---
+(use-package acp
+  :ensure t
+  :vc (:url "https://github.com/xenodium/acp.el" :rev :newest))
+
 ;; --- Agent Shell Integration ---
 ;; Ensure agent-shell is installed
 (use-package agent-shell
   :ensure t
   :config
+  (setq agent-shell-google-authentication
+        (agent-shell-google-make-authentication :login t))
   (setq agent-shell-agent-configs
         '((:name "Gemini" 
            :command "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini" 
