@@ -103,6 +103,7 @@
   :ensure t
   :if (memq window-system '(mac ns x))
   :config
+  (setq exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize))
 
 ;; --- Your Original Configuration ---
@@ -1009,10 +1010,6 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   :config
   (setq agent-shell-google-authentication
         (agent-shell-google-make-authentication :login t))
-  (setq agent-shell-agent-configs
-        '((:name "Gemini" 
-           :command "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini" 
-           :args ("chat"))))
   (global-set-key (kbd "C-c A") 'agent-shell))
 
 ;; (require 'agent-shell) ;; Removed to prevent startup error if missing
