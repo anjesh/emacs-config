@@ -108,10 +108,13 @@
 
 ;; --- Your Original Configuration ---
 
+(use-package ess
+  :ensure t)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((shell . t)  ;; This enables sh, bash, zsh, etc.
-   ))
+   (R . t)))
 
 ;; Load custom settings from custom.el
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -1010,7 +1013,47 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   :config
   (setq agent-shell-google-authentication
         (agent-shell-google-make-authentication :login t))
-  (global-set-key (kbd "C-c A") 'agent-shell))
+
+  ;; Custom CWD logic
+  (defvar my/agent-shell-force-cwd nil
+    "If non-nil, force `agent-shell-cwd` to return this path.")
+
+  (advice-add 'agent-shell-cwd :around
+              (lambda (orig-fun &rest args)
+                (or my/agent-shell-force-cwd (apply orig-fun args))))
+
+  (defun my/get-agent-shell-context-path ()
+    "Get path from treemacs, dired, or buffer for agent-shell."
+    (cond
+     ((derived-mode-p 'dired-mode) (dired-current-directory))
+     ((derived-mode-p 'treemacs-mode)
+      (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                           (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                           (ignore-errors
+                             (treemacs-copy-path-at-point)
+                             (substring-no-properties (current-kill 0))))))
+        (if (and node-path (file-exists-p node-path))
+            (if (file-directory-p node-path)
+                node-path
+              (file-name-directory node-path))
+          nil)))
+     (t (if buffer-file-name
+            (file-name-directory buffer-file-name)
+          default-directory))))
+
+  (defun my/agent-shell-start-in-directory (dir)
+    "Start agent-shell in a specific directory DIR."
+    (interactive
+     (list (read-directory-name "Agent Shell in directory: " (my/get-agent-shell-context-path))))
+    (let ((my/agent-shell-force-cwd (expand-file-name dir)))
+      (agent-shell t)))
+
+  ;; Keybindings: Make C-c A a prefix map
+  (global-unset-key (kbd "C-c A"))
+  (define-prefix-command 'my/agent-shell-map)
+  (global-set-key (kbd "C-c A") 'my/agent-shell-map)
+  (define-key my/agent-shell-map (kbd "A") 'agent-shell)
+  (define-key my/agent-shell-map (kbd "d") 'my/agent-shell-start-in-directory))
 
 ;; (require 'agent-shell) ;; Removed to prevent startup error if missing
 
