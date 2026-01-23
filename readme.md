@@ -350,7 +350,15 @@ Interact with Gemini AI directly from Emacs.
 | Send Current File | `C-c g o` | Send the current buffer's file content to Gemini |
 | Toggle Window | `C-c g t` | Show/Hide the Gemini chat window |
 | Quit Session | `C-c g q` | Kill the current Gemini CLI process |
-| Agent Shell | `C-c A` | Open Agent Shell (configured for Gemini) |
+
+## Agent Shell (agent-shell)
+
+Interact with Agent Shell directly from Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start Agent Shell | `C-c A A` | Open standard Agent Shell |
+| Start in Directory | `C-c A d` | Open Agent Shell in specific directory (context-aware) |
 
 ## Claude AI (claude-code)
 
