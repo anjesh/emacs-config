@@ -313,6 +313,19 @@
          ("M-y"   . consult-yank-pop)     ;; Paste from clipboard history
          ("M-g g" . consult-goto-line)))  ;; Go to line with preview
 
+;; Beframe: Isolate buffers per frame
+(use-package beframe
+  :ensure t
+  :config
+  (beframe-mode 1)
+  
+  ;; Integration with Consult to show only frame-specific buffers by default
+  (with-eval-after-load 'consult
+    (defun my/consult-beframe-buffer-list (&optional frame)
+      "Return the list of buffers from `beframe-buffer-names' sorted by visibility."
+      (beframe-buffer-list frame :sort #'beframe-buffer-sort-visibility))
+    (setq consult-buffer-list-function #'my/consult-beframe-buffer-list)))
+
 ;; Marginalia: Annotations (file size, mode, etc.) in the minibuffer
 (use-package marginalia
   :ensure t
