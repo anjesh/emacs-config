@@ -146,6 +146,18 @@ Quickly open your current journal files.
 | Go to Line | `M-g g` | Go to a specific line with live preview |
 | Kill Buffer | `M-k k` | Open action menu (`M-k`) then press `k` to kill |
 
+## Frame-Isolated Buffers (Beframe)
+
+Beframe isolates buffers based on the frame they were opened in. When you switch buffers using `C-x b`, you will only see buffers associated with the current frame.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Switch Buffer (Frame) | `C-x b` | Only shows buffers belonging to the current frame (default behavior) |
+| List All Buffers | Type `o` | At the empty `consult-buffer` prompt, type `o` (other buffers) to see all buffers |
+| Switch Frame | `C-x 5 5` | Switch to another frame (or `C-x 5 o` to cycle) |
+| Create New Frame | `C-x 5 2` | Open a new frame with its own isolated buffer list |
+| Close Frame | `C-x 5 0` | Close the current frame |
+
 ## Project Management (Projectile)
 
 | Action | Key Sequence | Note |
