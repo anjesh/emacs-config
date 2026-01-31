@@ -306,6 +306,13 @@ By default, Emacs uses `Ctrl` and `Meta` key combinations for movement.
 | Go to beginning of buffer | `M-<` or `C-c u`  |
 | Go to end of buffer      | `M->` or `C-c d`  |
 
+## Text Editing
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Delete Word Forward | `M-d` | Delete from cursor to end of word |
+| Delete Word Backward | `M-DEL` (Option + Backspace) | Delete from cursor to start of word |
+
 ## Window Management
 
 | Action | Key Sequence | Note |

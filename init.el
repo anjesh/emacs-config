@@ -111,10 +111,16 @@
 (use-package ess
   :ensure t)
 
+(use-package ob-mermaid
+  :ensure t
+  :config
+  (setq ob-mermaid-cli-path "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/mmdc"))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((shell . t)  ;; This enables sh, bash, zsh, etc.
-   (R . t)))
+   (R . t)
+   (mermaid . t)))
 
 ;; Load custom settings from custom.el
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -375,6 +381,19 @@
       (setq org-hide-leading-stars t)
       (font-lock-flush)
       (message "Org Bullets: Hidden (Spaces)")))
+
+  ;; Org Pomodoro
+  (use-package org-pomodoro
+    :ensure t
+    :after org
+    :bind (:map org-mode-map
+                ("C-c C-x C-p" . org-pomodoro))
+    :config
+    ;; Optional: Custom sound files or notification settings
+    ;; (setq org-pomodoro-length 25)
+    ;; (setq org-pomodoro-short-break-length 5)
+    (setq org-pomodoro-play-sounds nil) ;; Silence by default
+    )
 
   ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, and slack
   (setq org-agenda-files 

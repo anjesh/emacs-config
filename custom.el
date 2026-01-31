@@ -17,17 +17,17 @@
      "/Users/anjesh/dev/research/cold-leads-mgmt/automated-lead-generation-plan.org"
      "/Users/anjesh/dev/inbox.org"))
  '(package-selected-packages
-   '(adaptive-wrap agent-shell all-the-icons auth-source-xoauth2
+   '(adaptive-wrap agent-shell all-the-icons auth-source-xoauth2 beframe
 		   calibredb claude-code csv-mode define-word dimmer
 		   eat embark-consult ess evil-collection
 		   exec-path-from-shell gemini-cli gptel hackernews
 		   hnreader iedit impatient-mode leuven-theme
 		   life-calendar marginalia markdown-preview-mode
-		   material-theme mistty neotree nov oauth2 orderless
-		   org-bullets pdf-tools popup qwen-cli slack
-		   solarized-theme treemacs-icons-dired treemacs-magit
-		   treemacs-projectile undo-tree vertico vterm-toggle
-		   wasabi yaml-mode))
+		   material-theme mistty neotree nov oauth2 ob-mermaid
+		   orderless org-bullets org-pomodoro pdf-tools popup
+		   qwen-cli slack solarized-theme treemacs-icons-dired
+		   treemacs-magit treemacs-projectile undo-tree
+		   vertico vterm-toggle wasabi yaml-mode))
  '(package-vc-selected-packages
    '((life-calendar :url
 		    "https://github.com/vshender/emacs-life-calendar")
