@@ -1163,31 +1163,31 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   ;; and change this to 'notifier.
   (setq alert-default-style 'message))
 
-;; (use-package slack
-;;   :ensure t
-;;   :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
-;;   :commands (slack-start)
-;;   :bind (("C-c s s" . slack-start)
-;;          ("C-c s m" . slack-message-embed-mention)
-;;          ("C-c s q" . slack-ws-close)
-;;          ("C-c s r" . slack-select-rooms)  ;; List all channels/DMs with unread status
-;;          ("C-c s u" . slack-select-unread-rooms) ;; List ONLY unread channels/DMs
-;;          ("C-c s t" . slack-all-threads))  ;; View threaded conversations
-;;   :init
-;;   (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
-;;   (setq slack-prefer-current-team t)
-;;   :config
-;;   (setq slack-enable-notification t) ;; Enable notifications via 'alert'
+(use-package slack
+  :ensure t
+  :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
+  :commands (slack-start)
+  :bind (("C-c s s" . slack-start)
+         ("C-c s m" . slack-message-embed-mention)
+         ("C-c s q" . slack-ws-close)
+         ("C-c s r" . slack-select-rooms)  ;; List all channels/DMs with unread status
+         ("C-c s u" . slack-select-unread-rooms) ;; List ONLY unread channels/DMs
+         ("C-c s t" . slack-all-threads))  ;; View threaded conversations
+  :init
+  (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
+  (setq slack-prefer-current-team t)
+  :config
+  (setq slack-enable-notification t) ;; Enable notifications via 'alert'
   
-;;   (slack-register-team
-;;    :name "younginnovations"
-;;    :default t
-;;    :token (auth-source-pick-first-password
-;;            :host "younginnovations.slack.com"
-;;            :user "anjesh@yipl.com.np")
-;;    :cookie (auth-source-pick-first-password
-;;             :host "younginnovations.slack.com"
-;;             :user "anjesh@yipl.com.np^cookie")))
+  (slack-register-team
+   :name "younginnovations"
+   :default t
+   :token (auth-source-pick-first-password
+           :host "younginnovations.slack.com"
+           :user "anjesh@yipl.com.np")
+   :cookie (auth-source-pick-first-password
+            :host "younginnovations.slack.com"
+            :user "anjesh@yipl.com.np^cookie")))
 
 ;; --- Slack Logging & Linking ---
 (with-eval-after-load 'org
