@@ -1163,31 +1163,31 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
   ;; and change this to 'notifier.
   (setq alert-default-style 'message))
 
-(use-package slack
-  :ensure t
-  :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
-  :commands (slack-start)
-  :bind (("C-c s s" . slack-start)
-         ("C-c s m" . slack-message-embed-mention)
-         ("C-c s q" . slack-ws-close)
-         ("C-c s r" . slack-select-rooms)  ;; List all channels/DMs with unread status
-         ("C-c s u" . slack-select-unread-rooms) ;; List ONLY unread channels/DMs
-         ("C-c s t" . slack-all-threads))  ;; View threaded conversations
-  :init
-  (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
-  (setq slack-prefer-current-team t)
-  :config
-  (setq slack-enable-notification t) ;; Enable notifications via 'alert'
+;; (use-package slack
+;;   :ensure t
+;;   :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
+;;   :commands (slack-start)
+;;   :bind (("C-c s s" . slack-start)
+;;          ("C-c s m" . slack-message-embed-mention)
+;;          ("C-c s q" . slack-ws-close)
+;;          ("C-c s r" . slack-select-rooms)  ;; List all channels/DMs with unread status
+;;          ("C-c s u" . slack-select-unread-rooms) ;; List ONLY unread channels/DMs
+;;          ("C-c s t" . slack-all-threads))  ;; View threaded conversations
+;;   :init
+;;   (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
+;;   (setq slack-prefer-current-team t)
+;;   :config
+;;   (setq slack-enable-notification t) ;; Enable notifications via 'alert'
   
-  (slack-register-team
-   :name "younginnovations"
-   :default t
-   :token (auth-source-pick-first-password
-           :host "younginnovations.slack.com"
-           :user "anjesh@yipl.com.np")
-   :cookie (auth-source-pick-first-password
-            :host "younginnovations.slack.com"
-            :user "anjesh@yipl.com.np^cookie")))
+;;   (slack-register-team
+;;    :name "younginnovations"
+;;    :default t
+;;    :token (auth-source-pick-first-password
+;;            :host "younginnovations.slack.com"
+;;            :user "anjesh@yipl.com.np")
+;;    :cookie (auth-source-pick-first-password
+;;             :host "younginnovations.slack.com"
+;;             :user "anjesh@yipl.com.np^cookie")))
 
 ;; --- Slack Logging & Linking ---
 (with-eval-after-load 'org
@@ -1235,6 +1235,52 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 (global-set-key (kbd "C-c s S") 'my/slack-sync-current-team)
 (global-set-key (kbd "C-c s l") 'my/open-latest-slack-log) ;; Keeping this for backward compatibility if needed, or remove if you want to fully switch.
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
+
+;; --- Email Configuration (Gnus + OAuth2) ---
+
+;; Ensure GPG prompts appear in the minibuffer
+(setq epg-pinentry-mode 'loopback)
+
+;; OAuth2 Configuration
+(use-package auth-source-xoauth2
+  :ensure t
+  :config
+  ;; Polyfill: Fix 'wrong-number-of-arguments' error in some oauth2 versions
+  (with-eval-after-load 'oauth2
+    (defun oauth2-compute-id (token-url client-id client-secret &optional scope &rest _ignore)
+      (secure-hash 'sha512 (concat token-url client-id client-secret (or scope "")))))
+
+  ;; Define credentials with the Refresh Token
+  (defvar my-gmail-xoauth2-creds
+    (list :token-url "https://accounts.google.com/o/oauth2/token"
+          :client-id "REDACTED_GOOGLE_OAUTH_CLIENT_ID"
+          :client-secret "REDACTED_GOOGLE_OAUTH_CLIENT_SECRET"
+          :refresh-token "REDACTED_GOOGLE_OAUTH_REFRESH_TOKEN"))
+
+  ;; Tell auth-source-xoauth2 to use these credentials
+  (setq auth-source-xoauth2-creds my-gmail-xoauth2-creds)
+
+  (auth-source-xoauth2-enable))
+
+(setq user-mail-address "anjesh.tuladhar@codingmountain.com"
+      user-full-name "Anjesh")
+
+(setq gnus-select-method
+      '(nnimap "work"
+               (nnimap-address "imap.gmail.com")
+               (nnimap-server-port 993)
+               (nnimap-stream ssl)
+               (nnimap-user "anjesh.tuladhar@codingmountain.com")
+               (nnimap-authenticator xoauth2)))
+
+;; Performance: Don't check for new groups on startup
+(setq gnus-check-new-newsgroups nil)
+
+;; SMTP Settings (Sending)
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-stream-type 'starttls
+      smtpmail-smtp-service 587)
 
 (provide 'init)
 ;;; init.el ends here

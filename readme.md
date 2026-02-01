@@ -407,6 +407,28 @@ Interact with Qwen AI directly from Emacs.
 | Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
 | Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
 
+## Email (Gnus + Gmail)
+
+Gnus is configured to read Gmail using OAuth2.
+
+| Action | Key Sequence | Context | Note |
+| :--- | :--- | :--- | :--- |
+| **Launch Gnus** | `M-x gnus` | Anywhere | Start email client |
+| **Check Mail** | `g` | Group Buffer | Fetch new emails |
+| **Read Mail** | `SPACE` | Group/Summary | The "Magic" key: Select folder, read email, scroll, next email |
+| **View HTML** | `K H` | Article Buffer | View rich HTML content (if blank/messy) |
+| **Compose** | `m` | Any Buffer | Write a new email |
+| **Reply** | `r` / `R` | Summary/Article | Reply (without/with quotes) |
+| **Archive/Move** | `B m` | Summary | Move email to another folder |
+| **Mark Read** | `d` | Summary | Mark email as read |
+| **Subscribe** | `U` | Server Buffer | Toggle subscription to Gmail labels (`^` to open Server buffer) |
+| **Quit** | `q` | Group Buffer | Suspend Gnus (press `Q` to fully quit) |
+
+**Authentication Note:**
+Authentication is handled via `auth-source-xoauth2` with a hardcoded Refresh Token in `init.el`.
+- **Port:** 993 (IMAPS)
+- **User:** anjesh.tuladhar@codingmountain.com
+
 ## Slack Integration (emacs-slack)
 
 | Action | Key Sequence | Note |
