@@ -112,6 +112,23 @@ Emacs uses `pdf-tools` for a high-quality, searchable PDF experience.
 | :--- | :--- | :--- |
 | Toggle Multi-Edit | `C-;` | Highlight text/symbol and press this to edit all occurrences at once |
 
+## Python & LSP (Code Navigation)
+
+Emacs uses `eglot` (built-in) and `python-lsp-server` for IDE-like features.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Go to Definition** | `M-.` | Jump to the source of the function/variable at point |
+| **Go to Definition (Mouse)** | `C-Mouse-1` | **Ctrl + Left Click** to jump to definition |
+| **Go Back** | `M-,` | Return to where you were before jumping |
+| **Auto-completion** | *Automatic* | Suggestions appear as you type (Corfu) |
+| **Select Completion** | `TAB` / `RET` | Accept the highlighted suggestion |
+| **Show Documentation** | `C-c C-d` | View the docstring/help for the symbol at point |
+| **Format Code** | `M-x eglot-format` | Reformat the current buffer using `black` or `autopep8` |
+| **Rename Symbol** | `M-x eglot-rename` | Rename variable/function across the whole project |
+
+**Note:** Ensure `python-lsp-server` is installed: `pip install "python-lsp-server[all]"`
+
 ## Other Useful Commands
 
 | Action | Key Sequence | Note |

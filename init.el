@@ -475,6 +475,24 @@
                       (csv-align-mode 1)
                       (csv-header-line-mode 1))))
 
+;; --- SQLite Management (Built-in) ---
+(use-package sqlite-mode
+  :ensure nil ;; Built-in in Emacs 29+
+  :mode ("\\.sqlite\\'" "\\.sqlite3\\'" "\\.db\\'")
+  :bind ("C-c D o" . sqlite-mode-open-file))
+
+;; --- SQL Management (Multi-Database) ---
+(use-package sql
+  :ensure nil
+  :bind ("C-c D c" . my/sql-connect-preset)
+  :config
+  ;; Load external configuration from lisp/my-sql-config.el
+  (load (expand-file-name "lisp/my-sql-config.el" user-emacs-directory)))
+
+(use-package sql-indent
+  :ensure t
+  :after sql)
+
 ;; Iedit - Edit all occurrences of a symbol/region simultaneously
 (use-package iedit
   :ensure t
@@ -932,7 +950,7 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 (use-package eww
   :ensure nil
   :config
-  (setq eww-search-prefix "https://google.com/search?q=")
+  (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
   (setq eww-download-directory "~/Downloads/")
   (setq eww-form-checkbox-selected-symbol "[X]")
   (setq eww-form-checkbox-symbol "[ ]")
@@ -1143,6 +1161,45 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
    ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
    ("C-c Q d" . qwen-cli-start-in-directory)
    ("C-c Q q" . qwen-cli-kill)))
+
+;; --- Python & LSP Configuration ---
+
+(use-package eglot
+  :ensure nil ;; Built-in in Emacs 29+
+  :hook (python-mode . eglot-ensure)
+  :bind (:map python-mode-map
+              ("C-c C-d" . eldoc)
+              ([C-down-mouse-1] . xref-find-definitions-at-mouse))
+  :config
+  ;; Ensure python-lsp-server is used if installed
+  (add-to-list 'eglot-server-programs
+               '(python-mode . ("pylsp"))))
+
+;; --- Auto-completion (Corfu) ---
+
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode)
+  :custom
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  (corfu-quit-no-match t)        ;; Quit if no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  :config
+  ;; Enable Orderless filtering for Corfu
+  (defun my/corfu-enable-orderless ()
+    (setq-local completion-styles '(orderless basic)))
+  (add-hook 'corfu-mode-hook #'my/corfu-enable-orderless)
+
+  ;; Terminal support for Corfu
+  (use-package corfu-terminal
+    :ensure t
+    :unless (display-graphic-p)
+    :config
+    (corfu-terminal-mode +1)))
 
 ;; --- Life Calendar ---
 (use-package life-calendar
