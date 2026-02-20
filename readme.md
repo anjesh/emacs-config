@@ -431,17 +431,32 @@ Manage and read your RSS feeds inside Emacs.
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
 | **Open Elfeed** | `C-c f f` | Start the RSS reader |
-| **Update Feeds** | `G` (Shift+g) | Fetch new items from all feeds |
+| **Sync & Update** | `C-c f u` | **IMPORTANT**: Syncs `feeds.org` and fetches new articles |
 | **Read Entry** | `RET` (Enter) | Open selected feed entry |
 | **Mark Read** | `r` | Mark entry as read |
-| **Filter View** | `s` | Search/Filter entries (e.g., `@1-week-ago +unread`) |
+| **Filter View** | `s` | Search/Filter entries (e.g., `+elfeed`) |
 | **Quit Elfeed** | `q` | Close the Elfeed buffer |
 
 **Feed Management:**
-Your feeds are managed in `~/.emacs.d/feeds.org`. 
+Your feeds are managed in `~/dev/orgfiles/feeds.org`. 
 - To add a new feed, simply add a link to the RSS/Atom URL under a heading. 
-- Use Org-mode tags to categorize feeds (tags become Elfeed search tags).
-- Refresh Elfeed after making changes to `feeds.org`.
+- **Use `C-c f u`** after adding/removing feeds to apply changes and download new articles.
+
+## Bookmarks & Reading List
+
+Maintain a personal list of websites for review and articles for later reading.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Search Bookmarks** | `C-c f b` | Instantly fuzzy-search all bookmarks and reading items |
+| **Browse (EWW)** | `C-c B` | Open the link at point in Emacs' built-in browser (EWW) |
+| **Capture: Review** | `C-c c b` | Capture URL from clipboard to "Web Reviews" |
+| **Capture: Read** | `C-c c r` | Capture URL from clipboard to "Reading List" (as TODO) |
+
+**Storage:**
+Bookmarks are stored in `~/dev/orgfiles/bookmarks.org`.
+- **Web Reviews:** For sites/tools you want to check out later.
+- **Reading List:** For articles you want to read (marked as TODO).
 
 ## Email (Gnus + Gmail)
 

@@ -433,7 +433,30 @@
            ("w" "Work Task" entry (file+headline "~/dev/orgfiles/work.org" "Work Tasks")
            "* TODO %?\n  %i\n  %a")
            ("p" "Personal Task" entry (file+headline "~/dev/orgfiles/personal.org" "Personal Tasks")
-           "* TODO %?\n  %i\n  %a"))))
+           "* TODO %?\n  %i\n  %a")
+           ("b" "Bookmark Review" entry (file+headline "~/dev/orgfiles/bookmarks.org" "Web Reviews")
+           "* %?\n  %i\n  %c\n  %U")
+           ("r" "Reading List" entry (file+headline "~/dev/orgfiles/bookmarks.org" "Reading List")
+           "* TODO %?\n  %i\n  %c\n  %U"))))
+
+;; Browse with EWW
+(defun my/eww-browse-at-point ()
+  "Browse the URL at point using eww."
+  (interactive)
+  (let ((url (thing-at-point 'url)))
+    (if url
+        (eww url)
+      (message "No URL at point."))))
+
+(global-set-key (kbd "C-c B") 'my/eww-browse-at-point)
+
+;; Bookmark Search
+(defun my/search-bookmarks ()
+  "Search through bookmarks and reading list using consult-org-heading."
+  (interactive)
+  (consult-org-heading nil '("~/dev/orgfiles/bookmarks.org")))
+
+(global-set-key (kbd "C-c f b") 'my/search-bookmarks)
 
 ;; Backup Configuration
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -1300,20 +1323,37 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 
 ;; --- RSS Feed (Elfeed) ---
 
+(setq elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
+(setq rmh-elfeed-org-files (list (expand-file-name "~/dev/orgfiles/feeds.org")))
+
+(defun my/elfeed-sync-and-update ()
+  "Sync elfeed-org feeds and update entries, ensuring everything is loaded."
+  (interactive)
+  (require 'elfeed)
+  (require 'elfeed-org)
+  ;; Ensure DB is initialized before any operations
+  (unless elfeed-db
+    (elfeed-db-ensure))
+  (setq elfeed-feeds nil)
+  (elfeed-org)
+  (elfeed-update)
+  (message "Elfeed: Syncing feeds.org and fetching new articles..."))
+
+(global-set-key (kbd "C-c f u") 'my/elfeed-sync-and-update)
+
 (use-package elfeed
   :ensure t
   :bind ("C-c f f" . elfeed)
   :config
-  (setq elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (setq elfeed-show-entry-switch #'pop-to-buffer)
-  (setq elfeed-search-filter "@1-week-ago +unread "))
+  (setq elfeed-search-filter ""))
 
 (use-package elfeed-org
   :ensure t
-  :after elfeed
   :config
   (elfeed-org)
-  (setq rmh-elfeed-org-files (list (expand-file-name "feeds.org" user-emacs-directory))))
+  :bind (:map elfeed-search-mode-map
+              ("G" . my/elfeed-sync-and-update)))
 
 ;; OAuth2 Configuration
 (use-package auth-source-xoauth2

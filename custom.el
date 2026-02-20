@@ -3,9 +3,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(elfeed-feeds
+   '("https://www.onlinekhabar.com/feed"
+     ("https://simonwillison.net/atom/everything/" tech)))
  '(life-calendar-birthday "1982-02-19")
  '(org-agenda-files
-   '("/Users/anjesh/dev/articles/bookmarks.org"
+   '("/Users/anjesh/dev/orgfiles/bookmarks.org"
      "/Users/anjesh/dev/kings/emerging-tech/agent-resp.org"
      "/Users/anjesh/dev/kings/emerging-tech/notes-old.org"
      "/Users/anjesh/dev/kings/emerging-tech/notes.org"
@@ -21,16 +24,17 @@
  '(package-selected-packages
    '(adaptive-wrap agent-shell all-the-icons auth-source-xoauth2 beframe
 		   calibredb claude-code corfu corfu-terminal csv-mode
-		   define-word dimmer eat embark-consult ess
-		   evil-collection exec-path-from-shell gemini-cli
-		   gptel hackernews hnreader iedit impatient-mode
-		   leuven-theme life-calendar marginalia
-		   markdown-preview-mode material-theme mistty neotree
-		   nov oauth2 ob-mermaid orderless org-bullets
-		   org-pomodoro pdf-tools popup qwen-cli slack
-		   solarized-theme sql-indent treemacs-icons-dired
-		   treemacs-magit treemacs-projectile undo-tree
-		   vertico vterm-toggle wasabi yaml-mode))
+		   define-word dimmer eat elfeed elfeed-org
+		   embark-consult ess evil-collection
+		   exec-path-from-shell gemini-cli gptel hackernews
+		   hnreader iedit impatient-mode leuven-theme
+		   life-calendar marginalia markdown-preview-mode
+		   material-theme mistty neotree nov oauth2 ob-mermaid
+		   orderless org-bullets org-pomodoro pdf-tools popup
+		   qwen-cli slack solarized-theme sql-indent
+		   treemacs-icons-dired treemacs-magit
+		   treemacs-projectile undo-tree vertico vterm-toggle
+		   wasabi yaml-mode))
  '(package-vc-selected-packages
    '((life-calendar :url
 		    "https://github.com/vshender/emacs-life-calendar")
