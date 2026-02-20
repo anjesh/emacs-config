@@ -1,0 +1,13 @@
+#+TITLE: RSS Feeds
+
+* Blogs                                                              :elfeed:
+** [[https://planet.emacslife.com/atom.xml][Emacs Life]]                                                    :emacs:
+** [[https://orgmode.org/index.html][Org Mode]]                                                      :emacs:
+** [[https://karthinks.com/index.xml][Karthinks]]                                                     :emacs:
+** [[https://protesilaos.com/master.xml][Protesilaos Stavrou]]                                           :emacs:
+** [[https://irreal.org/blog/?feed=rss2][Irreal]]                                                        :emacs:
+
+* Tech                                                               :elfeed:
+** [[https://news.ycombinator.com/rss][Hacker News]]                                                   :tech:
+** [[https://www.theverge.com/rss/index.xml][The Verge]]                                                     :tech:
+** [[https://techcrunch.com/feed/][TechCrunch]]                                                    :tech:

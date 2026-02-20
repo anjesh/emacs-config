@@ -1298,6 +1298,23 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 ;; Ensure GPG prompts appear in the minibuffer
 (setq epg-pinentry-mode 'loopback)
 
+;; --- RSS Feed (Elfeed) ---
+
+(use-package elfeed
+  :ensure t
+  :bind ("C-c f f" . elfeed)
+  :config
+  (setq elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
+  (setq elfeed-show-entry-switch #'pop-to-buffer)
+  (setq elfeed-search-filter "@1-week-ago +unread "))
+
+(use-package elfeed-org
+  :ensure t
+  :after elfeed
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list (expand-file-name "feeds.org" user-emacs-directory))))
+
 ;; OAuth2 Configuration
 (use-package auth-source-xoauth2
   :ensure t

@@ -424,6 +424,25 @@ Interact with Qwen AI directly from Emacs.
 | Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
 | Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
 
+## RSS Feed (Elfeed)
+
+Manage and read your RSS feeds inside Emacs.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Open Elfeed** | `C-c f f` | Start the RSS reader |
+| **Update Feeds** | `G` (Shift+g) | Fetch new items from all feeds |
+| **Read Entry** | `RET` (Enter) | Open selected feed entry |
+| **Mark Read** | `r` | Mark entry as read |
+| **Filter View** | `s` | Search/Filter entries (e.g., `@1-week-ago +unread`) |
+| **Quit Elfeed** | `q` | Close the Elfeed buffer |
+
+**Feed Management:**
+Your feeds are managed in `~/.emacs.d/feeds.org`. 
+- To add a new feed, simply add a link to the RSS/Atom URL under a heading. 
+- Use Org-mode tags to categorize feeds (tags become Elfeed search tags).
+- Refresh Elfeed after making changes to `feeds.org`.
+
 ## Email (Gnus + Gmail)
 
 Gnus is configured to read Gmail using OAuth2.
