@@ -424,6 +424,19 @@ Interact with Qwen AI directly from Emacs.
 | Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
 | Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
 
+## Editor Code Assistant (ECA)
+
+A lightweight AI assistant for code.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| Start ECA | `C-c E` | Start the ECA process and open the chat window |
+
+**Quickstart:**
+- Type your prompt after the `>` and press `RET`.
+- Attach context by typing `@` and using auto-completion.
+- ECA will automatically download the backend binary if not found.
+
 ## RSS Feed (Elfeed)
 
 Manage and read your RSS feeds inside Emacs.

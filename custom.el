@@ -24,7 +24,7 @@
  '(package-selected-packages
    '(adaptive-wrap agent-shell all-the-icons auth-source-xoauth2 beframe
 		   calibredb claude-code corfu corfu-terminal csv-mode
-		   define-word dimmer eat elfeed elfeed-org
+		   define-word dimmer eat eca elfeed elfeed-org
 		   embark-consult ess evil-collection
 		   exec-path-from-shell gemini-cli gptel hackernews
 		   hnreader iedit impatient-mode leuven-theme

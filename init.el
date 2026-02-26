@@ -255,6 +255,9 @@
 (use-package projectile
   :ensure t
   :init
+  ;; Avoid writing per-project `.projectile-cache.eld` files.
+  ;; Use in-memory caching for the current Emacs session instead.
+  (setq projectile-enable-caching t)
   (projectile-mode +1)
   :bind (:map projectile-mode-map
               ("C-c p" . projectile-command-map)))
@@ -609,6 +612,41 @@
           (vterm t))
       (message "Could not determine directory."))))
 
+(defun my/open-vterm-here-side ()
+  "Open a *new* vterm in a right side window at the current location.
+
+This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
+*toggle* an existing vterm; it always creates a new vterm buffer." 
+  (interactive)
+  (let ((path (cond
+               ((derived-mode-p 'dired-mode) (dired-current-directory))
+               ((derived-mode-p 'treemacs-mode)
+                (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                                     (ignore-errors
+                                       (treemacs-copy-path-at-point)
+                                       (substring-no-properties (current-kill 0))))))
+                  (if (and node-path (file-exists-p node-path))
+                      (if (file-directory-p node-path)
+                          node-path
+                        (file-name-directory node-path))
+                    nil)))
+               (t (if buffer-file-name
+                      (file-name-directory buffer-file-name)
+                    default-directory)))))
+    (if (and path (not (string-empty-p path)))
+        (let ((default-directory path))
+          (require 'vterm)
+          ;; Create a new session without stealing the Treemacs window...
+          (let* ((buf (vterm--internal #'ignore t))
+                 ;; ...then show it on the right.
+                 (win (display-buffer-in-side-window
+                       buf
+                       '((side . right)
+                         (window-width . 0.3)))))
+            (select-window win)))
+      (message "Could not determine directory."))))
+
 (defun my/open-eshell-here ()
   "Open eshell in the current buffer's directory, dired dir, or treemacs node."
   (interactive)
@@ -642,6 +680,7 @@
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
   (define-key treemacs-mode-map (kbd "v") #'my/open-vterm-here)
+  (define-key treemacs-mode-map (kbd "V") #'my/open-vterm-here-side)
   (define-key treemacs-mode-map (kbd "E") #'my/open-eshell-here)
   (define-key treemacs-mode-map (kbd "C") #'my/treemacs-copy-path-to-clipboard)
   (define-key treemacs-mode-map (kbd "L") #'org-store-link))
@@ -1184,6 +1223,48 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
    ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
    ("C-c Q d" . qwen-cli-start-in-directory)
    ("C-c Q q" . qwen-cli-kill)))
+
+;; Editor Code Assistant (ECA)
+;; Prefer starting ECA from the directory/file at point in Treemacs,
+;; rather than always using the current project root.
+(defun my/eca--treemacs-dir-at-point ()
+  "Return the Treemacs node directory at point, or nil."
+  (when (and (derived-mode-p 'treemacs-mode)
+             (fboundp 'treemacs-node-at-point)
+             (fboundp 'treemacs-button-get))
+    (when-let* ((btn (treemacs-node-at-point))
+                (path (treemacs-button-get btn :path)))
+      (let ((dir (if (file-directory-p path)
+                     path
+                   (file-name-directory path))))
+        (when dir
+          (file-name-as-directory (expand-file-name dir)))))))
+
+(defun my/eca-find-root-for-buffer ()
+  "Root finder for ECA.
+
+If invoked from Treemacs, use the node at point.
+Otherwise, fall back to ECA's default root discovery (project root, etc.)."
+  (or (my/eca--treemacs-dir-at-point)
+      (and (fboundp 'eca-find-root-for-buffer)
+           (eca-find-root-for-buffer))
+      (if-let ((f (buffer-file-name)))
+          (file-name-directory f)
+        default-directory)))
+
+(defun my/eca (&optional arg)
+  "Start ECA with `default-directory' aligned to the chosen workspace root."
+  (interactive "P")
+  (let* ((root (funcall eca-find-root-for-buffer-function))
+         (default-directory (file-name-as-directory (expand-file-name root))))
+    (eca arg)))
+
+(use-package eca
+  :vc (:url "https://github.com/editor-code-assistant/eca-emacs" :rev :newest)
+  :custom
+  (eca-find-root-for-buffer-function #'my/eca-find-root-for-buffer)
+  :bind
+  (("C-c E" . my/eca)))
 
 ;; --- Python & LSP Configuration ---
 
