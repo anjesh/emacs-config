@@ -1153,6 +1153,20 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
             (file-name-directory buffer-file-name)
           default-directory))))
 
+  (defun my/agent-shell-dwim (&optional _arg)
+    "Start `agent-shell` using context directory when available.
+
+When invoked from Treemacs/Dired/a file buffer, force agent-shell's CWD to that
+location and start a *new* agent-shell session so the directory takes effect.
+
+Otherwise, fall back to regular `agent-shell` behavior."
+    (interactive "P")
+    (let ((ctx (my/get-agent-shell-context-path)))
+      (if (and ctx (file-directory-p ctx))
+          (let ((my/agent-shell-force-cwd (file-name-as-directory (expand-file-name ctx))))
+            (agent-shell t))
+        (call-interactively #'agent-shell))))
+
   (defun my/agent-shell-start-in-directory (dir)
     "Start agent-shell in a specific directory DIR."
     (interactive
@@ -1160,12 +1174,42 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
     (let ((my/agent-shell-force-cwd (expand-file-name dir)))
       (agent-shell t)))
 
+  (defun my/agent-shell-quit (&optional all)
+    "Stop agent-shell.
+
+By default, kill all agent-shell sessions belonging to the current project.
+With prefix arg ALL (C-u), kill *all* agent-shell sessions." 
+    (interactive "P")
+    (require 'agent-shell)
+    (let* ((shell-bufs (if all
+                           (agent-shell-buffers)
+                         (agent-shell-project-buffers)))
+           (killed 0))
+      (dolist (buf shell-bufs)
+        (when (buffer-live-p buf)
+          (with-current-buffer buf
+            (when (derived-mode-p 'agent-shell-mode)
+              (ignore-errors (agent-shell--clean-up))))
+          (ignore-errors (kill-buffer buf))
+          (setq killed (1+ killed))))
+      ;; Best-effort: clean up any orphaned viewport buffers.
+      (dolist (buf (buffer-list))
+        (when (buffer-live-p buf)
+          (with-current-buffer buf
+            (when (or (derived-mode-p 'agent-shell-viewport-view-mode)
+                      (derived-mode-p 'agent-shell-viewport-edit-mode))
+              (ignore-errors (kill-buffer buf))))))
+      (message "agent-shell: stopped %d session(s)%s"
+               killed
+               (if all " (all projects)" ""))))
+
   ;; Keybindings: Make C-c A a prefix map
   (global-unset-key (kbd "C-c A"))
   (define-prefix-command 'my/agent-shell-map)
   (global-set-key (kbd "C-c A") 'my/agent-shell-map)
-  (define-key my/agent-shell-map (kbd "A") 'agent-shell)
-  (define-key my/agent-shell-map (kbd "d") 'my/agent-shell-start-in-directory))
+  (define-key my/agent-shell-map (kbd "A") 'my/agent-shell-dwim)
+  (define-key my/agent-shell-map (kbd "d") 'my/agent-shell-start-in-directory)
+  (define-key my/agent-shell-map (kbd "q") 'my/agent-shell-quit))
 
 ;; (require 'agent-shell) ;; Removed to prevent startup error if missing
 
@@ -1324,6 +1368,16 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
   ;; and change this to 'notifier.
   (setq alert-default-style 'message))
 
+(defun auth-source-pick-first-password (&rest spec)
+  "Return the first password matching SPEC from auth-source."
+  (let ((res (car (apply #'auth-source-search spec))))
+    (if res
+        (let ((secret (plist-get res :secret)))
+          (if (functionp secret)
+              (funcall secret)
+            secret))
+      (error "No password found for %S" spec))))
+
 (use-package slack
   :ensure t
   :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
@@ -1394,7 +1448,8 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
 
 (global-set-key (kbd "C-c s D") 'my/slack-show-logs)
 (global-set-key (kbd "C-c s S") 'my/slack-sync-current-team)
-(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log) ;; Keeping this for backward compatibility if needed, or remove if you want to fully switch.
+(global-set-key (kbd "C-c s C") 'my/slack-manage-channels)
+(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
 
 ;; --- Email Configuration (Gnus + OAuth2) ---
