@@ -521,6 +521,21 @@ You can now manage which channels are tracked in your local database.
 
 **Notifications:** Slack notifications are enabled via the `alert` package and will appear in the minibuffer by default.
 
+## WhatsApp Integration (Wasabi)
+
+A native Emacs interface for WhatsApp, powered by `wuzapi`.
+
+| Action | Key Sequence | Note |
+| :--- | :--- | :--- |
+| **Start Wasabi** | `C-c w a` | Open the WhatsApp interface (will prompt for QR code if not linked) |
+| Next Chat | `n` | Go to the next chat in the list |
+| Previous Chat | `p` | Go to the previous chat in the list |
+| Open Chat | `RET` | Open the selected chat buffer |
+| Send Message | `RET` | Inside a chat buffer, send the message typed in the prompt |
+| Refresh | `g` | Refresh the chat list |
+
+**Note:** Ensure `wuzapi` is installed: `brew install asternic/wuzapi/wuzapi`
+
 ## Configuration Note
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).

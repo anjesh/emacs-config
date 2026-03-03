@@ -1452,6 +1452,17 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
 (global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
 
+;; --- WhatsApp Integration (Wasabi) ---
+;; Requires: brew install asternic/wuzapi/wuzapi
+(use-package wasabi
+  :ensure nil ;; Already installed via package-vc
+  :bind (("C-c w a" . wasabi))
+  :config
+  ;; Ensure the wasabi data directory is set correctly
+  (setq wasabi-data-dir (expand-file-name "wasabi" user-emacs-directory))
+  ;; Use a wrapper to redirect stderr, preventing info logs from being treated as errors
+  (setq wasabi-wuzapi-command `("/Users/anjesh/bin/wuzapi-wrapper" "-mode=stdio" ,(format "-datadir=%s" wasabi-data-dir))))
+
 ;; --- Email Configuration (Gnus + OAuth2) ---
 
 ;; Ensure GPG prompts appear in the minibuffer
