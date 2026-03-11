@@ -398,16 +398,17 @@
     (setq org-pomodoro-play-sounds nil) ;; Silence by default
     )
 
-  ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, and slack
+  ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, slack, research, and kings
   (setq org-agenda-files 
         (seq-filter 
          (lambda (file)
-           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\|slack\\)/" file)))
+           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\|slack\\|research\\|kings\\)/" file)))
          (directory-files-recursively "~/dev" "\\.org$")))
   
   ;; Custom TODO keywords
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "DOING(i!)" "WAITING(w@/!)" "FUTURE(f)" "|" "DONE(d@)" "CANCELLED(c@/!)")))
+        '((sequence "TODO(t)" "DOING(i@/!)" "WAITING(w@/!)" "FUTURE(f)" "|" "DONE(d@)" "CANCELLED(c@/!)")))
+  (setq org-log-into-drawer t)
 
   ;; Custom TODO keyword faces
   (setq org-todo-keyword-faces
