@@ -120,6 +120,7 @@
  'org-babel-load-languages
  '((shell . t)  ;; This enables sh, bash, zsh, etc.
    (R . t)
+   (python .)
    (mermaid . t)))
 
 ;; Load custom settings from custom.el
