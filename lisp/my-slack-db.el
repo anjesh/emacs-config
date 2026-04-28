@@ -339,7 +339,7 @@ Prioritizes unread rooms and only updates rooms with new activity compared to DB
         SELECT datetime(m.ts, 'unixepoch', 'localtime'), m.sender_name, m.text, m.room_id, m.team_id, c.type_id, date(m.ts, 'unixepoch', 'localtime')
         FROM messages m 
         LEFT JOIN channels c ON m.team_id = c.team_id AND m.room_id = c.room_id 
-        ORDER BY m.ts DESC LIMIT 1000"))
+        ORDER BY m.ts DESC LIMIT 100"))
             (current-date nil))
         (dolist (row rows)
           (let* ((datetime (nth 0 row))

@@ -40,6 +40,7 @@ When using `C-x C-f` (Find file) or other file prompts with Vertico:
 | Mark/Unmark File | `M-m` then `m` | Mark or unmark the file at point for bulk actions. |
 | Move Marked Files | `M-m` then `o` | Move all currently marked files to a different folder. |
 | Open Externally | `O` (Shift+o) | Open selected file in default system app (e.g., Preview) |
+| Open in Eat | `t` | Open internal Eat terminal in selected directory |
 | Open in vterm | `v` | Open internal vterm in selected directory |
 | Open in Eshell | `E` (Shift+e) | Open internal Eshell in selected directory |
 | Open in Ghostty | `T` (Shift+t) | Open Ghostty terminal in selected directory |
@@ -268,13 +269,15 @@ To see what you did on a specific day (even if not scheduled):
 | Correct Word | `C-c s c` | Show suggestions for word at cursor |
 | Correct Word (Alt) | `M-$` | Standard Emacs shortcut for suggestions |
 
-## Terminal (Vterm & Mistty)
+## Terminal (Eat, Vterm & Mistty)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Open New vterm | `C-c t t` | Open a new internal vterm in current directory |
+| Open Eat | `C-c t t` | Open a new Eat terminal in current directory |
+| Open New vterm | `C-c t v` | Open a new internal vterm in current directory |
+| Toggle vterm Side Window | `C-c t V` | Toggle the side-window vterm terminal |
 | Open New Eshell | `C-c t e` | Open a new internal Eshell in current directory |
-| Toggle Terminal | `C-c t v` | Open/Close a fast terminal in a split window (Vterm Toggle) |
+| Toggle Terminal | `C-c t V` | Open/Close a fast terminal in a split window (Vterm Toggle) |
 | Open Mistty | `C-c t m` | Open Mistty terminal (better shell integration) |
 
 ## Copying & Pasting

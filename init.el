@@ -1,4 +1,3 @@
-
 ;;; init.el --- User configuration file  -*- lexical-binding: t; -*-
 
 ;; Enable Syntax Highlighting Early
@@ -200,7 +199,19 @@
       (`(t . t)
        (treemacs-git-mode 'deferred))
       (`(t . _)
-       (treemacs-git-mode 'simple))))
+       (treemacs-git-mode 'simple)))
+
+  (defun my/treemacs-kill-workspace-buffers (workspace)
+    "Kill file-visiting buffers belonging to deleted Treemacs WORKSPACE."
+    (dolist (project (treemacs-workspace->projects workspace))
+      (let ((project-path (file-truename (treemacs-project->path project))))
+        (dolist (buffer (buffer-list))
+          (when-let ((buffer-path (buffer-file-name buffer)))
+            (when (file-in-directory-p (file-truename buffer-path) project-path)
+              (kill-buffer buffer)))))))
+
+  (add-hook 'treemacs-delete-workspace-functions
+            #'my/treemacs-kill-workspace-buffers))
   :bind
   (:map global-map
         ("M-0"       . treemacs-select-window)
@@ -590,25 +601,39 @@
           (start-process "open-ghostty" nil "open" "-a" "Ghostty" path))
       (message "Could not determine directory."))))
 
+(defun my/current-path-for-terminal ()
+  "Return a sensible directory for launching a terminal from the current context."
+  (interactive)
+  (cond
+   ((derived-mode-p 'dired-mode) (dired-current-directory))
+   ((derived-mode-p 'treemacs-mode)
+    (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
+                         (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
+                         (ignore-errors
+                           (treemacs-copy-path-at-point)
+                           (substring-no-properties (current-kill 0))))))
+      (when (and node-path (file-exists-p node-path))
+        (if (file-directory-p node-path)
+            node-path
+          (file-name-directory node-path)))))
+   (t (if buffer-file-name
+          (file-name-directory buffer-file-name)
+        default-directory))))
+
+(defun my/open-eat-here ()
+  "Open Eat in the current buffer's directory, dired dir, or treemacs node."
+  (interactive)
+  (let ((path (my/current-path-for-terminal)))
+    (if (and path (not (string-empty-p path)))
+        (let ((default-directory path))
+          (require 'eat)
+          (eat))
+      (message "Could not determine directory."))))
+
 (defun my/open-vterm-here ()
   "Open vterm in the current buffer's directory, dired dir, or treemacs node."
   (interactive)
-  (let ((path (cond
-               ((derived-mode-p 'dired-mode) (dired-current-directory))
-               ((derived-mode-p 'treemacs-mode)
-                (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                                     (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                                     (ignore-errors
-                                       (treemacs-copy-path-at-point)
-                                       (substring-no-properties (current-kill 0))))))
-                  (if (and node-path (file-exists-p node-path))
-                      (if (file-directory-p node-path)
-                          node-path
-                        (file-name-directory node-path))
-                    nil)))
-               (t (if buffer-file-name
-                      (file-name-directory buffer-file-name)
-                    default-directory)))))
+  (let ((path (my/current-path-for-terminal)))
     (if (and path (not (string-empty-p path)))
         (let ((default-directory path))
           (vterm t))
@@ -620,22 +645,7 @@
 This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
 *toggle* an existing vterm; it always creates a new vterm buffer." 
   (interactive)
-  (let ((path (cond
-               ((derived-mode-p 'dired-mode) (dired-current-directory))
-               ((derived-mode-p 'treemacs-mode)
-                (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                                     (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                                     (ignore-errors
-                                       (treemacs-copy-path-at-point)
-                                       (substring-no-properties (current-kill 0))))))
-                  (if (and node-path (file-exists-p node-path))
-                      (if (file-directory-p node-path)
-                          node-path
-                        (file-name-directory node-path))
-                    nil)))
-               (t (if buffer-file-name
-                      (file-name-directory buffer-file-name)
-                    default-directory)))))
+  (let ((path (my/current-path-for-terminal)))
     (if (and path (not (string-empty-p path)))
         (let ((default-directory path))
           (require 'vterm)
@@ -674,13 +684,15 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
       (message "Could not determine directory."))))
 
 (global-set-key (kbd "C-c t g") 'my/open-ghostty-here)
-(global-set-key (kbd "C-c t t") 'my/open-vterm-here)
+(global-set-key (kbd "C-c t t") 'my/open-eat-here)
+(global-set-key (kbd "C-c t v") 'my/open-vterm-here)
 (global-set-key (kbd "C-c t e") 'my/open-eshell-here)
 
 ;; Bind 'O' in Treemacs to open externally, 'T' to open Ghostty, and 'C' to copy path
 (with-eval-after-load 'treemacs
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
+  (define-key treemacs-mode-map (kbd "t") #'my/open-eat-here)
   (define-key treemacs-mode-map (kbd "v") #'my/open-vterm-here)
   (define-key treemacs-mode-map (kbd "V") #'my/open-vterm-here-side)
   (define-key treemacs-mode-map (kbd "E") #'my/open-eshell-here)
@@ -713,12 +725,16 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
   :bind (:map vterm-mode-map
               ("C-q" . vterm-send-next-key))
   :config
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (visual-line-mode -1)
+              (setq truncate-lines t)))
   (setq vterm-max-scrollback 10000))
 
 ;; Vterm Toggle (Pop up terminal)
 (use-package vterm-toggle
   :ensure t
-  :bind ("C-c t v" . vterm-toggle) ;; Changed from C-c t to C-c t v
+  :bind ("C-c t V" . vterm-toggle)
   :config
   (setq vterm-toggle-fullscreen-p nil) ;; Open in split, not fullscreen
   (add-to-list 'display-buffer-alist
@@ -729,7 +745,7 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
                            (string-prefix-p "vterm" (buffer-name buffer))))))
                  (display-buffer-in-side-window)
                  (side . right)
-                 (window-width . 0.3))))
+                 (window-width . 0.4))))
 
 ;; Mistty Configuration (Alternative to Vterm with better shell integration)
 (use-package mistty
@@ -884,6 +900,14 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
 (global-set-key (kbd "C-c j m") 'my/open-monthly-journal)
 (global-set-key (kbd "C-c j n") 'my/insert-daily-journal-entry) ;; New Entry Shortcut
 ;; --- Ebook Reading Configuration ---
+
+;; One-word-at-a-time speed-reading mode.
+(use-package spray
+  :ensure t
+  :bind ("<f6>" . spray-mode)
+  :config
+  (setq spray-wpm 420
+        spray-save-point t))
 
 ;; nov.el - EPUB Reader
 (use-package nov
@@ -1044,7 +1068,40 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
 (use-package hackernews
   :ensure t
   :config
-  (setq hackernews-default-browser 'eww-browse-url) ;; Open links in EWW (inside Emacs)
+  (defvar my/hackernews-content-window nil
+    "Reusable window for displaying Hacker News stories and comments.")
+
+  (defun my/hackernews--ensure-content-window ()
+    "Return a reusable window for Hacker News content."
+    (cond
+     ((and (window-live-p my/hackernews-content-window)
+           (eq (window-frame my/hackernews-content-window) (selected-frame))
+           (not (eq my/hackernews-content-window (selected-window))))
+      my/hackernews-content-window)
+     ((one-window-p t)
+      (setq my/hackernews-content-window (split-window-right)))
+     (t
+      (setq my/hackernews-content-window
+            (or (window-in-direction 'right)
+                (window-in-direction 'below)
+                (next-window (selected-window) 'no-minibuf))))))
+
+  (defun my/hackernews-open-url (url)
+    "Open URL in a reusable split window and keep focus on Hacker News."
+    (interactive "sURL: ")
+    (unless (and url (string-prefix-p "http" url))
+      (user-error "No URL found at point"))
+    (save-selected-window
+      (select-window (my/hackernews--ensure-content-window))
+      (eww-browse-url url)))
+
+  (defun my/hackernews-browse-url-action (button)
+    "Open BUTTON's URL in the reusable Hacker News content window."
+    (hackernews--visit button #'my/hackernews-open-url))
+
+  (setq hackernews-internal-browser-function #'my/hackernews-open-url)
+  (button-type-put 'hackernews-link 'action #'my/hackernews-browse-url-action)
+  (button-type-put 'hackernews-comment-count 'action #'my/hackernews-browse-url-action)
   
   (defun my/hackernews-copy-url ()
     "Copy the URL of the Hacker News item at point."
@@ -1057,14 +1114,14 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
         (message "No URL found at point."))))
   
   (defun my/hackernews-open-comments ()
-    "Jump to the 'comments' button and open it in EWW."
+    "Jump to the 'comments' button and open it in the Hacker News split window."
     (interactive)
     (save-excursion
       (end-of-line)
       (if (search-backward "comments" (line-beginning-position) t)
           (let ((url (get-text-property (point) 'help-echo)))
             (if url
-                (eww-browse-url url)
+                (my/hackernews-open-url url)
               (message "No URL found for comments.")))
         (message "No comments link found on this line."))))
 
@@ -1075,9 +1132,25 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
         ("c" . my/hackernews-open-comments)))
 
 ;; --- Gemini CLI Integration ---
+(defun my/eat-send-C-h ()
+  "Send a literal C-h to Eat.
+
+This makes macOS Delete/backspace behave reliably in Eat semi-char mode,
+even when the terminal or shell disagrees about DEL vs BS."
+  (interactive)
+  (eat-self-input 1 ?\C-h))
+
 (use-package eat
   :ensure t
   :config
+  ;; Use Emacs line editing at shell prompts instead of terminal-native
+  ;; prompt editing, which is more reliable on macOS.
+  (setq eat-enable-auto-line-mode t)
+  ;; On macOS, Delete/backspace handling in terminal apps is often
+  ;; inconsistent.  Force these keys to send C-h in semi-char mode.
+  (define-key eat-semi-char-mode-map [backspace] #'my/eat-send-C-h)
+  (define-key eat-semi-char-mode-map [delete] #'my/eat-send-C-h)
+  (define-key eat-semi-char-mode-map [deletechar] #'my/eat-send-C-h)
   (add-hook 'eat-mode-hook
             (lambda ()
               (display-line-numbers-mode -1)
@@ -1129,12 +1202,33 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
         (agent-shell-google-make-authentication :login t))
 
   ;; Custom CWD logic
-  (defvar my/agent-shell-force-cwd nil
-    "If non-nil, force `agent-shell-cwd` to return this path.")
+  (defvar-local my/agent-shell-buffer-cwd nil
+    "Buffer-local working directory override for `agent-shell`.")
 
-  (advice-add 'agent-shell-cwd :around
-              (lambda (orig-fun &rest args)
-                (or my/agent-shell-force-cwd (apply orig-fun args))))
+  (defun my/agent-shell--selected-config ()
+    "Return the agent-shell config to use for a new session."
+    (or agent-shell-preferred-agent-config
+        (agent-shell-select-config :prompt "Start new agent: ")
+        (error "No agent config found")))
+
+  (defun my/agent-shell--set-buffer-cwd (shell-buffer dir)
+    "Persist DIR as cwd for SHELL-BUFFER."
+    (with-current-buffer shell-buffer
+      (setq-local my/agent-shell-buffer-cwd dir)
+      (setq-local default-directory dir)
+      (setq-local agent-shell-cwd-function
+                  (lambda ()
+                    my/agent-shell-buffer-cwd))))
+
+  (defun my/agent-shell--start-at-directory (dir)
+    "Start a new agent-shell session rooted at DIR."
+    (let* ((dir (file-name-as-directory (expand-file-name dir)))
+           (default-directory dir)
+           (agent-shell-cwd-function (lambda () dir))
+           (shell-buffer (agent-shell-start
+                          :config (my/agent-shell--selected-config))))
+      (my/agent-shell--set-buffer-cwd shell-buffer dir)
+      shell-buffer))
 
   (defun my/get-agent-shell-context-path ()
     "Get path from treemacs, dired, or buffer for agent-shell."
@@ -1165,16 +1259,15 @@ Otherwise, fall back to regular `agent-shell` behavior."
     (interactive "P")
     (let ((ctx (my/get-agent-shell-context-path)))
       (if (and ctx (file-directory-p ctx))
-          (let ((my/agent-shell-force-cwd (file-name-as-directory (expand-file-name ctx))))
-            (agent-shell t))
+          (my/agent-shell--start-at-directory ctx)
         (call-interactively #'agent-shell))))
 
   (defun my/agent-shell-start-in-directory (dir)
     "Start agent-shell in a specific directory DIR."
     (interactive
      (list (read-directory-name "Agent Shell in directory: " (my/get-agent-shell-context-path))))
-    (let ((my/agent-shell-force-cwd (expand-file-name dir)))
-      (agent-shell t)))
+    ;; Start directly to avoid DWIM buffer reuse interfering with the chosen CWD.
+    (my/agent-shell--start-at-directory dir))
 
   (defun my/agent-shell-quit (&optional all)
     "Stop agent-shell.
@@ -1227,7 +1320,7 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
   :ensure t
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   :config
-  (setq claude-code-terminal-backend 'vterm)
+  (setq claude-code-terminal-backend 'eat)
   (setq claude-code-optimize-window-resize nil)
   (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
   (claude-code-mode)
@@ -1251,7 +1344,7 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
   :ensure t
   :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
   :config
-  (setq qwen-cli-terminal-backend 'vterm)
+  (setq qwen-cli-terminal-backend 'eat)
   (setq qwen-cli-optimize-window-resize nil)
   (setq qwen-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/qwen")
   (qwen-cli-mode)
@@ -1311,6 +1404,14 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
   (eca-find-root-for-buffer-function #'my/eca-find-root-for-buffer)
   :bind
   (("C-c E" . my/eca)))
+
+;; --- AI Code Interface ---
+(use-package ai-code
+  :ensure t
+  :bind (("C-c i" . ai-code-menu))
+  :config
+  ;; Set your preferred backend (e.g., 'claude-code, 'gemini, 'codex, 'aider)
+  (ai-code-set-backend 'gemini))
 
 ;; --- Python & LSP Configuration ---
 
