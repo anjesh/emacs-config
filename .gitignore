@@ -9,6 +9,7 @@ transient/
 .#*
 .DS_Store
 bookmarks
+custom.el
 projectile-bookmarks.eld
 nov-places
 projects
