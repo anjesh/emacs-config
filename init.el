@@ -206,7 +206,7 @@
     (dolist (project (treemacs-workspace->projects workspace))
       (let ((project-path (file-truename (treemacs-project->path project))))
         (dolist (buffer (buffer-list))
-          (when-let ((buffer-path (buffer-file-name buffer)))
+          (when-let* ((buffer-path (buffer-file-name buffer)))
             (when (file-in-directory-p (file-truename buffer-path) project-path)
               (kill-buffer buffer)))))))
 
@@ -1387,7 +1387,7 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
   (or (my/eca--treemacs-dir-at-point)
       (and (fboundp 'eca-find-root-for-buffer)
            (eca-find-root-for-buffer))
-      (if-let ((f (buffer-file-name)))
+      (if-let* ((f (buffer-file-name)))
           (file-name-directory f)
         default-directory)))
 

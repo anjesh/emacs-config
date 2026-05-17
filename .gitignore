@@ -25,3 +25,7 @@ var/
 /.authinfo
 /eshell/
 /.agent-shell/
+/.ai.code.files/
+/games/
+/elfeed/
+/agent/
