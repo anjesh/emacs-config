@@ -1545,7 +1545,8 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
   ;; Terminal support for Corfu
   (use-package corfu-terminal
     :ensure t
-    :unless (display-graphic-p)
+    :if (and (not (display-graphic-p))
+             (< emacs-major-version 31))
     :config
     (corfu-terminal-mode +1)))
 
