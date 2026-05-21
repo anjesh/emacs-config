@@ -29,3 +29,5 @@ var/
 /games/
 /elfeed/
 /agent/
+/eca/
+oauth2.plstore

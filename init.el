@@ -201,17 +201,114 @@
       (`(t . _)
        (treemacs-git-mode 'simple)))
 
+  (defun my/treemacs--buffer-path (buffer)
+    "Return BUFFER's relevant workspace path, if any."
+    (with-current-buffer buffer
+      (or (and-let* ((file (buffer-file-name (or (buffer-base-buffer) buffer))))
+            (ignore-errors (file-truename file)))
+          (and default-directory
+               (ignore-errors (file-truename default-directory))))))
+
+  (defun my/treemacs-workspace-project-paths (workspace)
+    "Return normalized project paths for Treemacs WORKSPACE."
+    (mapcar (lambda (project)
+              (file-name-as-directory
+               (file-truename (treemacs-project->path project))))
+            (treemacs-workspace->projects workspace)))
+
+  (defun my/treemacs-workspace-buffers (workspace)
+    "Return buffers associated with Treemacs WORKSPACE."
+    (let* ((frames (my/treemacs-frames-for-workspace workspace))
+           (project-paths (my/treemacs-workspace-project-paths workspace))
+           buffers)
+      (dolist (frame frames)
+        (dolist (buffer (if (fboundp 'beframe-buffer-list)
+                            (beframe-buffer-list frame)
+                          (mapcar #'window-buffer (window-list frame 'no-minibuf frame))))
+          (when (buffer-live-p buffer)
+            (push buffer buffers))))
+      (dolist (buffer (buffer-list))
+        (when-let* ((buffer-path (my/treemacs--buffer-path buffer)))
+          (when (seq-some (lambda (project-path)
+                            (file-in-directory-p buffer-path project-path))
+                          project-paths)
+            (push buffer buffers))))
+      (delq nil (delete-dups buffers))))
+
   (defun my/treemacs-kill-workspace-buffers (workspace)
-    "Kill file-visiting buffers belonging to deleted Treemacs WORKSPACE."
-    (dolist (project (treemacs-workspace->projects workspace))
-      (let ((project-path (file-truename (treemacs-project->path project))))
-        (dolist (buffer (buffer-list))
-          (when-let* ((buffer-path (buffer-file-name buffer)))
-            (when (file-in-directory-p (file-truename buffer-path) project-path)
-              (kill-buffer buffer)))))))
+    "Kill buffers associated with Treemacs WORKSPACE.
+
+Buffers still displayed in non-workspace frames are preserved."
+    (let* ((target-workspace (or workspace (treemacs-current-workspace)))
+           (frames (my/treemacs-frames-for-workspace target-workspace))
+           (killed 0))
+      (dolist (buffer (my/treemacs-workspace-buffers target-workspace))
+        (when (and (buffer-live-p buffer)
+                   (not (seq-some
+                         (lambda (window)
+                           (not (memq (window-frame window) frames)))
+                         (get-buffer-window-list buffer nil t))))
+          (kill-buffer buffer)
+          (setq killed (1+ killed))))
+      killed))
+
+  (defun my/treemacs-delete-frames-for-workspace (&optional workspace)
+    "Delete all frames assigned to Treemacs WORKSPACE."
+    (interactive
+     (list (treemacs--select-workspace-by-name)))
+    (let* ((target-workspace (or workspace (treemacs-current-workspace)))
+           (frames (my/treemacs-frames-for-workspace target-workspace))
+           (killed (my/treemacs-kill-workspace-buffers target-workspace))
+           (deleted 0))
+      (dolist (frame frames)
+        (when (frame-live-p frame)
+          (delete-frame frame)
+          (setq deleted (1+ deleted))))
+      (when (called-interactively-p 'interactive)
+        (message "Deleted %d frame(s) and killed %d buffer(s) for Treemacs workspace %s."
+                 deleted
+                 killed
+                 (treemacs-workspace->name target-workspace)))))
+
+  (defun my/treemacs-frames-for-workspace (&optional workspace)
+    "Return live frames associated with Treemacs WORKSPACE."
+    (let ((target-workspace (or workspace (treemacs-current-workspace))))
+      (delq nil
+            (mapcar
+             (lambda (entry)
+               (let ((frame (car entry))
+                     (shelf (cdr entry)))
+                 (when (and (frame-live-p frame)
+                            (eq (treemacs-scope-shelf->workspace shelf)
+                                target-workspace))
+                   frame)))
+             (treemacs--scope-store)))))
+
+  (defun my/treemacs-list-frames-for-workspace (&optional workspace)
+    "Display frames associated with Treemacs WORKSPACE."
+    (interactive
+     (list (treemacs--select-workspace-by-name)))
+    (let* ((target-workspace (or workspace (treemacs-current-workspace)))
+           (frames (my/treemacs-frames-for-workspace target-workspace))
+           (buffer (get-buffer-create "*Treemacs Workspace Frames*")))
+      (with-current-buffer buffer
+        (erase-buffer)
+        (insert (format "Workspace: %s\nFrames: %d\n\n"
+                        (treemacs-workspace->name target-workspace)
+                        (length frames)))
+        (if frames
+            (dolist (frame frames)
+              (insert
+               (format "- %s  name=%S  terminal=%S\n"
+                       frame
+                       (frame-parameter frame 'name)
+                       (frame-terminal frame))))
+          (insert "No live frames are currently associated with this workspace.\n")))
+      (display-buffer buffer)))
 
   (add-hook 'treemacs-delete-workspace-functions
-            #'my/treemacs-kill-workspace-buffers))
+            #'my/treemacs-delete-frames-for-workspace)
+  )
   :bind
   (:map global-map
         ("M-0"       . treemacs-select-window)
