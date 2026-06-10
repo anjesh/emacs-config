@@ -327,6 +327,9 @@ Buffers still displayed in non-workspace frames are preserved."
   :ensure t
   :config (treemacs-icons-dired-mode))
 
+(use-package magit
+  :ensure t)
+
 (use-package treemacs-magit
   :after (treemacs magit)
   :ensure t)
@@ -815,6 +818,9 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
           (kill-new path)
           (message "Copied path to clipboard: %s" path))
       (message "Could not determine path to copy."))))
+
+(use-package ghostel
+  :ensure t)
 
 ;; Vterm Configuration (Requires cmake & libtool)
 (use-package vterm
