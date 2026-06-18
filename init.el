@@ -120,13 +120,10 @@
 
 (require 'my-terminals)
 (require 'my-agent-shell)
+(require 'my-ess)
 
 (use-package popup
   :ensure t)
-
-(use-package ess
-  :ensure t
-  :defer t)
 
 (use-package yaml-mode
   :ensure t
