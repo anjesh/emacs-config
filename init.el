@@ -311,33 +311,7 @@
 ;; Popup package
 (use-package popup :ensure t)
 
-;; --- Mouse Configuration ---
-;; Enable mouse support in terminal (click, scroll, resize)
-(xterm-mouse-mode 1)
-
-;; Disable mouse wheel text scaling by default
-(global-unset-key (kbd "C-<wheel-up>"))
-(global-unset-key (kbd "C-<wheel-down>"))
-(global-unset-key (kbd "M-<wheel-up>"))
-(global-unset-key (kbd "M-<wheel-down>"))
-
-(defun my/toggle-mouse-wheel-zoom ()
-  "Toggle mouse wheel zooming (text scaling)."
-  (interactive)
-  (if (lookup-key global-map (kbd "C-<wheel-up>"))
-      (progn
-        (global-unset-key (kbd "C-<wheel-up>"))
-        (global-unset-key (kbd "C-<wheel-down>"))
-        (global-unset-key (kbd "M-<wheel-up>"))
-        (global-unset-key (kbd "M-<wheel-down>"))
-        (message "Mouse wheel zoom: DISABLED"))
-    (global-set-key (kbd "C-<wheel-up>") 'text-scale-increase)
-    (global-set-key (kbd "C-<wheel-down>") 'text-scale-decrease)
-    (global-set-key (kbd "M-<wheel-up>") 'text-scale-increase)
-    (global-set-key (kbd "M-<wheel-down>") 'text-scale-decrease)
-    (message "Mouse wheel zoom: ENABLED")))
-
-(global-set-key (kbd "C-c z") 'my/toggle-mouse-wheel-zoom)
+(require 'my-mouse)
 
 ;; Clipboard Integration (Ensure Emacs copies to system clipboard)
 (setq select-enable-clipboard t)
@@ -386,43 +360,7 @@
 ;; nov.el - EPUB Reader
 (require 'my-ebooks)
 
-;; --- Window Highlighting (Dimmer) ---
-(use-package dimmer
-  :ensure t
-  :config
-  (setq dimmer-fraction 0.2) ;; Gentle background dimming
-  (setq dimmer-adjustment-mode :background) 
-  (setq dimmer-use-colors-space :rgb)
-  
-  ;; IMPORTANT: Ensure it works on splits within the same frame
-  (setq dimmer-watch-frame-focus-events nil) ;; Don't dim everything when switching apps
-  
-  ;; Explicitly set the dimmed face to a neutral gray background
-  (custom-set-faces
-   '(dimmer-dim-face ((t (:background "#e0e0e0")))))
-  
-  (dimmer-configure-which-key)
-  (dimmer-configure-helm)
-  (dimmer-configure-hydra)
-  (dimmer-configure-magit)
-  
-  ;; Exclude minibuffer and echo area
-  (add-to-list 'dimmer-buffer-exclusion-regexps "^ \\*Minibuf-[0-9]+\\*")
-  (add-to-list 'dimmer-buffer-exclusion-regexps "^ \\*Echo Area[0-9]+\\*")
-
-  (dimmer-mode t))
-
-(defun my/toggle-window-highlighting ()
-  "Toggle the dimmer mode for window highlighting."
-  (interactive)
-  (if (bound-and-true-p dimmer-mode)
-      (progn
-        (dimmer-mode -1)
-        (message "Window Highlighting: DISABLED"))
-    (dimmer-mode 1)
-    (message "Window Highlighting: ENABLED")))
-
-(global-set-key (kbd "C-c w h") 'my/toggle-window-highlighting)
+(require 'my-dimmer)
 
 ;; --- Web Browsing (EWW) ---
 
