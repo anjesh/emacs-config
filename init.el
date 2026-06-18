@@ -263,24 +263,6 @@
                       (csv-align-mode 1)
                       (csv-header-line-mode 1))))
 
-;; --- SQLite Management (Built-in) ---
-(use-package sqlite-mode
-  :ensure nil ;; Built-in in Emacs 29+
-  :mode ("\\.sqlite\\'" "\\.sqlite3\\'" "\\.db\\'")
-  :bind ("C-c D o" . sqlite-mode-open-file))
-
-;; --- SQL Management (Multi-Database) ---
-(use-package sql
-  :ensure nil
-  :bind ("C-c D c" . my/sql-connect-preset)
-  :config
-  ;; Load external configuration from lisp/my-sql-config.el
-  (load (expand-file-name "lisp/my-sql-config.el" user-emacs-directory)))
-
-(use-package sql-indent
-  :ensure t
-  :after sql)
-
 ;; Iedit - Edit all occurrences of a symbol/region simultaneously
 (use-package iedit
   :ensure t
