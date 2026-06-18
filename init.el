@@ -52,7 +52,8 @@
   :if (display-graphic-p))
 
 (use-package magit
-  :ensure t)
+  :ensure t
+  :commands (magit magit-status magit-dispatch))
 
 (require 'my-treemacs)
 (require 'my-ibuffer)

@@ -1,6 +1,5 @@
 ;;; my-agent-shell-magit.el --- Magit helpers for agent-shell -*- lexical-binding: t; -*-
 
-(require 'magit)
 (require 'subr-x)
 
 (declare-function agent-shell-start "agent-shell" (&key config session-id outgoing-request-decorator))
@@ -8,15 +7,25 @@
 (declare-function agent-shell-queue-request "agent-shell" (prompt))
 (declare-function agent-shell--clean-up "agent-shell")
 (declare-function agent-shell-openai-make-codex-config "agent-shell-openai")
+(declare-function magit-git-insert "magit-git" (&rest args))
+(declare-function magit-status "magit")
+(declare-function magit-dispatch "magit")
+(declare-function magit-toplevel "magit")
 (declare-function magit-commit-create "magit-commit")
 (declare-function my/agent-shell--set-buffer-cwd "my-agent-shell" (shell-buffer dir))
 (declare-function shell-maker-busy "shell-maker")
 (declare-function shell-maker-last-output "shell-maker")
 
+(defun my/magit-agent-shell--ensure-magit ()
+  "Load Magit support on demand."
+  (unless (require 'magit nil t)
+    (user-error "Magit is not available")))
+
 (defun my/magit-agent-shell--diff (&optional unstaged)
   "Return the current repo diff as a string.
 
 Use the staged diff by default. With UNSTAGED, use the working tree diff."
+  (my/magit-agent-shell--ensure-magit)
   (let ((default-directory (or (magit-toplevel)
                                default-directory)))
     (with-temp-buffer
@@ -43,6 +52,7 @@ Use the staged diff by default. With UNSTAGED, use the working tree diff."
 
 (defun my/magit-agent-shell--repo-root ()
   "Return the current Git repository root."
+  (my/magit-agent-shell--ensure-magit)
   (or (magit-toplevel)
       (user-error "Not inside a Git repository")))
 
@@ -149,6 +159,7 @@ Use the staged diff by default. With UNSTAGED, use the working tree diff."
 Use the staged diff by default. With prefix arg UNSTAGED, use the working tree
 diff instead."
   (interactive "P")
+  (my/magit-agent-shell--ensure-magit)
   (let* ((repo-root (my/magit-agent-shell--repo-root))
          (commit-buffer (or (my/magit-agent-shell--commit-buffer repo-root)
                             (progn
