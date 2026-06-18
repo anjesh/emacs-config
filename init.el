@@ -27,36 +27,7 @@
 (setq-default line-move-visual t)
 (global-visual-line-mode t)
 
-;; --- Spell Checking (Flyspell) ---
-;; Requires: brew install hunspell
-(use-package flyspell
-  :ensure nil ;; Built-in
-  :hook ((text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode))
-  :bind (("C-c s C" . my/toggle-spell-check)
-         ("C-c s c" . flyspell-correct-word-before-point))
-  :config
-  (cond
-   ;; Prefer Hunspell
-   ((executable-find "hunspell")
-    (setq ispell-program-name "hunspell")
-    (setq ispell-local-dictionary "en_US")
-    (setq ispell-local-dictionary-alist
-          '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
-   ;; Fallback to Aspell
-   ((executable-find "aspell")
-    (setq ispell-program-name "aspell")
-    (setq ispell-extra-args '("--sug-mode=ultra"))))
-
-  (defun my/toggle-spell-check ()
-    "Toggle flyspell-mode on/off."
-    (interactive)
-    (if (bound-and-true-p flyspell-mode)
-        (progn
-          (flyspell-mode -1)
-          (message "Spell check: OFF"))
-      (flyspell-mode 1)
-      (message "Spell check: ON"))))
+(require 'my-flyspell)
 
 ;; Syntax Highlighting
 (global-hl-line-mode 1)
