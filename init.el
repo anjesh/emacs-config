@@ -57,14 +57,6 @@
 (require 'my-treemacs)
 (require 'my-ibuffer)
 
-(use-package projectile
-  :ensure t
-  :init
-  (setq projectile-enable-caching t)
-  (projectile-mode +1)
-  :bind (:map projectile-mode-map
-              ("C-c p" . projectile-command-map)))
-
 (require 'my-completion)
 
 (use-package beframe

@@ -461,7 +461,7 @@ A native Emacs interface for WhatsApp, powered by `wuzapi`.
 Your configuration is in `~/.emacs.d/init.el`.
 - API Keys: Stored securely in `secrets.el` (ignored by git).
 - Custom Settings: Auto-generated settings (like safe variables) are in `custom.el`.
-- Packages: `treemacs` (file tree), `ibuffer` (buffer list), `projectile` (project management), `vertico` (completion), `vterm` (terminal), `markdown-mode`, `consult`, and `marginalia`.
+- Packages: `treemacs` (file tree), `ibuffer` (buffer list), `vertico` (completion), `vterm` (terminal), `markdown-mode`, `consult`, and `marginalia`.
 
 **Qwen Code CLI Installation:**
 To use the Qwen AI integration, you need to install the `qwen-code` CLI globally via npm:
