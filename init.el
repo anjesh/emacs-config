@@ -71,10 +71,6 @@
 (require 'my-pdf)
 (require 'my-spray)
 
-(use-package adaptive-wrap
-  :ensure t
-  :defer t)
-
 ;; --- Shells, Terminals, And External Tools ---
 
 (require 'my-terminals)
