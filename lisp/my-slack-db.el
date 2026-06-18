@@ -2,9 +2,6 @@
 
 (require 'sqlite)
 (require 'cl-lib)
-(require 'slack)
-(require 'slack-message)
-(require 'slack-conversations)
 
 (defvar my/slack-db-path (expand-file-name "var/slack-messages.db" user-emacs-directory))
 
@@ -382,14 +379,16 @@ Prioritizes unread rooms and only updates rooms with new activity compared to DB
 (defun my/slack-log-message-at-point ()
   "Log the message at point in the current Slack buffer to the SQLite DB."
   (interactive)
-  (slack-if-let* ((ts (slack-get-ts))
-                  (buffer slack-current-buffer)
-                  (team (slack-buffer-team buffer))
-                  (room (slack-buffer-room buffer))
-                  (message (slack-room-find-message room ts)))
-    (let* ((room-id (oref room id)))
-      (my/slack-db-insert-message message team room-id)
-      (message "Message logged to DB."))))
+  (let* ((ts (slack-get-ts))
+         (buffer slack-current-buffer)
+         (team (and buffer (slack-buffer-team buffer)))
+         (room (and buffer (slack-buffer-room buffer)))
+         (message (and room ts (slack-room-find-message room ts))))
+    (if (and team room message)
+        (let ((room-id (oref room id)))
+          (my/slack-db-insert-message message team room-id)
+          (message "Message logged to DB."))
+      (message "No Slack message found at point."))))
 
 ;;; Channel Management UI
 

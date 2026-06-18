@@ -8,6 +8,7 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 ;; Clean up UI & Silent Bell (Mode Line Flash)
 (setq ring-bell-function
@@ -1488,101 +1489,7 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
     (corfu-terminal-mode +1)))
 
 ;; --- Slack Integration ---
-(use-package alert
-  :ensure t
-  :commands (alert)
-  :config
-  ;; Use 'message' (minibuffer) by default. 
-  ;; For macOS system notifications, install terminal-notifier (brew install terminal-notifier)
-  ;; and change this to 'notifier.
-  (setq alert-default-style 'message))
-
-(defun auth-source-pick-first-password (&rest spec)
-  "Return the first password matching SPEC from auth-source."
-  (let ((res (car (apply #'auth-source-search spec))))
-    (if res
-        (let ((secret (plist-get res :secret)))
-          (if (functionp secret)
-              (funcall secret)
-            secret))
-      (error "No password found for %S" spec))))
-
-(use-package slack
-  :ensure t
-  :vc (:url "https://github.com/yuya373/emacs-slack" :rev :newest)
-  :commands (slack-start)
-  :bind (("C-c s s" . slack-start)
-         ("C-c s m" . slack-message-embed-mention)
-         ("C-c s q" . slack-ws-close)
-         ("C-c s r" . slack-select-rooms)  ;; List all channels/DMs with unread status
-         ("C-c s u" . slack-select-unread-rooms) ;; List ONLY unread channels/DMs
-         ("C-c s t" . slack-all-threads))  ;; View threaded conversations
-  :init
-  (setq slack-buffer-function #'switch-to-buffer) ; How to open slack buffers
-  (setq slack-prefer-current-team t)
-  :config
-  (setq slack-enable-notification t) ;; Enable notifications via 'alert'
-  
-  (slack-register-team
-   :name "younginnovations"
-   :default t
-   :token (auth-source-pick-first-password
-           :host "younginnovations.slack.com"
-           :user "anjesh@yipl.com.np")
-   :cookie (auth-source-pick-first-password
-            :host "younginnovations.slack.com"
-            :user "anjesh@yipl.com.np^cookie")))
-
-;; --- Slack Logging & Linking ---
-(with-eval-after-load 'org
-  (org-link-set-parameters "slack"
-                           :follow #'my/slack-org-link-follow))
-
-(defun my/slack-org-link-follow (path)
-  "Follow a Slack link of the form team-id:room-id or team-id:room-id:thread-ts."
-  (let* ((parts (split-string path ":"))
-         (team-id (nth 0 parts))
-         (room-id (nth 1 parts))
-         (thread-ts (nth 2 parts))
-         ;; Fix: Use (hash-table-values slack-teams-by-token) instead of non-existent slack-teams
-         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (tm) (oref tm id)) :test #'string=))
-         (room (when team
-                 (or (gethash room-id (oref team channels))
-                     (gethash room-id (oref team groups))
-                     (gethash room-id (oref team ims))))))
-    (if (and team room)
-        (if thread-ts
-            (slack-open-message team room thread-ts thread-ts)
-          (slack-room-display room team))
-      (message "Debug: Team found? %s | Room found? %s (ID: %s)" (if team "Yes" "No") (if room "Yes" "No") room-id))))
-
-(defun my/slack-user-org-link-follow (path)
-  "Follow a Slack user link of the form team-id:user-id."
-  (let* ((parts (split-string path ":"))
-         (team-id (nth 0 parts))
-         (user-id (nth 1 parts))
-         (team (cl-find team-id (hash-table-values slack-teams-by-token) :key (lambda (t) (oref t id)) :test #'string=)))
-    (if team
-        (slack-buffer-display (slack-create-user-profile-buffer team user-id))
-      (message "Slack team not found"))))
-
-(with-eval-after-load 'org
-  (org-link-set-parameters "slack" :follow #'my/slack-org-link-follow)
-  (org-link-set-parameters "slack-user" :follow #'my/slack-user-org-link-follow))
-
-;; --- Slack Global Logging (SQLite) ---
-(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
-(require 'my-slack-db)
-(my/setup-slack-db-logging)
-
-(global-set-key (kbd "C-c s D") 'my/slack-show-logs)
-(global-set-key (kbd "C-c s S") 'my/slack-sync-current-team)
-(global-set-key (kbd "C-c s C") 'my/slack-manage-channels)
-(global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
-(global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
-
-;; Ensure GPG prompts appear in the minibuffer
-(setq epg-pinentry-mode 'loopback)
+(require 'my-slack)
 
 (provide 'init)
 ;;; init.el ends here

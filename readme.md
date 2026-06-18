@@ -468,15 +468,15 @@ Bookmarks are stored in `~/dev/orgfiles/bookmarks.org`.
 | Quit Slack | `C-c s q` | Disconnect from Slack |
 | Select Channel | `M-x slack-channel-select` | Browse and jump to channels |
 | Select Group/DM | `M-x slack-group-select` | Browse and jump to DMs |
-| Manage Channels | `C-c s C` | **New**: Toggle read/ignore status for each channel |
+| Manage Channels | `C-c s a` | Toggle read/ignore status for each channel |
 | Open Latest Log | `C-c s l` | View recent messages from the SQLite database |
 | Sync Team | `C-c s S` | Manually trigger a smart backfill of the current team |
 | Log Msg at Point | `C-c s L` | Manually log the message at point in a Slack buffer |
 | Show Logs | `C-c s D` | View historical Slack logs from the SQLite database |
 
-**New: Smart Channel Filtering:**
+**Smart Channel Filtering:**
 You can now manage which channels are tracked in your local database. 
-- Press **`C-c s C`** to open the Channel Manager.
+- Press **`C-c s a`** to open the Channel Manager.
 - Use **`t`** to toggle between `[READ]` and `[IGNORE]`.
 - Only channels marked as `[READ]` will be backfilled and logged.
 - New channels are automatically discovered and set to `[READ]` by default.
