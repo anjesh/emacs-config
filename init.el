@@ -720,16 +720,6 @@ Buffers still displayed in non-workspace frames are preserved."
           (file-name-directory buffer-file-name)
         default-directory))))
 
-(defun my/open-eat-here ()
-  "Open Eat in the current buffer's directory, dired dir, or treemacs node."
-  (interactive)
-  (let ((path (my/current-path-for-terminal)))
-    (if (and path (not (string-empty-p path)))
-        (let ((default-directory path))
-          (require 'eat)
-          (eat))
-      (message "Could not determine directory."))))
-
 (defun my/open-vterm-here ()
   "Open vterm in the current buffer's directory, dired dir, or treemacs node."
   (interactive)
@@ -784,7 +774,6 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
       (message "Could not determine directory."))))
 
 (global-set-key (kbd "C-c t g") 'my/open-ghostty-here)
-(global-set-key (kbd "C-c t t") 'my/open-eat-here)
 (global-set-key (kbd "C-c t v") 'my/open-vterm-here)
 (global-set-key (kbd "C-c t e") 'my/open-eshell-here)
 
@@ -792,7 +781,6 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
 (with-eval-after-load 'treemacs
   (define-key treemacs-mode-map (kbd "O") #'my/open-in-external-app)
   (define-key treemacs-mode-map (kbd "T") #'my/open-ghostty-here)
-  (define-key treemacs-mode-map (kbd "t") #'my/open-eat-here)
   (define-key treemacs-mode-map (kbd "v") #'my/open-vterm-here)
   (define-key treemacs-mode-map (kbd "V") #'my/open-vterm-here-side)
   (define-key treemacs-mode-map (kbd "E") #'my/open-eshell-here)
@@ -849,11 +837,6 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
                  (display-buffer-in-side-window)
                  (side . right)
                  (window-width . 0.4))))
-
-;; Mistty Configuration (Alternative to Vterm with better shell integration)
-(use-package mistty
-  :ensure t
-  :bind ("C-c t m" . mistty))
 
 ;; Popup package (dependency for gemini-cli.el)
 (use-package popup :ensure t)
@@ -1235,36 +1218,11 @@ Images are resized to a smaller dimension (30% of window) and are clickable."
         ("c" . my/hackernews-open-comments)))
 
 ;; --- Gemini CLI Integration ---
-(defun my/eat-send-C-h ()
-  "Send a literal C-h to Eat.
-
-This makes macOS Delete/backspace behave reliably in Eat semi-char mode,
-even when the terminal or shell disagrees about DEL vs BS."
-  (interactive)
-  (eat-self-input 1 ?\C-h))
-
-(use-package eat
-  :ensure t
-  :config
-  ;; Use Emacs line editing at shell prompts instead of terminal-native
-  ;; prompt editing, which is more reliable on macOS.
-  (setq eat-enable-auto-line-mode t)
-  ;; On macOS, Delete/backspace handling in terminal apps is often
-  ;; inconsistent.  Force these keys to send C-h in semi-char mode.
-  (define-key eat-semi-char-mode-map [backspace] #'my/eat-send-C-h)
-  (define-key eat-semi-char-mode-map [delete] #'my/eat-send-C-h)
-  (define-key eat-semi-char-mode-map [deletechar] #'my/eat-send-C-h)
-  (add-hook 'eat-mode-hook
-            (lambda ()
-              (display-line-numbers-mode -1)
-              (visual-line-mode -1)
-              (setq truncate-lines t))))
-
 (use-package gemini-cli
   :ensure t
   :vc (:url "https://github.com/linchen2chris/gemini-cli.el" :rev :newest)
   :config
-  (setq gemini-cli-terminal-backend 'eat)
+  (setq gemini-cli-terminal-backend 'vterm)
   (setq gemini-cli-optimize-window-resize nil)
   (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
   (gemini-cli-mode)
@@ -1273,10 +1231,7 @@ even when the terminal or shell disagrees about DEL vs BS."
               (display-line-numbers-mode -1)
               (visual-line-mode -1)
               (setq truncate-lines t)
-              (local-set-key (kbd "M-w") 'kill-ring-save)
-              ;; Fix visibility for light themes in eat
-              (face-remap-add-relative 'eat-term-color-7 :foreground "black")
-              (face-remap-add-relative 'eat-term-color-15 :foreground "black")))
+              (local-set-key (kbd "M-w") 'kill-ring-save)))
   :bind
   (("C-c g g" . gemini-cli)                  ;; Start Gemini
    ("C-c g s" . gemini-cli-send-command)     ;; Send command from minibuffer
@@ -1423,7 +1378,7 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
   :ensure t
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   :config
-  (setq claude-code-terminal-backend 'eat)
+  (setq claude-code-terminal-backend 'vterm)
   (setq claude-code-optimize-window-resize nil)
   (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
   (claude-code-mode)
@@ -1447,7 +1402,7 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
   :ensure t
   :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
   :config
-  (setq qwen-cli-terminal-backend 'eat)
+  (setq qwen-cli-terminal-backend 'vterm)
   (setq qwen-cli-optimize-window-resize nil)
   (setq qwen-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/qwen")
   (qwen-cli-mode)
@@ -1658,17 +1613,6 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
 (global-set-key (kbd "C-c s C") 'my/slack-manage-channels)
 (global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
-
-;; --- WhatsApp Integration (Wasabi) ---
-;; Requires: brew install asternic/wuzapi/wuzapi
-(use-package wasabi
-  :ensure nil ;; Already installed via package-vc
-  :bind (("C-c w a" . wasabi))
-  :config
-  ;; Ensure the wasabi data directory is set correctly
-  (setq wasabi-data-dir (expand-file-name "wasabi" user-emacs-directory))
-  ;; Use a wrapper to redirect stderr, preventing info logs from being treated as errors
-  (setq wasabi-wuzapi-command `("/Users/anjesh/bin/wuzapi-wrapper" "-mode=stdio" ,(format "-datadir=%s" wasabi-data-dir))))
 
 ;; --- Email Configuration (Gnus + OAuth2) ---
 
