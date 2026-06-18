@@ -57,13 +57,7 @@
 (require 'my-treemacs)
 (require 'my-ibuffer)
 (require 'my-completion)
-
-(use-package beframe
-  :ensure t
-  :config
-  (beframe-mode 1)
-  (with-eval-after-load 'my-completion
-    (setq consult-buffer-list-function #'my/consult-beframe-buffer-list)))
+(require 'my-beframe)
 
 ;; --- Writing, Reading, And Notes ---
 
