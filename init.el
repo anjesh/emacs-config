@@ -9,6 +9,7 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(require 'my-helper)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -26,13 +27,7 @@
 
 ;; --- Core UI And Editing ---
 
-(setq ring-bell-function
-      (lambda ()
-        (let ((orig-bg (face-background 'mode-line)))
-          (set-face-background 'mode-line "#F2804F")
-          (run-with-idle-timer 0.1 nil
-                               (lambda (bg) (set-face-background 'mode-line bg))
-                               orig-bg))))
+(setq ring-bell-function #'my/flash-mode-line)
 
 (setq-default line-move-visual t)
 (global-visual-line-mode t)
@@ -129,24 +124,6 @@
   :ensure t
   :mode ("\\.yaml\\'" "\\.yml\\'"))
 
-(defun my/open-in-external-app ()
-  "Open the current file, dired-marked file, or treemacs node in external app."
-  (interactive)
-  (let ((file (cond
-               ((derived-mode-p 'dired-mode) (dired-get-filename nil t))
-               ((derived-mode-p 'treemacs-mode)
-                (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                    (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                    (ignore-errors
-                      (treemacs-copy-path-at-point)
-                      (substring-no-properties (current-kill 0)))))
-               (t buffer-file-name))))
-    (if (and file (not (string-empty-p file)))
-        (progn
-          (start-process "open-external" nil "open" file)
-          (message "Opened in external app: %s" file))
-      (message "Could not determine file path."))))
-
 ;; --- Development And Language Tooling ---
 
 (use-package ai-code
@@ -201,11 +178,7 @@
 (global-set-key (kbd "C-c +") #'enlarge-window)
 (global-set-key (kbd "C-c u") #'beginning-of-buffer)
 (global-set-key (kbd "C-c d") #'end-of-buffer)
-(global-set-key
- (kbd "C-c r")
- (lambda ()
-   (interactive)
-   (find-file (expand-file-name "readme.md" user-emacs-directory))))
+(global-set-key (kbd "C-c r") #'my/open-user-readme)
 
 (provide 'init)
 ;;; init.el ends here
