@@ -116,13 +116,10 @@
 (require 'my-terminals)
 (require 'my-agent-shell)
 (require 'my-ess)
+(require 'my-yaml)
 
 (use-package popup
   :ensure t)
-
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.yaml\\'" "\\.yml\\'"))
 
 ;; --- Development And Language Tooling ---
 
