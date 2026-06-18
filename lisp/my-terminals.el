@@ -69,7 +69,8 @@
 (global-set-key (kbd "C-c t e") #'my/open-eshell-here)
 
 (use-package ghostel
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package vterm
   :ensure t
