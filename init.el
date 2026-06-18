@@ -196,50 +196,13 @@
 (require 'my-eww)
 (require 'my-hackernews)
 (require 'my-ebooks)
+(require 'my-markdown)
+(require 'my-csv)
+(require 'my-pdf)
 
 (use-package adaptive-wrap
   :ensure t
   :defer t)
-
-(use-package markdown-mode
-  :ensure t
-  :mode ("\\.md\\'" . markdown-mode)
-  :init
-  (setq markdown-command "pandoc")
-  :hook (markdown-mode . (lambda ()
-                           (font-lock-mode 1)
-                           (visual-line-mode 1)))
-  :config
-  (setq markdown-fontify-code-blocks-natively t))
-
-(use-package markdown-preview-mode
-  :ensure t
-  :defer t
-  :config
-  (setq markdown-preview-stylesheets
-        (list "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css")))
-
-(use-package csv-mode
-  :ensure t
-  :mode ("\\.csv\\'" . csv-mode)
-  :hook (csv-mode . (lambda ()
-                      (csv-align-mode 1)
-                      (csv-header-line-mode 1))))
-
-(use-package pdf-tools
-  :ensure t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :bind (:map pdf-view-mode-map
-              ("C-s" . isearch-forward))
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-width)
-  (setq pdf-view-continuous t)
-  (add-hook 'pdf-view-mode-hook
-            (lambda ()
-              (display-line-numbers-mode -1)
-              (pdf-isearch-minor-mode)
-              (auto-revert-mode 1))))
 
 (use-package spray
   :ensure t
