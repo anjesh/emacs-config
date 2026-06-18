@@ -2,6 +2,14 @@
 
 (require 'use-package)
 
+(use-package shell-maker
+  :ensure t
+  :vc (:url "https://github.com/xenodium/shell-maker" :rev :newest))
+
+(use-package acp
+  :ensure t
+  :vc (:url "https://github.com/xenodium/acp.el" :rev :newest))
+
 (defvar-local my/agent-shell-buffer-cwd nil
   "Buffer-local working directory override for `agent-shell`.")
 

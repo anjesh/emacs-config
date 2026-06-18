@@ -250,16 +250,7 @@
   :init
   (marginalia-mode))
 
-;; Browse with EWW
-(defun my/eww-browse-at-point ()
-  "Browse the URL at point using eww."
-  (interactive)
-  (let ((url (thing-at-point 'url)))
-    (if url
-        (eww url)
-      (message "No URL at point."))))
-
-(global-set-key (kbd "C-c B") 'my/eww-browse-at-point)
+(require 'my-eww)
 
 ;; Backup Configuration
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -613,29 +604,6 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
 
 ;; --- Web Browsing (EWW) ---
 
-;; EWW (Text-based, built-in)
-(use-package eww
-  :ensure nil
-  :config
-  (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
-  (setq eww-download-directory "~/Downloads/")
-  (setq eww-form-checkbox-selected-symbol "[X]")
-  (setq eww-form-checkbox-symbol "[ ]")
-  ;; Rename buffer to page title
-  (add-hook 'eww-after-render-hook
-            (lambda ()
-              (rename-buffer (format "*eww: %s*"
-                                     (or (plist-get eww-data :title) "Web Page"))
-                             t))))
-
-(defun my/browse-url (url &optional new-window)
-  "Browse URL using EWW."
-  (interactive (browse-url-interactive-arg "URL: "))
-  (eww-browse-url url))
-
-(global-set-key (kbd "C-c w e") 'eww)
-(global-set-key (kbd "C-c w b") 'my/browse-url)
-
 ;; --- Dictionary (Minibuffer) ---
 ;; (Dictionary configuration removed)
 
@@ -645,16 +613,6 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
   :mode ("\\.yaml\\'" "\\.yml\\'"))
 
 (require 'my-hackernews)
-
-;; --- Shell Maker (Dependency for Agent Shell) ---
-(use-package shell-maker
-  :ensure t
-  :vc (:url "https://github.com/xenodium/shell-maker" :rev :newest))
-
-;; --- ACP (Dependency for Agent Shell) ---
-(use-package acp
-  :ensure t
-  :vc (:url "https://github.com/xenodium/acp.el" :rev :newest))
 
 (require 'my-agent-shell)
 
