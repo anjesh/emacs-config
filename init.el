@@ -56,7 +56,6 @@
 
 (require 'my-treemacs)
 (require 'my-ibuffer)
-
 (require 'my-completion)
 
 (use-package beframe
@@ -76,17 +75,11 @@
 (require 'my-markdown)
 (require 'my-csv)
 (require 'my-pdf)
+(require 'my-spray)
 
 (use-package adaptive-wrap
   :ensure t
   :defer t)
-
-(use-package spray
-  :ensure t
-  :bind ("<f6>" . spray-mode)
-  :config
-  (setq spray-wpm 420
-        spray-save-point t))
 
 ;; --- Shells, Terminals, And External Tools ---
 
