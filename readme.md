@@ -440,24 +440,6 @@ A lightweight AI assistant for code.
 - Attach context by typing `@` and using auto-completion.
 - ECA will automatically download the backend binary if not found.
 
-## RSS Feed (Elfeed)
-
-Manage and read your RSS feeds inside Emacs.
-
-| Action | Key Sequence | Note |
-| :--- | :--- | :--- |
-| **Open Elfeed** | `C-c f f` | Start the RSS reader |
-| **Sync & Update** | `C-c f u` | **IMPORTANT**: Syncs `feeds.org` and fetches new articles |
-| **Read Entry** | `RET` (Enter) | Open selected feed entry |
-| **Mark Read** | `r` | Mark entry as read |
-| **Filter View** | `s` | Search/Filter entries (e.g., `+elfeed`) |
-| **Quit Elfeed** | `q` | Close the Elfeed buffer |
-
-**Feed Management:**
-Your feeds are managed in `~/dev/orgfiles/feeds.org`. 
-- To add a new feed, simply add a link to the RSS/Atom URL under a heading. 
-- **Use `C-c f u`** after adding/removing feeds to apply changes and download new articles.
-
 ## Bookmarks & Reading List
 
 Maintain a personal list of websites for review and articles for later reading.
@@ -473,28 +455,6 @@ Maintain a personal list of websites for review and articles for later reading.
 Bookmarks are stored in `~/dev/orgfiles/bookmarks.org`.
 - **Web Reviews:** For sites/tools you want to check out later.
 - **Reading List:** For articles you want to read (marked as TODO).
-
-## Email (Gnus + Gmail)
-
-Gnus is configured to read Gmail using OAuth2.
-
-| Action | Key Sequence | Context | Note |
-| :--- | :--- | :--- | :--- |
-| **Launch Gnus** | `M-x gnus` | Anywhere | Start email client |
-| **Check Mail** | `g` | Group Buffer | Fetch new emails |
-| **Read Mail** | `SPACE` | Group/Summary | The "Magic" key: Select folder, read email, scroll, next email |
-| **View HTML** | `K H` | Article Buffer | View rich HTML content (if blank/messy) |
-| **Compose** | `m` | Any Buffer | Write a new email |
-| **Reply** | `r` / `R` | Summary/Article | Reply (without/with quotes) |
-| **Archive/Move** | `B m` | Summary | Move email to another folder |
-| **Mark Read** | `d` | Summary | Mark email as read |
-| **Subscribe** | `U` | Server Buffer | Toggle subscription to Gmail labels (`^` to open Server buffer) |
-| **Quit** | `q` | Group Buffer | Suspend Gnus (press `Q` to fully quit) |
-
-**Authentication Note:**
-Authentication is handled via `auth-source-xoauth2` with a hardcoded Refresh Token in `init.el`.
-- **Port:** 993 (IMAPS)
-- **User:** anjesh.tuladhar@codingmountain.com
 
 ## Slack Integration (emacs-slack)
 

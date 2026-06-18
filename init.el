@@ -1581,85 +1581,8 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
 (global-set-key (kbd "C-c s l") 'my/open-latest-slack-log)
 (global-set-key (kbd "C-c s L") 'my/slack-log-message-at-point)
 
-;; --- Email Configuration (Gnus + OAuth2) ---
-
 ;; Ensure GPG prompts appear in the minibuffer
 (setq epg-pinentry-mode 'loopback)
-
-;; --- RSS Feed (Elfeed) ---
-
-(setq elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
-(setq rmh-elfeed-org-files (list (expand-file-name "~/dev/orgfiles/feeds.org")))
-
-(defun my/elfeed-sync-and-update ()
-  "Sync elfeed-org feeds and update entries, ensuring everything is loaded."
-  (interactive)
-  (require 'elfeed)
-  (require 'elfeed-org)
-  ;; Ensure DB is initialized before any operations
-  (unless elfeed-db
-    (elfeed-db-ensure))
-  (setq elfeed-feeds nil)
-  (elfeed-org)
-  (elfeed-update)
-  (message "Elfeed: Syncing feeds.org and fetching new articles..."))
-
-(global-set-key (kbd "C-c f u") 'my/elfeed-sync-and-update)
-
-(use-package elfeed
-  :ensure t
-  :bind ("C-c f f" . elfeed)
-  :config
-  (setq elfeed-show-entry-switch #'pop-to-buffer)
-  (setq elfeed-search-filter ""))
-
-(use-package elfeed-org
-  :ensure t
-  :config
-  (elfeed-org)
-  :bind (:map elfeed-search-mode-map
-              ("G" . my/elfeed-sync-and-update)))
-
-;; OAuth2 Configuration
-(use-package auth-source-xoauth2
-  :ensure t
-  :config
-  ;; Polyfill: Fix 'wrong-number-of-arguments' error in some oauth2 versions
-  (with-eval-after-load 'oauth2
-    (defun oauth2-compute-id (token-url client-id client-secret &optional scope &rest _ignore)
-      (secure-hash 'sha512 (concat token-url client-id client-secret (or scope "")))))
-
-  ;; Define credentials with the Refresh Token
-  (defvar my-gmail-xoauth2-creds
-    (list :token-url "https://accounts.google.com/o/oauth2/token"
-          :client-id "REDACTED_GOOGLE_OAUTH_CLIENT_ID"
-          :client-secret "REDACTED_GOOGLE_OAUTH_CLIENT_SECRET"
-          :refresh-token "REDACTED_GOOGLE_OAUTH_REFRESH_TOKEN"))
-
-  ;; Tell auth-source-xoauth2 to use these credentials
-  (setq auth-source-xoauth2-creds my-gmail-xoauth2-creds)
-
-  (auth-source-xoauth2-enable))
-
-(setq user-mail-address "anjesh.tuladhar@codingmountain.com"
-      user-full-name "Anjesh")
-
-(setq gnus-select-method
-      '(nnimap "work"
-               (nnimap-address "imap.gmail.com")
-               (nnimap-server-port 993)
-               (nnimap-stream ssl)
-               (nnimap-user "anjesh.tuladhar@codingmountain.com")
-               (nnimap-authenticator xoauth2)))
-
-;; Performance: Don't check for new groups on startup
-(setq gnus-check-new-newsgroups nil)
-
-;; SMTP Settings (Sending)
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-stream-type 'starttls
-      smtpmail-smtp-service 587)
 
 (provide 'init)
 ;;; init.el ends here
