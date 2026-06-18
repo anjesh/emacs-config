@@ -108,19 +108,25 @@
 ;; --- Your Original Configuration ---
 
 (use-package ess
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package ob-mermaid
   :ensure t
-  :config
+  :defer t
+  :init
   (setq ob-mermaid-cli-path "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/mmdc"))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t)  ;; This enables sh, bash, zsh, etc.
-   (R . t)
-   (python .)
-   (mermaid . t)))
+(defvar my/org-babel-languages-loaded nil
+  "Whether Org Babel languages have been loaded for this session.")
+
+(defun my/org-babel-ensure-languages (&rest _)
+  "Load configured Org Babel languages on first use."
+  (unless my/org-babel-languages-loaded
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     org-babel-load-languages)
+    (setq my/org-babel-languages-loaded t)))
 
 ;; Load custom settings from custom.el
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -456,6 +462,12 @@ Buffers still displayed in non-workspace frames are preserved."
 ;; Org Mode Configuration
 (use-package org
   :ensure nil ;; Built-in
+  :init
+  (setq org-babel-load-languages
+        '((shell . t)
+          (R . t)
+          (python . nil)
+          (mermaid . t)))
   :hook (org-mode . (lambda () 
                       (font-lock-mode 1)
                       (font-lock-ensure)
@@ -471,6 +483,31 @@ Buffers still displayed in non-workspace frames are preserved."
   (setq browse-url-browser-function 'eww-browse-url) ;; Open links in EWW by default
   (setq org-export-with-section-numbers nil) ;; Disable numbered headings globally
   (setq org-hide-leading-stars t) ;; Hide all but the last star
+
+  (defvar my/org-agenda-files-cache nil
+    "Cached value for `org-agenda-files'.")
+
+  (defun my/org-compute-agenda-files ()
+    "Find agenda files under `org-directory', excluding large unwanted trees."
+    (seq-filter
+     (lambda (file)
+       (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\|slack\\|research\\|kings\\)/" file)))
+     (directory-files-recursively org-directory "\\.org$")))
+
+  (defun my/org-refresh-agenda-files ()
+    "Rebuild and cache `org-agenda-files'."
+    (interactive)
+    (setq my/org-agenda-files-cache (my/org-compute-agenda-files))
+    (setq org-agenda-files my/org-agenda-files-cache))
+
+  (defun my/org-ensure-agenda-files (&rest _)
+    "Populate `org-agenda-files' on first agenda use."
+    (unless my/org-agenda-files-cache
+      (my/org-refresh-agenda-files)))
+
+  (advice-add 'org-babel-execute-src-block :before #'my/org-babel-ensure-languages)
+  (advice-add 'org-babel-expand-src-block :before #'my/org-babel-ensure-languages)
+  (advice-add 'org-agenda :before #'my/org-ensure-agenda-files)
   
   ;; Custom Font Styling for Headers: All normal weight, all same size
   (dolist (face '(org-level-1 org-level-2 org-level-3 org-level-4
@@ -497,12 +534,8 @@ Buffers still displayed in non-workspace frames are preserved."
       (font-lock-flush)
       (message "Org Bullets: Hidden (Spaces)")))
 
-  ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, slack, research, and kings
-  (setq org-agenda-files 
-        (seq-filter 
-         (lambda (file)
-           (not (string-match-p "/\\(journal\\|obsidian-notes\\|client-projects\\|slack\\|research\\|kings\\)/" file)))
-         (directory-files-recursively "~/dev" "\\.org$")))
+  ;; Compute agenda files lazily on first agenda use instead of during init.
+  (setq org-agenda-files nil)
   
   ;; Custom TODO keywords
   (setq org-todo-keywords
@@ -985,58 +1018,56 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
 ;; nov.el - EPUB Reader
 (use-package nov
   :ensure t
+  :mode ("\\.epub\\'" "\\.EPUB\\'")
   :config
-  (progn
-    (add-to-list 'auto-mode-alist '("\.epub\'" . nov-mode))
-    (add-to-list 'auto-mode-alist '("\.EPUB\'" . nov-mode))
-    (setq nov-text-width 80) ;; comfortable reading width
-    (add-hook 'nov-mode-hook 'visual-line-mode)
-    
-    ;; Enable images (works in GUI Emacs)
-    (require 'shr)
-    (setq shr-inhibit-images nil)
-    (setq shr-use-fonts t)
-    (setq shr-max-image-proportion 0.8)
+  (setq nov-text-width 80) ;; comfortable reading width
+  (add-hook 'nov-mode-hook 'visual-line-mode)
 
-    ;; Custom image handling: small images, clickable to enlarge
-    (defun my-nov-view-image (path)
-      "View the image at PATH in a new buffer."
-      (interactive)
-      (let ((buf (find-file-noselect path)))
-        (with-current-buffer buf
-          (image-mode)
-          (pop-to-buffer buf))))
+  ;; Enable images (works in GUI Emacs)
+  (require 'shr)
+  (setq shr-inhibit-images nil)
+  (setq shr-use-fonts t)
+  (setq shr-max-image-proportion 0.8)
 
-    (defun my-nov-insert-image (path alt)
-      "Insert an image for PATH at point, falling back to ALT.
+  ;; Custom image handling: small images, clickable to enlarge
+  (defun my-nov-view-image (path)
+    "View the image at PATH in a new buffer."
+    (interactive)
+    (let ((buf (find-file-noselect path)))
+      (with-current-buffer buf
+        (image-mode)
+        (pop-to-buffer buf))))
+
+  (defun my-nov-insert-image (path alt)
+    "Insert an image for PATH at point, falling back to ALT.
 Images are resized to a smaller dimension (30% of window) and are clickable."
-      (let ((type (if (or (and (fboundp 'image-transforms-p) (image-transforms-p))
-                          (not (fboundp 'imagemagick-types)))
-                      nil
-                    'imagemagick)))
-        (if (not (display-graphic-p))
-            (insert alt)
-          (seq-let (x1 y1 x2 y2) (window-inside-pixel-edges
-                                  (get-buffer-window (current-buffer)))
-            (let* ((max-width (truncate (* 0.3 (- x2 x1))))
-                   (max-height (truncate (* 0.3 (- y2 y1))))
-                   (image
-                    (ignore-errors
-                      (create-image path type nil
-                                    :ascent 100
-                                    :max-width max-width
-                                    :max-height max-height))))
-              (if image
-                  (let ((map (make-sparse-keymap)))
-                    (define-key map [mouse-1] (lambda () (interactive) (my-nov-view-image path)))
-                    (define-key map (kbd "RET") (lambda () (interactive) (my-nov-view-image path)))
-                    (insert (propertize " "
-                                        'display image
-                                        'keymap map
-                                        'help-echo "Click to enlarge")))
-                (insert alt)))))))
+    (let ((type (if (or (and (fboundp 'image-transforms-p) (image-transforms-p))
+                        (not (fboundp 'imagemagick-types)))
+                    nil
+                  'imagemagick)))
+      (if (not (display-graphic-p))
+          (insert alt)
+        (seq-let (x1 y1 x2 y2) (window-inside-pixel-edges
+                                (get-buffer-window (current-buffer)))
+          (let* ((max-width (truncate (* 0.3 (- x2 x1))))
+                 (max-height (truncate (* 0.3 (- y2 y1))))
+                 (image
+                  (ignore-errors
+                    (create-image path type nil
+                                  :ascent 100
+                                  :max-width max-width
+                                  :max-height max-height))))
+            (if image
+                (let ((map (make-sparse-keymap)))
+                  (define-key map [mouse-1] (lambda () (interactive) (my-nov-view-image path)))
+                  (define-key map (kbd "RET") (lambda () (interactive) (my-nov-view-image path)))
+                  (insert (propertize " "
+                                      'display image
+                                      'keymap map
+                                      'help-echo "Click to enlarge")))
+              (insert alt)))))))
 
-    (advice-add 'nov-insert-image :override #'my-nov-insert-image)))
+  (advice-add 'nov-insert-image :override #'my-nov-insert-image))
 ;; calibredb - Interface for Calibre
 (use-package calibredb
   :ensure t
