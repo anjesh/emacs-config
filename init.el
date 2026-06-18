@@ -495,7 +495,7 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
                  (side . right)
                  (window-width . 0.4))))
 
-;; Popup package (dependency for gemini-cli.el)
+;; Popup package
 (use-package popup :ensure t)
 
 ;; --- Mouse Configuration ---
@@ -644,97 +644,9 @@ This is meant to be used from Treemacs (e.g. bound to `V`) so it does not
   :ensure t
   :mode ("\\.yaml\\'" "\\.yml\\'"))
 
-(use-package hackernews
-  :ensure t
-  :config
-  (defvar my/hackernews-content-window nil
-    "Reusable window for displaying Hacker News stories and comments.")
+(require 'my-hackernews)
 
-  (defun my/hackernews--ensure-content-window ()
-    "Return a reusable window for Hacker News content."
-    (cond
-     ((and (window-live-p my/hackernews-content-window)
-           (eq (window-frame my/hackernews-content-window) (selected-frame))
-           (not (eq my/hackernews-content-window (selected-window))))
-      my/hackernews-content-window)
-     ((one-window-p t)
-      (setq my/hackernews-content-window (split-window-right)))
-     (t
-      (setq my/hackernews-content-window
-            (or (window-in-direction 'right)
-                (window-in-direction 'below)
-                (next-window (selected-window) 'no-minibuf))))))
-
-  (defun my/hackernews-open-url (url)
-    "Open URL in a reusable split window and keep focus on Hacker News."
-    (interactive "sURL: ")
-    (unless (and url (string-prefix-p "http" url))
-      (user-error "No URL found at point"))
-    (save-selected-window
-      (select-window (my/hackernews--ensure-content-window))
-      (eww-browse-url url)))
-
-  (defun my/hackernews-browse-url-action (button)
-    "Open BUTTON's URL in the reusable Hacker News content window."
-    (hackernews--visit button #'my/hackernews-open-url))
-
-  (setq hackernews-internal-browser-function #'my/hackernews-open-url)
-  (button-type-put 'hackernews-link 'action #'my/hackernews-browse-url-action)
-  (button-type-put 'hackernews-comment-count 'action #'my/hackernews-browse-url-action)
-  
-  (defun my/hackernews-copy-url ()
-    "Copy the URL of the Hacker News item at point."
-    (interactive)
-    (let ((url (get-text-property (point) 'help-echo))) ;; hackernews puts URL in help-echo
-      (if (and url (string-prefix-p "http" url))
-          (progn
-            (kill-new url)
-            (message "Copied URL: %s" url))
-        (message "No URL found at point."))))
-  
-  (defun my/hackernews-open-comments ()
-    "Jump to the 'comments' button and open it in the Hacker News split window."
-    (interactive)
-    (save-excursion
-      (end-of-line)
-      (if (search-backward "comments" (line-beginning-position) t)
-          (let ((url (get-text-property (point) 'help-echo)))
-            (if url
-                (my/hackernews-open-url url)
-              (message "No URL found for comments.")))
-        (message "No comments link found on this line."))))
-
-  :bind
-  ("C-c h n" . hackernews)
-  (:map hackernews-mode-map
-        ("w" . my/hackernews-copy-url)
-        ("c" . my/hackernews-open-comments)))
-
-;; --- Gemini CLI Integration ---
-(use-package gemini-cli
-  :ensure t
-  :vc (:url "https://github.com/linchen2chris/gemini-cli.el" :rev :newest)
-  :config
-  (setq gemini-cli-terminal-backend 'vterm)
-  (setq gemini-cli-optimize-window-resize nil)
-  (setq gemini-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/gemini")
-  (gemini-cli-mode)
-  (add-hook 'gemini-cli-start-hook
-            (lambda ()
-              (display-line-numbers-mode -1)
-              (visual-line-mode -1)
-              (setq truncate-lines t)
-              (local-set-key (kbd "M-w") 'kill-ring-save)))
-  :bind
-  (("C-c g g" . gemini-cli)                  ;; Start Gemini
-   ("C-c g s" . gemini-cli-send-command)     ;; Send command from minibuffer
-   ("C-c g r" . gemini-cli-send-region)      ;; Send selected region
-   ("C-c g o" . gemini-cli-send-buffer-file) ;; Send current file
-   ("C-c g t" . gemini-cli-toggle)           ;; Toggle Gemini window
-   ("C-c g d" . gemini-cli-start-in-directory)
-   ("C-c g q" . gemini-cli-kill)))
-
-;; --- Shell Maker (Dependency for Agent Shell / Gemini CLI) ---
+;; --- Shell Maker (Dependency for Agent Shell) ---
 (use-package shell-maker
   :ensure t
   :vc (:url "https://github.com/xenodium/shell-maker" :rev :newest))
@@ -860,67 +772,10 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
 ;; (require 'agent-shell) ;; Removed to prevent startup error if missing
 
 
-;; --- Claude Code CLI Integration ---
-
-;; Inheritenv (dependency for claude-code)
-(use-package inheritenv
-  :ensure t
-  :vc (:url "https://github.com/purcell/inheritenv" :rev :newest))
-
-(use-package claude-code
-  :ensure t
-  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-  :config
-  (setq claude-code-terminal-backend 'vterm)
-  (setq claude-code-optimize-window-resize nil)
-  (setq claude-code-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/claude")
-  (claude-code-mode)
-  (add-hook 'claude-code-start-hook
-            (lambda ()
-              (display-line-numbers-mode -1)
-              (visual-line-mode -1)
-              (setq truncate-lines t)
-              (local-set-key (kbd "M-w") 'kill-ring-save)))
-  :bind
-  (("C-c C c" . claude-code)                  ;; Start Claude
-   ("C-c C s" . claude-code-send-command)     ;; Send command
-   ("C-c C r" . claude-code-send-region)      ;; Send region
-   ("C-c C o" . claude-code-send-buffer-file) ;; Send file
-   ("C-c C t" . claude-code-toggle)           ;; Toggle window
-   ("C-c C d" . claude-code-start-in-directory)
-   ("C-c C q" . claude-code-kill)))
-
-;; --- Qwen CLI Integration ---
-(use-package qwen-cli
-  :ensure t
-  :load-path "elpa/qwen-cli" ;; Specify load-path since it's a local package
-  :config
-  (setq qwen-cli-terminal-backend 'vterm)
-  (setq qwen-cli-optimize-window-resize nil)
-  (setq qwen-cli-program "/Users/anjesh/.nvm/versions/node/v24.2.0/bin/qwen")
-  (qwen-cli-mode)
-  (add-hook 'qwen-cli-start-hook
-            (lambda ()
-              (display-line-numbers-mode -1)
-              (visual-line-mode -1)
-              (setq truncate-lines t)
-              (local-set-key (kbd "M-w") 'kill-ring-save)))
-  :bind
-  (("C-c Q Q" . qwen-cli)                     ;; Start Qwen
-   ("C-c Q s" . qwen-cli-send-command)        ;; Send command from minibuffer
-   ("C-c Q r" . qwen-cli-send-region)         ;; Send selected region
-   ("C-c Q o" . qwen-cli-send-buffer-file)    ;; Send current file
-   ("C-c Q t" . qwen-cli-toggle)              ;; Toggle Qwen window
-   ("C-c Q d" . qwen-cli-start-in-directory)
-   ("C-c Q q" . qwen-cli-kill)))
-
 ;; --- AI Code Interface ---
 (use-package ai-code
   :ensure t
-  :bind (("C-c i" . ai-code-menu))
-  :config
-  ;; Set your preferred backend (e.g., 'claude-code, 'gemini, 'codex, 'aider)
-  (ai-code-set-backend 'gemini))
+  :bind (("C-c i" . ai-code-menu)))
 
 ;; --- Python & LSP Configuration ---
 

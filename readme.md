@@ -376,20 +376,6 @@ Emacs has a fast, text-based built-in browser called **EWW**.
 - **Images:** Press `I` (Shift-i) to toggle image display on/off.
 - **Readability:** EWW naturally strips away most ads and tracking, making it a great "Reader Mode" for the whole web.
 
-## Gemini AI (gemini-cli)
-
-Interact with Gemini AI directly from Emacs.
-
-| Action | Key Sequence | Note |
-| :--- | :--- | :--- |
-| Start Gemini Chat | `C-c g g` | Start a new chat session (or continue default) |
-| Start in Directory | `C-c g d` | Start chat in a specific directory context |
-| Send Command | `C-c g s` | Send a one-off command from the minibuffer |
-| Send Region | `C-c g r` | Send the selected text (region) to Gemini |
-| Send Current File | `C-c g o` | Send the current buffer's file content to Gemini |
-| Toggle Window | `C-c g t` | Show/Hide the Gemini chat window |
-| Quit Session | `C-c g q` | Kill the current Gemini CLI process |
-
 ## Agent Shell (agent-shell)
 
 Interact with Agent Shell directly from Emacs.
@@ -398,34 +384,6 @@ Interact with Agent Shell directly from Emacs.
 | :--- | :--- | :--- |
 | Start Agent Shell | `C-c A A` | Open standard Agent Shell |
 | Start in Directory | `C-c A d` | Open Agent Shell in specific directory (context-aware) |
-
-## Claude AI (claude-code)
-
-Interact with Claude AI (Anthropic) directly from Emacs.
-
-| Action | Key Sequence | Note |
-| :--- | :--- | :--- |
-| Start Claude Chat | `C-c C c` | Start a new chat session |
-| Start in Directory | `C-c C d` | Start chat in a specific directory |
-| Send Command | `C-c C s` | Send a one-off command from the minibuffer |
-| Send Region | `C-c C r` | Send the selected text (region) to Claude |
-| Send Current File | `C-c C o` | Send the current buffer's file content to Claude |
-| Toggle Window | `C-c C t` | Show/Hide the Claude chat window |
-| Quit Session | `C-c C q` | Kill the current Claude Code process |
-
-## Qwen AI (qwen-cli)
-
-Interact with Qwen AI directly from Emacs.
-
-| Action | Key Sequence | Note |
-| :--- | :--- | :--- |
-| Start Qwen Chat | `C-c Q Q` | Start a new chat session |
-| Start in Directory | `C-c Q d` | Start chat in a specific directory |
-| Send Command | `C-c Q s` | Send a one-off command from the minibuffer |
-| Send Region | `C-c Q r` | Send the selected text (region) to Qwen |
-| Send Current File | `C-c Q o` | Send the current buffer's file content to Qwen |
-| Toggle Window | `C-c Q t` | Show/Hide the Qwen chat window |
-| Quit Session | `C-c Q q` | Kill the current Qwen CLI process |
 
 ## Editor Code Assistant (ECA)
 
