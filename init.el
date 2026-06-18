@@ -19,10 +19,6 @@
                                (lambda (bg) (set-face-background 'mode-line bg))
                                orig-bg))))
 
-(when (display-graphic-p)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1))
-
 ;; Enable visual line movement globally
 (setq-default line-move-visual t)
 (global-visual-line-mode t)
@@ -33,24 +29,7 @@
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "#f2f2f2") ; Very light gray
 
-;; Theme
-(use-package solarized-theme
-  :ensure t
-  :config
-  (load-theme 'solarized-light t))
-
-;; Font Configuration (GUI)
-(defun my/set-gui-font ()
-  "Set the font family and size for GUI Emacs."
-  (when (display-graphic-p)
-    (set-face-attribute 'default nil :family "Iosevka" :height 140)
-    (set-face-attribute 'fixed-pitch nil :family "Iosevka" :height 140)
-    (set-face-attribute 'variable-pitch nil :family "Iosevka" :height 140)))
-
-;; Apply font settings at startup and when creating new frames
-(my/set-gui-font)
-(add-hook 'window-setup-hook 'my/set-gui-font)
-(add-hook 'server-after-make-frame-hook 'my/set-gui-font)
+(require 'my-gui)
 
 ;; Undo Tree (Visual Undo History)
 (use-package undo-tree
@@ -109,10 +88,6 @@
 ;; Auto-save Settings
 (setq auto-save-interval 50)
 (setq auto-save-timeout 30)
-
-;; macOS Option Key as Meta Fix for GUI Emacs
-(setq mac-option-modifier 'meta)
-(setq mac-right-option-modifier 'meta)
 
 ;; Ibuffer Configuration
 (use-package ibuffer
