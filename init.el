@@ -124,70 +124,14 @@
   :bind (:map projectile-mode-map
               ("C-c p" . projectile-command-map)))
 
-(use-package orderless
-  :ensure t
-  :init
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
-
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode)
-  :bind (:map vertico-map
-              ("DEL" . vertico-directory-delete-char)))
-
-(use-package vertico-directory
-  :after vertico
-  :ensure nil
-  :bind (:map vertico-map
-              ("RET" . vertico-directory-enter)
-              ("DEL" . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word)))
-
-(use-package consult
-  :ensure t
-  :bind (("C-x b" . consult-buffer)
-         ("C-s"   . consult-line)
-         ("M-y"   . consult-yank-pop)
-         ("M-g g" . consult-goto-line)))
-
-(use-package embark
-  :ensure t
-  :bind
-  (("C-." . embark-act)
-   ("M-k" . embark-act)
-   ("C-;" . embark-dwim)
-   ("C-h B" . embark-bindings))
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command)
-  :config
-  (add-to-list 'display-buffer-alist
-               '("`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-(use-package embark-consult
-  :ensure t
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+(require 'my-completion)
 
 (use-package beframe
   :ensure t
   :config
   (beframe-mode 1)
-  (with-eval-after-load 'consult
-    (defun my/consult-beframe-buffer-list (&optional frame)
-      "Return the list of buffers from `beframe-buffer-names' sorted by visibility."
-      (beframe-buffer-list frame :sort #'beframe-buffer-sort-visibility))
+  (with-eval-after-load 'my-completion
     (setq consult-buffer-list-function #'my/consult-beframe-buffer-list)))
-
-(use-package marginalia
-  :ensure t
-  :init
-  (marginalia-mode))
 
 ;; --- Writing, Reading, And Notes ---
 
