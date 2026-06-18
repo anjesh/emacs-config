@@ -497,19 +497,6 @@ Buffers still displayed in non-workspace frames are preserved."
       (font-lock-flush)
       (message "Org Bullets: Hidden (Spaces)")))
 
-  ;; Org Pomodoro
-  (use-package org-pomodoro
-    :ensure t
-    :after org
-    :bind (:map org-mode-map
-                ("C-c C-x C-p" . org-pomodoro))
-    :config
-    ;; Optional: Custom sound files or notification settings
-    ;; (setq org-pomodoro-length 25)
-    ;; (setq org-pomodoro-short-break-length 5)
-    (setq org-pomodoro-play-sounds nil) ;; Silence by default
-    )
-
   ;; Find .org files recursively but exclude journal, obsidian-notes, client-projects, slack, research, and kings
   (setq org-agenda-files 
         (seq-filter 
@@ -1421,48 +1408,6 @@ With prefix arg ALL (C-u), kill *all* agent-shell sessions."
    ("C-c Q d" . qwen-cli-start-in-directory)
    ("C-c Q q" . qwen-cli-kill)))
 
-;; Editor Code Assistant (ECA)
-;; Prefer starting ECA from the directory/file at point in Treemacs,
-;; rather than always using the current project root.
-(defun my/eca--treemacs-dir-at-point ()
-  "Return the Treemacs node directory at point, or nil."
-  (when (and (derived-mode-p 'treemacs-mode)
-             (fboundp 'treemacs-node-at-point)
-             (fboundp 'treemacs-button-get))
-    (when-let* ((btn (treemacs-node-at-point))
-                (path (treemacs-button-get btn :path)))
-      (let ((dir (if (file-directory-p path)
-                     path
-                   (file-name-directory path))))
-        (when dir
-          (file-name-as-directory (expand-file-name dir)))))))
-
-(defun my/eca-find-root-for-buffer ()
-  "Root finder for ECA.
-
-If invoked from Treemacs, use the node at point.
-Otherwise, fall back to ECA's default root discovery (project root, etc.)."
-  (or (my/eca--treemacs-dir-at-point)
-      (and (fboundp 'eca-find-root-for-buffer)
-           (eca-find-root-for-buffer))
-      (if-let* ((f (buffer-file-name)))
-          (file-name-directory f)
-        default-directory)))
-
-(defun my/eca (&optional arg)
-  "Start ECA with `default-directory' aligned to the chosen workspace root."
-  (interactive "P")
-  (let* ((root (funcall eca-find-root-for-buffer-function))
-         (default-directory (file-name-as-directory (expand-file-name root))))
-    (eca arg)))
-
-(use-package eca
-  :vc (:url "https://github.com/editor-code-assistant/eca-emacs" :rev :newest)
-  :custom
-  (eca-find-root-for-buffer-function #'my/eca-find-root-for-buffer)
-  :bind
-  (("C-c E" . my/eca)))
-
 ;; --- AI Code Interface ---
 (use-package ai-code
   :ensure t
@@ -1510,15 +1455,6 @@ Otherwise, fall back to ECA's default root discovery (project root, etc.)."
              (< emacs-major-version 31))
     :config
     (corfu-terminal-mode +1)))
-
-;; --- Life Calendar ---
-(use-package life-calendar
-  :ensure t
-  :vc (:url "https://github.com/vshender/emacs-life-calendar")
-  :custom
-  (life-calendar-past-char "■")
-  (life-calendar-current-char "▣")
-  (life-calendar-future-char "□"))
 
 ;; --- Slack Integration ---
 (use-package alert
