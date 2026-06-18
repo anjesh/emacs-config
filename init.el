@@ -82,9 +82,6 @@
 (require 'my-ess)
 (require 'my-yaml)
 
-(use-package popup
-  :ensure t)
-
 ;; --- Development And Language Tooling ---
 
 (require 'my-ai-code)
