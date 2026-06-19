@@ -1,11 +1,13 @@
 ;;; my-project.el --- project.el configuration -*- lexical-binding: t; -*-
 
 (require 'cl-lib)
+(require 'dired)
 (require 'package)
 (require 'project)
 (require 'subr-x)
 (require 'use-package)
 (require 'vc)
+(declare-function dired-sidebar-buffer "ext:dired-sidebar" ())
 (declare-function vterm "ext:vterm" (&optional arg))
 
 (cl-defstruct my/project-ignore-rule
@@ -45,11 +47,24 @@
   :custom
   (dired-sidebar-theme 'icons)
   (dired-sidebar-use-term-integration t)
+  (dired-sidebar-window-fixed nil)
   (dired-sidebar-width 32))
 
 (use-package all-the-icons-dired
   :ensure t
   :after (all-the-icons dired-sidebar))
+
+(defcustom my/project-sidebar-hide-gitignored-files t
+  "Whether project sidebars should hide files ignored by `.gitignore' by default."
+  :type 'boolean
+  :group 'project)
+
+(defvar-local my/project-sidebar-hide-ignored-files
+  my/project-sidebar-hide-gitignored-files
+  "Whether the current project sidebar hides files ignored by `.gitignore'.")
+
+(defvar-local my/project-sidebar--ignored-overlays nil
+  "Overlays used to hide ignored entries in the current sidebar buffer.")
 
 (defun my/project-sidebar-open (&optional root)
   "Show `dired-sidebar' for project ROOT or the current project."
@@ -58,7 +73,8 @@
   (let ((default-directory (or root (project-root (project-current t)))))
     (unless (dired-sidebar-showing-sidebar-p)
       (dired-sidebar-toggle-sidebar))
-    (dired-sidebar-jump-to-sidebar)))
+    (dired-sidebar-jump-to-sidebar)
+    (my/project-sidebar--refresh-ignored-visibility)))
 
 (defun my/project-sidebar-close ()
   "Close the current `dired-sidebar'."
@@ -80,6 +96,73 @@
   "Open the project sidebar after switching projects."
   (when-let* ((project (project-current nil)))
     (my/project-sidebar-open (project-root project))))
+
+(defun my/project-sidebar--project-root ()
+  "Return the current sidebar project root, or nil when unavailable."
+  (when-let* ((project (project-current nil)))
+    (project-root project)))
+
+(defun my/project-sidebar--clear-ignored-overlays ()
+  "Remove overlays used to hide ignored entries in the current sidebar."
+  (mapc #'delete-overlay my/project-sidebar--ignored-overlays)
+  (setq my/project-sidebar--ignored-overlays nil))
+
+(defun my/project-sidebar--hide-current-line ()
+  "Hide the current line in the sidebar."
+  (let ((overlay (make-overlay (line-beginning-position)
+                               (min (point-max) (1+ (line-end-position))))))
+    (overlay-put overlay 'invisible t)
+    (push overlay my/project-sidebar--ignored-overlays)))
+
+(defun my/project-sidebar--refresh-ignored-visibility ()
+  "Hide ignored files in the current project sidebar when enabled."
+  (when (derived-mode-p 'dired-sidebar-mode)
+    (my/project-sidebar--clear-ignored-overlays)
+    (when my/project-sidebar-hide-ignored-files
+      (when-let* ((root (my/project-sidebar--project-root)))
+        (let ((root (file-name-as-directory root))
+              (rules-cache (make-hash-table :test #'equal)))
+          (save-excursion
+            (goto-char (point-min))
+            (while (< (point) (point-max))
+              (let ((file (ignore-errors (dired-get-filename nil t))))
+                (when (and file
+                           (not (equal (file-name-as-directory file) root))
+                           (my/project--ignored-p root
+                                                  file
+                                                  (file-directory-p file)
+                                                  rules-cache))
+                  (my/project-sidebar--hide-current-line))
+                (forward-line 1)))))))))
+
+(defun my/project-sidebar--setup ()
+  "Set up project-specific behavior for `dired-sidebar' buffers."
+  (setq-local my/project-sidebar-hide-ignored-files
+              my/project-sidebar-hide-gitignored-files)
+  (add-hook 'dired-after-readin-hook
+            #'my/project-sidebar--refresh-ignored-visibility
+            nil
+            t))
+
+(defun my/project-sidebar-toggle-gitignored-files ()
+  "Toggle whether the project sidebar shows files ignored by `.gitignore'."
+  (interactive)
+  (require 'dired-sidebar)
+  (let ((buffer (if (derived-mode-p 'dired-sidebar-mode)
+                    (current-buffer)
+                  (dired-sidebar-buffer))))
+    (unless buffer
+      (user-error "No project sidebar is open"))
+    (with-current-buffer buffer
+      (unless (derived-mode-p 'dired-sidebar-mode)
+        (user-error "Sidebar buffer is not active"))
+      (setq-local my/project-sidebar-hide-ignored-files
+                  (not my/project-sidebar-hide-ignored-files))
+      (my/project-sidebar--refresh-ignored-visibility)
+      (message "Project sidebar ignored files %s"
+               (if my/project-sidebar-hide-ignored-files
+                   "hidden"
+                 "shown")))))
 
 (defun my/project--gitignore-rules (dir)
   "Return parsed .gitignore rules from DIR."
@@ -164,7 +247,7 @@ RULES-CACHE memoizes parsed .gitignore files by directory."
     result))
 
 (defun my/project--list-local-files (root)
-  "List files in ROOT while respecting nested .gitignore files."
+  "List files in ROOT while respecting nested `.gitignore' files."
   (let ((rules-cache (make-hash-table :test #'equal))
         (results nil))
     (cl-labels
@@ -197,6 +280,7 @@ RULES-CACHE memoizes parsed .gitignore files by directory."
 ;; Put .project detection ahead of VC so nested marker-based projects
 ;; inside a larger repository can take precedence over the repo root.
 (add-hook 'project-find-functions #'my/project-try-dot-project)
+(add-hook 'dired-sidebar-mode-hook #'my/project-sidebar--setup)
 
 (setq project-switch-commands
       '((project-find-file "Find file")
@@ -206,7 +290,13 @@ RULES-CACHE memoizes parsed .gitignore files by directory."
         (my/project-vterm "vterm" ?t)
         (project-any-command "Other")))
 
+(define-key project-prefix-map (kbd "t") #'my/project-vterm)
+(define-key project-prefix-map (kbd "I") #'my/project-sidebar-toggle-gitignored-files)
 (define-key project-prefix-map (kbd "s") #'my/project-sidebar-toggle)
+
+(with-eval-after-load 'dired-sidebar
+  (define-key dired-sidebar-mode-map (kbd "I")
+              #'my/project-sidebar-toggle-gitignored-files))
 
 (advice-add 'project-switch-project :after #'my/project-sidebar-open-after-switch)
 

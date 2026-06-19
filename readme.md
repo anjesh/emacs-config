@@ -184,11 +184,15 @@ Beframe isolates buffers based on the frame they were opened in. When you switch
 | Switch Project | `C-x p p` | Switch to a known project |
 | Search in Project | `C-x p g` | Grep in the current project |
 | Dired Project Root | `C-x p d` | Open the current project root in Dired |
-| Open Project vterm | `C-x p p` then `t` | After choosing a project, open `vterm` at its root |
+| Open Project vterm | `C-x p t` | Open `vterm` at the current project root |
+| Open Switched Project vterm | `C-x p p` then `t` | After choosing a project, open `vterm` at its root |
+| Toggle Ignored Files in Sidebar | `C-x p I` or `I` in sidebar | Show or hide `.gitignore`-ignored files in the project sidebar |
 | Compile Project | `C-x p c` | Run `compile` from the project root |
 | Shell Command in Project | `C-x p !` | Run a shell command from the project root |
 | Remember Project | `M-x project-remember-project` | Add a project to the known projects list |
 | Forget Project | `M-x project-forget-project` | Remove a project from the known projects list |
+
+`C-u C-x p f` includes ignored files for one `project-find-file` invocation without changing the sidebar setting.
 
 ### .project Marker Projects
 
