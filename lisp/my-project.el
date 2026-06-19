@@ -1,9 +1,12 @@
 ;;; my-project.el --- project.el configuration -*- lexical-binding: t; -*-
 
 (require 'cl-lib)
+(require 'package)
 (require 'project)
 (require 'subr-x)
+(require 'use-package)
 (require 'vc)
+(declare-function vterm "ext:vterm" (&optional arg))
 
 (cl-defstruct my/project-ignore-rule
   pattern
@@ -19,6 +22,60 @@
 
 (cl-defmethod project-root ((project (head dot-project)))
   (cdr project))
+
+(defun my/project-vterm ()
+  "Open `vterm' in the current project root."
+  (interactive)
+  (require 'vterm)
+  (let ((default-directory (project-root (project-current t))))
+    (vterm t)))
+
+(defun my/ensure-dired-sidebar-installed ()
+  "Install `dired-sidebar' from GitHub when missing."
+  (unless (package-installed-p 'dired-sidebar)
+    (package-vc-install
+     '(dired-sidebar :url "https://github.com/jojojames/dired-sidebar"))))
+
+(use-package dired-sidebar
+  :ensure nil
+  :preface
+  (my/ensure-dired-sidebar-installed)
+  :commands (dired-sidebar-toggle-sidebar
+             dired-sidebar-jump-to-sidebar)
+  :custom
+  (dired-sidebar-theme 'icons)
+  (dired-sidebar-use-term-integration t)
+  (dired-sidebar-width 32))
+
+(defun my/project-sidebar-open (&optional root)
+  "Show `dired-sidebar' for project ROOT or the current project."
+  (interactive)
+  (require 'dired-sidebar)
+  (let ((default-directory (or root (project-root (project-current t)))))
+    (unless (dired-sidebar-showing-sidebar-p)
+      (dired-sidebar-toggle-sidebar))
+    (dired-sidebar-jump-to-sidebar)))
+
+(defun my/project-sidebar-close ()
+  "Close the current `dired-sidebar'."
+  (interactive)
+  (require 'dired-sidebar)
+  (when (dired-sidebar-showing-sidebar-p)
+    (dired-sidebar-toggle-sidebar)))
+
+(defun my/project-sidebar-toggle ()
+  "Toggle `dired-sidebar' for the current project."
+  (interactive)
+  (require 'dired-sidebar)
+  (let ((default-directory (project-root (project-current t))))
+    (dired-sidebar-toggle-sidebar)
+    (when (dired-sidebar-showing-sidebar-p)
+      (dired-sidebar-jump-to-sidebar))))
+
+(defun my/project-sidebar-open-after-switch (&rest _)
+  "Open the project sidebar after switching projects."
+  (when-let* ((project (project-current nil)))
+    (my/project-sidebar-open (project-root project))))
 
 (defun my/project--gitignore-rules (dir)
   "Return parsed .gitignore rules from DIR."
@@ -136,6 +193,18 @@ RULES-CACHE memoizes parsed .gitignore files by directory."
 ;; Put .project detection ahead of VC so nested marker-based projects
 ;; inside a larger repository can take precedence over the repo root.
 (add-hook 'project-find-functions #'my/project-try-dot-project)
+
+(setq project-switch-commands
+      '((project-find-file "Find file")
+        (project-find-regexp "Find regexp")
+        (project-find-dir "Find directory")
+        (project-vc-dir "VC-Dir")
+        (my/project-vterm "vterm" ?t)
+        (project-any-command "Other")))
+
+(define-key project-prefix-map (kbd "s") #'my/project-sidebar-toggle)
+
+(advice-add 'project-switch-project :after #'my/project-sidebar-open-after-switch)
 
 (provide 'my-project)
 ;;; my-project.el ends here
