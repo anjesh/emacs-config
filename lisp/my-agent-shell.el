@@ -115,7 +115,6 @@ With prefix arg ALL (C-u), kill all agent-shell sessions."
   (setq agent-shell-google-authentication
         (agent-shell-google-make-authentication :login t)))
 
-(require 'my-agent-shell-fixes)
 (require 'my-agent-shell-magit)
 
 (provide 'my-agent-shell)
