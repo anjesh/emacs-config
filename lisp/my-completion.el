@@ -57,9 +57,5 @@
   :init
   (marginalia-mode))
 
-(defun my/consult-beframe-buffer-list (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility."
-  (beframe-buffer-list frame :sort #'beframe-buffer-sort-visibility))
-
 (provide 'my-completion)
 ;;; my-completion.el ends here

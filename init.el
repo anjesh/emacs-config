@@ -58,9 +58,7 @@
   :commands (magit magit-status magit-dispatch))
 
 (require 'my-treemacs)
-(require 'my-ibuffer)
 (require 'my-completion)
-(require 'my-beframe)
 
 ;; --- Writing, Reading, And Notes ---
 
