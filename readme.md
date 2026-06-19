@@ -184,6 +184,7 @@ Beframe isolates buffers based on the frame they were opened in. When you switch
 | Switch Project | `C-x p p` | Switch to a known project |
 | Search in Project | `C-x p g` | Grep in the current project |
 | Dired Project Root | `C-x p d` | Open the current project root in Dired |
+| Open Project vterm | `C-x p p` then `t` | After choosing a project, open `vterm` at its root |
 | Compile Project | `C-x p c` | Run `compile` from the project root |
 | Shell Command in Project | `C-x p !` | Run a shell command from the project root |
 | Remember Project | `M-x project-remember-project` | Add a project to the known projects list |
