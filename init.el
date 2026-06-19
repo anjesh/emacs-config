@@ -52,10 +52,7 @@
   :ensure t
   :if (display-graphic-p))
 
-(use-package magit
-  :ensure t
-  :commands (magit magit-status magit-dispatch))
-
+(require 'my-magit)
 (require 'my-completion)
 
 ;; --- Writing, Reading, And Notes ---
