@@ -31,29 +31,10 @@
          ("M-y" . consult-yank-pop)
          ("M-g g" . consult-goto-line)))
 
-(use-package embark
-  :ensure t
-  :bind
-  (("C-." . embark-act)
-   ("M-k" . embark-act)
-   ("C-;" . embark-dwim)
-   ("C-h B" . embark-bindings))
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command)
-  :config
-  (add-to-list 'display-buffer-alist
-               '("`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-(use-package embark-consult
-  :ensure t
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-
 (use-package marginalia
   :ensure t
+  ;; Adds right-side annotations in minibuffer completion lists, such as
+  ;; buffer modes/paths for `consult-buffer' and extra metadata for `M-x'.
   :init
   (marginalia-mode))
 
