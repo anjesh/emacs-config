@@ -176,13 +176,34 @@ Beframe isolates buffers based on the frame they were opened in. When you switch
 | Create New Frame | `C-x 5 2` | Open a new frame with its own isolated buffer list |
 | Close Frame | `C-x 5 0` | Close the current frame |
 
-## Project Management (Projectile)
+## Project Management (project.el)
 
 | Action | Key Sequence | Note |
 | :--- | :--- | :--- |
-| Find File in Project | `C-c p f` | Fuzzy search for files in current project |
-| Switch Project | `C-c p p` | Switch to another project |
-| Search in Project | `C-c p s g` | Grep (search text) in all project files |
+| Find File in Project | `C-x p f` | Find a file in the current project |
+| Switch Project | `C-x p p` | Switch to a known project |
+| Search in Project | `C-x p g` | Grep in the current project |
+| Dired Project Root | `C-x p d` | Open the current project root in Dired |
+| Compile Project | `C-x p c` | Run `compile` from the project root |
+| Shell Command in Project | `C-x p !` | Run a shell command from the project root |
+| Remember Project | `M-x project-remember-project` | Add a project to the known projects list |
+| Forget Project | `M-x project-forget-project` | Remove a project from the known projects list |
+
+### .project Marker Projects
+
+- Any directory containing a `.project` file is treated as a project root.
+- Nested `.project` directories take precedence over the enclosing Git repo root.
+- In Git repos, file listing respects `.gitignore`.
+- Outside Git repos, `.gitignore` files are still used for filtering within `.project` roots.
+
+Useful commands:
+
+| Action | Command | Note |
+| :--- | :--- | :--- |
+| Show Current Project Root | `M-: (project-root (project-current))` | Print the detected project root |
+| Show Known Projects | `M-: (project-known-project-roots)` | Inspect the list used by `C-x p p` |
+| Open Project Cache File | `M-: (find-file project-list-file)` | Open the saved known-projects file |
+| Refresh Project Cache | `M-: (setq project--list 'unset)` | Force `project.el` to reread `project-list-file` |
 
 ## Git (Magit)
 

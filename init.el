@@ -47,6 +47,8 @@
 
 ;; --- Navigation And Project Tools ---
 
+(require 'my-project)
+
 (use-package all-the-icons
   :ensure t
   :if (display-graphic-p))
