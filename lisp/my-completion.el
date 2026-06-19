@@ -5,6 +5,8 @@
 (use-package orderless
   :ensure t
   :init
+  ;; Allows space-separated completion terms to match in any order, which
+  ;; makes commands like `M-x' and `consult-buffer' much more flexible.
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
@@ -12,6 +14,7 @@
 (use-package vertico
   :ensure t
   :init
+  ;; Provides the vertical minibuffer candidate UI used by completion commands.
   (vertico-mode)
   :bind (:map vertico-map
               ("DEL" . vertico-directory-delete-char)))
@@ -19,6 +22,7 @@
 (use-package vertico-directory
   :after vertico
   :ensure nil
+  ;; Improves directory navigation during file completion prompts.
   :bind (:map vertico-map
               ("RET" . vertico-directory-enter)
               ("DEL" . vertico-directory-delete-char)
