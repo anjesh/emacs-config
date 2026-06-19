@@ -47,6 +47,10 @@
   (dired-sidebar-use-term-integration t)
   (dired-sidebar-width 32))
 
+(use-package all-the-icons-dired
+  :ensure t
+  :after (all-the-icons dired-sidebar))
+
 (defun my/project-sidebar-open (&optional root)
   "Show `dired-sidebar' for project ROOT or the current project."
   (interactive)
