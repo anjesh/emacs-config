@@ -7,22 +7,12 @@
   (interactive)
   (cond
    ((derived-mode-p 'dired-mode) (dired-current-directory))
-   ((derived-mode-p 'treemacs-mode)
-    (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                         (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                         (ignore-errors
-                           (treemacs-copy-path-at-point)
-                           (substring-no-properties (current-kill 0))))))
-      (when (and node-path (file-exists-p node-path))
-        (if (file-directory-p node-path)
-            node-path
-          (file-name-directory node-path)))))
    (t (if buffer-file-name
           (file-name-directory buffer-file-name)
         default-directory))))
 
 (defun my/open-ghostty-here ()
-  "Open Ghostty in the current buffer's directory, dired dir, or Treemacs node."
+  "Open Ghostty in the current buffer's directory or dired dir."
   (interactive)
   (let ((path (my/current-path-for-terminal)))
     (if (and path (not (string-empty-p path)))
@@ -32,7 +22,7 @@
       (message "Could not determine directory."))))
 
 (defun my/open-vterm-here ()
-  "Open vterm in the current buffer's directory, dired dir, or Treemacs node."
+  "Open vterm in the current buffer's directory or dired dir."
   (interactive)
   (let ((path (my/current-path-for-terminal)))
     (if (and path (not (string-empty-p path)))
@@ -56,7 +46,7 @@
       (message "Could not determine directory."))))
 
 (defun my/open-eshell-here ()
-  "Open eshell in the current buffer's directory, dired dir, or Treemacs node."
+  "Open eshell in the current buffer's directory or dired dir."
   (interactive)
   (let ((path (my/current-path-for-terminal)))
     (if (and path (not (string-empty-p path)))

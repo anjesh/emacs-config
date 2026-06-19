@@ -10,16 +10,10 @@
                          orig-bg)))
 
 (defun my/open-in-external-app ()
-  "Open the current file, dired-marked file, or treemacs node in an external app."
+  "Open the current file or dired-marked file in an external app."
   (interactive)
   (let ((file (cond
                ((derived-mode-p 'dired-mode) (dired-get-filename nil t))
-               ((derived-mode-p 'treemacs-mode)
-                (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                    (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                    (ignore-errors
-                      (treemacs-copy-path-at-point)
-                      (substring-no-properties (current-kill 0)))))
                (t buffer-file-name))))
     (if (and file (not (string-empty-p file)))
         (progn

@@ -36,7 +36,6 @@
 (set-face-background 'hl-line "#f2f2f2")
 
 (require 'my-gui)
-(require 'my-flyspell)
 (require 'my-dimmer)
 (require 'my-mouse)
 (require 'my-undo)
@@ -57,7 +56,6 @@
   :ensure t
   :commands (magit magit-status magit-dispatch))
 
-(require 'my-treemacs)
 (require 'my-completion)
 
 ;; --- Writing, Reading, And Notes ---

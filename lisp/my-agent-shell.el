@@ -41,20 +41,9 @@
     shell-buffer))
 
 (defun my/get-agent-shell-context-path ()
-  "Get path from treemacs, dired, or buffer for agent-shell."
+  "Get path from dired or the current buffer for agent-shell."
   (cond
    ((derived-mode-p 'dired-mode) (dired-current-directory))
-   ((derived-mode-p 'treemacs-mode)
-    (let ((node-path (or (ignore-errors (treemacs--button-get (treemacs-node-at-point) :path))
-                         (ignore-errors (treemacs-button-get (treemacs-node-at-point) :path))
-                         (ignore-errors
-                           (treemacs-copy-path-at-point)
-                           (substring-no-properties (current-kill 0))))))
-      (if (and node-path (file-exists-p node-path))
-          (if (file-directory-p node-path)
-              node-path
-            (file-name-directory node-path))
-        nil)))
    (t (if buffer-file-name
           (file-name-directory buffer-file-name)
         default-directory))))
@@ -62,7 +51,7 @@
 (defun my/agent-shell-dwim (&optional _arg)
   "Start `agent-shell` using context directory when available.
 
-When invoked from Treemacs/Dired/a file buffer, force agent-shell's CWD to that
+When invoked from Dired or a file buffer, force agent-shell's CWD to that
 location and start a new agent-shell session so the directory takes effect.
 Otherwise, fall back to regular `agent-shell` behavior."
   (interactive "P")
